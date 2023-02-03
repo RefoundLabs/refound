@@ -6,13 +6,18 @@ const usersSchema = new Schema(
     {
         username: {
             type: String,
-            required: true,
-            unique: true
-        },
-        fullname: {
-            type: String,
             required: false,
             unique: true
+        },
+        firstname: {
+            type: String,
+            required: false,
+            unique: false
+        },
+        lastname: {
+            type: String,
+            required: false,
+            unique: false
         },
         email: {
             type: String,
@@ -31,7 +36,7 @@ const usersSchema = new Schema(
         },
         type: {
             type: String,
-            required: true,
+            required: false,
             unique: false
         },
         avatar: {
@@ -41,7 +46,7 @@ const usersSchema = new Schema(
         },
         walletAddress: {
             type: String,
-            required: true,
+            required: false,
             unique: false
         },
 

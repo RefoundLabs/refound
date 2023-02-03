@@ -15,7 +15,8 @@ const validateEmail = (email: string): boolean => {
 
 const validateForm = async (
   username: string,
-  fullname: string,
+  firstname: string,
+  lastname: string,
   email: string,
   twitterHandle: string,
   bio: string,
@@ -23,10 +24,8 @@ const validateForm = async (
   avatar: string,
   walletAddress: string
 ) => {
-  console.log(username, email, fullname, twitterHandle, bio, type, walletAddress);
-  if (username.length < 3) {
-    return { error: "Username must have 3 or more characters" };
-  }
+  console.log(username, email, firstname, lastname, twitterHandle, bio, type, walletAddress);
+ 
   if (!validateEmail(email)) {
     return { error: "Email is invalid" };
   }
@@ -53,9 +52,9 @@ export default async function handler(
   }
 
   // get and validate body variables
-  const { username, fullname, email, twitterHandle, bio, type, avatar, walletAddress } = req.body;
+  const { username, firstname, lastname, email, twitterHandle, bio, type, avatar, walletAddress } = req.body;
 
-  const errorMessage = await validateForm(username, fullname, email, twitterHandle, bio, type, avatar, walletAddress);
+  const errorMessage = await validateForm(username, firstname, lastname, email, twitterHandle, bio, type, avatar, walletAddress);
   if (errorMessage) {
     return res.status(400).json(errorMessage as ResponseData);
   }
@@ -65,7 +64,8 @@ export default async function handler(
     const newUser = new users({
         username: username,
         email: email,
-        fullname: fullname,
+        firstname: firstname,
+        lastname: lastname,
         twitterHandle: twitterHandle,
         bio: bio,
         type:type,

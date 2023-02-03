@@ -5,6 +5,7 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
 import { config } from "@config/config";
+import axios from "axios";
 import { lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	createStyles,
@@ -25,19 +26,47 @@ export const WaitListView: NextPage = () => {
 	const [email , setEmail ] = useState();
 	const [firstname , setFirstName ] = useState();
   const [lastname , setLastName ] = useState();
-  const [twitter , setTwitter ] = useState();
-	const [alert , setAlert ] = useState();
+  const [twitterHandle , setTwitterHandle ] = useState();
+	const [alert , setAlert ] = useState("");
+  const [success , setSuccess ] = useState("");
 
 	const formSubmit = (actions: any) => {
 		actions.setSubmitting(false);
 	
 		//reegister with email and fullname
+    createUser();
 	  };
+
+
+    const createUser = async () => {
+      console.log('create newsletter fired')
+      if(firstname && lastname && email && twitterHandle){
+          const res = await axios
+          .post(
+              "/api/waitlist",
+              { firstname , lastname, email, twitterHandle },
+              {
+              headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+              },
+              }
+          )
+          .then(async () => {
+              //redirectToHome();
+              setSuccess("Succesfully signed up!");
+          }) 
+          .catch((error:any) => {
+              console.log(error);
+              setAlert(error);
+          });
+          console.log(res);
+      }
+    };
+
 
 	return (
 		<ContentSection width="xs" className="flex flex-col items-center gap-12">
-			{!submitted &&
-			<>
 			<div className="w-full pt-16 pb-4">
 				<h1 className="text-4xl font-bold text-center">Sign Up For Our Waitlist</h1>
 				<Formik
@@ -66,7 +95,7 @@ export const WaitListView: NextPage = () => {
                   <Field name="firstname">
                     {() => (
                       <>
-                        <Text>Full Name:</Text>
+                        <Text>First Name:</Text>
                         <Input
                           value={firstname}
                           onChange={(e:any) => setFirstName(e.target.value)}
@@ -87,13 +116,13 @@ export const WaitListView: NextPage = () => {
                        </>
                     )}
                   </Field>
-                  <Field name="twitter">
+                  <Field name="twitterHandle">
                     {() => (
                       <>
-                        <Text>Twitter:</Text>
+                        <Text>Twitter Handle:</Text>
                         <Input
-                          value={twitter}
-                          onChange={(e:any) => setTwitter(e.target.value)}
+                          value={twitterHandle}
+                          onChange={(e:any) => setTwitterHandle(e.target.value)}
                           placeholder="Twitter Handle"
                         />
                        </>
@@ -109,6 +138,7 @@ export const WaitListView: NextPage = () => {
             )}
           </Formik>
          {alert && <Alert color={"red"} style={{marginTop:"5%"}}>{alert}</Alert>}
+         {success && <Alert color={"green"} style={{marginTop:"5%"}}>{success}</Alert>}
 			</div>
 
 
@@ -120,13 +150,6 @@ export const WaitListView: NextPage = () => {
 					</NextLink>
 				</p>
 			</div>
-			</>
-			}
-			{submitted && 
-				<div>
-					<p>Thank you for registering your interest in Refound. Over the coming months, we'll be rolling out features as we prepare this platform for launch.</p>
-				</div>
-			}
 		</ContentSection>
 	);
 
