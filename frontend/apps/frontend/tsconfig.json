@@ -1,0 +1,68 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "target": "es6",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        // "noEmit": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "importsNotUsedAsValues": "error",
+        "jsx": "preserve",
+        "incremental": true,
+        "baseUrl": ".",
+        "outDir": "dist",
+        "composite": true,
+        "paths": {
+            "@api/*": [
+                "api/*"
+            ],
+            "@config/*": [
+                "config/*"
+            ],
+            "@modules/*": [
+                "src/modules/*"
+            ],
+            "@services/*": [
+                "src/services/*"
+            ],
+            "@styles/*": [
+                "src/styles/*"
+            ],
+            "@utils/*": [
+                "src/utils/*"
+            ]
+        },
+        "noEmit": true
+    },
+    "references": [
+        {
+            "path": "../common"
+        }
+    ],
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        ".eslintrc.js",
+        "tailwind.config.js",
+        "next.config.js"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/__deprecated__/**/*",
+        "**/__deprecated2__/**/*"
+    ]
+}

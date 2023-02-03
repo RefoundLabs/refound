@@ -1,0 +1,16 @@
+{
+    "name": "frontend",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "private": true,
+    "workspaces": [
+        "apps/*"
+    ],
+    "scripts": {
+        "onchain": "yarn workspace @repo/onchain",
+        "frontend": "yarn workspace @repo/frontend",
+        "indexer": "yarn workspace @repo/indexer",
+        "common": "yarn workspace @repo/common"
+    }
+}
