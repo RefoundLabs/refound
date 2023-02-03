@@ -16,7 +16,7 @@ const MONGODB_URI: string = process.env.MONGODB_URI;
  * in development. This prevents connections growing exponentially
  * during API Route usage.
  */
-let globalWithMongoose = global as typeof globalThis & {
+ const globalWithMongoose = global as typeof globalThis & {
   mongoose: any;
 };
 let cached = globalWithMongoose.mongoose;
