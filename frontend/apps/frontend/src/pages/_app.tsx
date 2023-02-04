@@ -22,7 +22,6 @@ import { SessionProvider } from "next-auth/react";
 
 function MyApp({ Component, pageProps : {session, ...pageProps} }: AppProps) {
 	return (
-		<SessionProvider session={session}>
 			<NearContextProvider>
 				<AccountContextProvider>
 					<IpfsContextProvider>
@@ -37,7 +36,6 @@ function MyApp({ Component, pageProps : {session, ...pageProps} }: AppProps) {
 					</IpfsContextProvider>
 				</AccountContextProvider>
 			</NearContextProvider>
-		</SessionProvider>
 	);
 }
 

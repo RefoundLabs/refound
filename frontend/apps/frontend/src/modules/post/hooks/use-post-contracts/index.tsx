@@ -18,7 +18,6 @@ export const usePostContracts = () => useContext(PostContractsContext);
 
 export const PostContractsContextProvider = ({ children }: { children: ReactNode }) => {
 	const { wallet, checkIsLoggedIn } = useNear();
-	const {data:session, status} = useSession();
 	const [adapter, setAdapter] = useState<State["adapter"]>(initialState.adapter);
 
 	useEffect(() => {

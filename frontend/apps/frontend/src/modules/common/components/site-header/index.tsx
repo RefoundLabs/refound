@@ -52,8 +52,10 @@ export const SiteHeader = () => {
 				{isSignedIn ? (
 					<div className="flex flex-row items-center justify-center gap-2">
 						<div className="flex flex-row justify-center gap-4 rounded-full badge">
-							<span className="text-background">{trimText(id, 15)}</span>
-							<span className="text-background">as {role}</span>
+							<NextLink href="/profile">
+								<span className="text-background">{trimText(id, 15)}</span>
+								<span className="text-background">as {role}</span>
+							</NextLink>
 						</div>
 
 						<button

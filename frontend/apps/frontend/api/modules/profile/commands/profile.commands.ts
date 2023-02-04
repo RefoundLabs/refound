@@ -1,7 +1,7 @@
 import { makeCoreContractRepo } from "@api/repo/core-contract/core-contract.repo"
 
 export const makeProfileCommands = () => {
-    const coreRepo = makeCoreContractRepo()
+    const coreRepo = makeCoreContractRepo();
     return {
         createProfile: async () => 
     }
