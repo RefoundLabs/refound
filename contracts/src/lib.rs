@@ -101,6 +101,10 @@ impl Contract {
         self.guests.get(&public_key.into()).expect("no guest")
     }
 
+    pub fn get_owner(&self) -> AccountId {
+        self.owner_id.clone()
+    }
+
     /// self callbacks
 
     /// after account creation delete all the guests activity

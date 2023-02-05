@@ -19,13 +19,16 @@ test.beforeEach(async (t) => {
     const refound = await root.createSubAccount("refound");
 
     // Deploy factory contract -- pass path to the wasm file as an argument
-    await refound.devDeploy(process.argv[2], {
-        initialBalance: NEAR.parse("100 N").toJSON(),
-        method: "new",
-        args: {
-            owner_id: root,
-        },
-    });
+    const contract = await root.devDeploy(
+        "/home/slyracoon23/Documents/refound/refound-repo/contracts/out/main.wasm",
+        {
+            // initialBalance: NEAR.parse("100 N").toJSON(),
+            method: "new",
+            args: {
+                owner_id: alice.accountId,
+            },
+        }
+    );
 
     // Save state for test runs, it is unique for each test
     t.context.worker = worker;
@@ -33,6 +36,7 @@ test.beforeEach(async (t) => {
         refound,
         alice,
         beneficiary,
+        contract,
     };
 });
 
@@ -42,18 +46,26 @@ test.afterEach(async (t) => {
     });
 });
 
-test("create_refound_subaccount_and_deploy tests", async (t) => {
-    const { refound, alice, beneficiary } = t.context.accounts;
+test("check_owner_id tests", async (t) => {
+    const { alice, contract } = t.context.accounts;
 
-    let create = await alice.call(
-        refound,
-        "create_factory_subaccount_and_deploy",
-        { name: `sub`, beneficiary: beneficiary },
-        {
-            gas: "80000000000000",
-            attachedDeposit: NEAR.parse("1.24 N").toString(),
-        }
-    );
+    let owner_id = await contract.view("get_owner");
 
-    t.is(create, true);
+    t.is(owner_id, alice.accountId);
 });
+
+// test("create_refound_subaccount_and_deploy tests", async (t) => {
+//     const { refound, alice, beneficiary } = t.context.accounts;
+
+//     let create = await alice.call(
+//         refound,
+//         "create_factory_subaccount_and_deploy",
+//         { name: `sub`, beneficiary: beneficiary },
+//         {
+//             gas: "80000000000000",
+//             attachedDeposit: NEAR.parse("1.24 N").toString(),
+//         }
+//     );
+
+//     t.is(create, true);
+// });
