@@ -27,6 +27,7 @@ export const WaitListView: NextPage = () => {
 	const [firstname , setFirstName ] = useState();
   const [lastname , setLastName ] = useState();
   const [twitterHandle , setTwitterHandle ] = useState();
+  const [link , setLink ] = useState();
 	const [alert , setAlert ] = useState("");
   const [success , setSuccess ] = useState("");
 
@@ -40,11 +41,11 @@ export const WaitListView: NextPage = () => {
 
     const createUser = async () => {
       console.log('create newsletter fired')
-      if(firstname && lastname && email && twitterHandle){
+      if(firstname && lastname && email && twitterHandle && link){
           const res = await axios
           .post(
               "/api/waitlist",
-              { firstname , lastname, email, twitterHandle },
+              { firstname , lastname, email, twitterHandle, link },
               {
               headers: {
                   Accept: "application/json",
@@ -124,6 +125,18 @@ export const WaitListView: NextPage = () => {
                           value={twitterHandle}
                           onChange={(e:any) => setTwitterHandle(e.target.value)}
                           placeholder="Twitter Handle"
+                        />
+                       </>
+                    )}
+                  </Field>
+                  <Field name="link">
+                    {() => (
+                      <>
+                        <Text>Other Link:</Text>
+                        <Input
+                          value={link}
+                          onChange={(e:any) => setLink(e.target.value)}
+                          placeholder="Other Link"
                         />
                        </>
                     )}

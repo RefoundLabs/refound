@@ -29,6 +29,11 @@ const usersSchema = new Schema(
             required: false,
             unique: false
         },
+        link: {
+            type: String,
+            required: false,
+            unique: false
+        },
         bio: {
             type: String,
             required: false,
