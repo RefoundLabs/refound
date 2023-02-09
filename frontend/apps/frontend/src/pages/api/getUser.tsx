@@ -13,15 +13,14 @@ interface ResponseData {
 const getUserByEmail = async (email: string) =>{
     await dbConnect();
     console.log(email);
-    const User = await users.findOne({email: email});
-    return User;
+    
+    return await users.findOne({email: email});
 }
 
 const getUserByUsername = async (username: string) =>{
   await dbConnect();
   console.log(username);
-  const User = await users.findOne({username: username});
-  return User;
+  return await users.findOne({username: username});
 }
 
 export default async function handler(
@@ -37,7 +36,7 @@ export default async function handler(
   }
   let username = "";
   let Email = "";
-  let queryVal = "";
+  const queryVal = "";
   if(req.query.userEmail){
     Email = req.query.userEmail.toString();
     try{
@@ -51,7 +50,7 @@ export default async function handler(
     username = req.query.username.toString();
     console.log(username);
     try{
-        var user = await getUserByUsername(username.toString());
+        const user = await getUserByUsername(username.toString());
         return res.status(200).json({ success: true, data: user });
     }catch(err: any){
       return res.status(400).json({ error: "Error on '/api/getUser': " + err })

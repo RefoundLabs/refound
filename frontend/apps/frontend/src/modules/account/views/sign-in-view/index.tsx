@@ -25,19 +25,6 @@ export const SignInView: NextPage = () => {
 
 	return (
 		<ContentSection width="xs" className="flex flex-col items-center gap-12">
-			{/* <ul className="steps">
-				<li className={`step step-neutral`}>
-					<span className="text-xs font-bold tracking-wide px-[1em]">
-						Connect Your Wallet
-					</span>
-				</li>
-				<li className={`step`}>
-					<span className="text-xs font-bold tracking-wide px-[1em]">
-						Create Your Profile
-					</span>
-				</li>
-			</ul> */}
-
 			<div className="w-full pt-16 pb-4">
 				<h1 className="text-4xl font-bold text-center">Sign In</h1>
 				<p className="w-full text-sm text-center pt-[0.5em] max-w-[25ch] mx-auto">

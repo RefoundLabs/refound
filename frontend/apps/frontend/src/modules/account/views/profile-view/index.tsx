@@ -135,7 +135,7 @@ export const ProfileView = () => {
 
 
   const getBase64= (file:any, cb:any) => {
-    let reader = new FileReader();
+    const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = function () {
         cb(reader.result)
@@ -158,7 +158,7 @@ export const ProfileView = () => {
         }
 
         if(avatarFile){
-            let base64file= getBase64(avatarFile, (result:string) => {
+            const base64file= getBase64(avatarFile, (result:string) => {
                 //console.log('base64image'+result);
                 setAvatar(result);
             });
@@ -230,7 +230,7 @@ export const ProfileView = () => {
                                             type="file" 
                                             accept="image/*"
                                             onChange={async(e:any) => {
-                                                let file = (e.target.files[0])
+                                                const file = (e.target.files[0])
                                                 setAvatarFile(file);
                                             }}
                                             />
