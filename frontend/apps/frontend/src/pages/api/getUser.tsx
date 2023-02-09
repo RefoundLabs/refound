@@ -40,7 +40,7 @@ export default async function handler(
   if(req.query.userEmail){
     Email = req.query.userEmail.toString();
     try{
-        var user = await getUserByEmail(Email.toString());
+        const user = await getUserByEmail(Email.toString());
         return res.status(200).json({ success: true, data: user });
     }catch(err: any){
       return res.status(400).json({ error: "Error on '/api/getUser': " + err })

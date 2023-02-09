@@ -135,15 +135,15 @@ export const ProfileView = () => {
 
 
   const getBase64= (file:any, cb:any) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function () {
-        cb(reader.result)
-    };
-    reader.onerror = function (error) {
-        console.log('Error: ', error);
-    };
-}
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            cb(reader.result)
+        };
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };
+    }
     
 
 
@@ -158,7 +158,7 @@ export const ProfileView = () => {
         }
 
         if(avatarFile){
-            const base64file= getBase64(avatarFile, (result:string) => {
+            let base64file= getBase64(avatarFile, (result:string) => {
                 //console.log('base64image'+result);
                 setAvatar(result);
             });
