@@ -7,8 +7,6 @@ import { cloin } from "@utils/styling/cloin";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import {signOut, useSession } from "next-auth/react"
-import {signIn as SignIn} from "next-auth/react"; 
 
 export const SignInView: NextPage = () => {
 	const router = useRouter();
@@ -76,7 +74,7 @@ export const SignInView: NextPage = () => {
 							/* status === "no_wallet" && "btn-disabled", */
 						)}
 						onClick={() => {
-							SignIn();
+							router.push("/onboarding");
 						}}
 					>
 						No Wallet Sign In 
