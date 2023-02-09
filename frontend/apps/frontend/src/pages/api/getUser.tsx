@@ -23,6 +23,12 @@ const getUserByUsername = async (username: string) =>{
   return await users.findOne({username: username});
 }
 
+const getUserByWalletAddress = async (walletAddress: string) =>{
+  await dbConnect();
+  console.log(walletAddress);
+  return await users.findOne({walletAddress: walletAddress});
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
@@ -36,6 +42,8 @@ export default async function handler(
   }
   let username = "";
   let Email = "";
+  let walletAddress = "";
+
   const queryVal = "";
   if(req.query.userEmail){
     Email = req.query.userEmail.toString();
@@ -55,6 +63,10 @@ export default async function handler(
     }catch(err: any){
       return res.status(400).json({ error: "Error on '/api/getUser': " + err })
     }
+  }else if(req.query.walletAddress){
+    walletAddress = req.query.walletAddress.toString();
+    const user = await getUserByWalletAddress(walletAddress.toString());
+    return res.status(200).json({ success: true, data: user });
   }
   
 }

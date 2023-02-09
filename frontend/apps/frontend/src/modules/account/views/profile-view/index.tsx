@@ -75,11 +75,11 @@ export const ProfileView = () => {
       };
 
       const getUser = async() => {
-        if(email){
-            //console.log(email);
+        if(account?.accountId){
+            console.log(account.accountId);
             const res = await axios
             .get(
-                "/api/getUser?userEmail="+email,
+                "/api/getUser?walletAddress="+account.accountId,
                 {
                 headers: {
                     Accept: "application/json",
