@@ -158,7 +158,7 @@ export const ProfileView = () => {
         }
 
         if(avatarFile){
-            let base64file= getBase64(avatarFile, (result:string) => {
+            const base64file= getBase64(avatarFile, (result:string) => {
                 //console.log('base64image'+result);
                 setAvatar(result);
             });
@@ -172,8 +172,8 @@ export const ProfileView = () => {
 
 	return (
 		<div>
-        {account &&
-        <div style={{minHeight:"85vh"}}>
+        {//account &&
+        <div style={{minHeight:"85vh", marginTop:"5%"}}>
             <Grid>
                 <Grid.Col sm={3}><h1 style={{marginLeft:"2%"}}>Profile</h1></Grid.Col>
             </Grid>
@@ -201,7 +201,7 @@ export const ProfileView = () => {
                     </Grid.Col>
                 </>
                 }
-                {editProfile && account && 
+                {editProfile && //account && 
                 <>
                     <Grid.Col sm={2}></Grid.Col>
                     <Grid.Col sm={8}>
@@ -274,18 +274,6 @@ export const ProfileView = () => {
                                     </>
                                     )}
                                 </Field>
-								<Field name="username">
-                                    {() => (
-                                    <>
-                                        <Text>Username:</Text>
-                                        <Input size="xs"
-                                        value={username}
-                                        onChange={(e:any) => setUsername(e.target.value)}
-                                        placeholder={username || "username"}
-                                        />
-                                    </>
-                                    )}
-                                </Field>
                                 <Field name="email">
                                     {() => (
                                     <>
@@ -313,7 +301,7 @@ export const ProfileView = () => {
                                 <Field name="twitterHandle">
                                     {() => (
                                     <>
-                                        <Text><FiTwitter></FiTwitter></Text>
+                                        <Text><FiTwitter></FiTwitter>Twitter Handle</Text>
                                         <Input size="xs"
                                         value={twitterHandle}
                                         onChange={(e:any) => setTwitterHandle(e.target.value)}
@@ -325,7 +313,7 @@ export const ProfileView = () => {
                                 <Field name="link">
                                     {() => (
                                     <>
-                                        <Text><FiGlobe></FiGlobe></Text>
+                                        <Text>Other Link<FiGlobe></FiGlobe></Text>
                                         <Input size="xs"
                                         value={link}
                                         onChange={(e:any) => setLink(e.target.value)}
