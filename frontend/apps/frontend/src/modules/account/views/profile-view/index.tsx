@@ -157,12 +157,12 @@ export const ProfileView = () => {
             //console.log(email);
         }
 
-        if(avatarFile){
-            const base64file= getBase64(avatarFile, (result:string) => {
-                //console.log('base64image'+result);
-                setAvatar(result);
-            });
-        }
+        // if(avatarFile){
+        //     const base64file= getBase64(avatarFile, (result:string) => {
+        //         //console.log('base64image'+result);
+        //         setAvatar(result);
+        //     });
+        // }
 
         if(!username){
             getUser();
