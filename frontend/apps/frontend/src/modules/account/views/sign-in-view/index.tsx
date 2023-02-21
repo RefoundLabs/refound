@@ -12,10 +12,10 @@ export const SignInView: NextPage = () => {
 	const router = useRouter();
 	const { signIn, isSignedIn } = useAccount();
 	//const {data:session, status} = useSession();
-
 	useEffect(() => {
 		if (isSignedIn) {
 			router.push("/sign-up");
+			console.log(isSignedIn);
 		}
 
 		
