@@ -275,7 +275,7 @@ export const ProfileView = () => {
                                             type="file" 
                                             accept="image/*" style={{display:"none"}}
                                             onChange={async(e:any) => {
-                                                let file = (e.target.files[0])
+                                                const file = (e.target.files[0])
                                                 setAvatarFile(file);
                                             }}
                                         />    
