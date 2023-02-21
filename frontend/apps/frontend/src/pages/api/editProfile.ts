@@ -20,8 +20,7 @@ const validateForm = async (
   email: string, 
   bio: string,
   twitterHandle: string,
-  link: string,
-  //images: []
+  link: string
 ) => {
   if (username.length < 3) {
     return { error: "Username must have 3 or more characters" };
@@ -55,7 +54,7 @@ export default async function handler(
   // get and validate body variables
   const { username, firstname, lastname, email, bio, twitterHandle, link,  } = req.body;
 
-  const errorMessage = await validateForm(username, firstname, lastname, email, bio, twitterHandle, link, avatar);
+  const errorMessage = await validateForm(username, firstname, lastname, email, bio, twitterHandle, link);
   if (errorMessage) {
     return res.status(400).json(errorMessage as ResponseData);
   }
