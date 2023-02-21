@@ -246,7 +246,7 @@ export const ProfileView = () => {
                 <Grid.Col sm={3}><h1 style={{marginLeft:"2%", fontSize:'2em'}}>Profile</h1></Grid.Col>
             </Grid>
             <hr></hr>
-            <Grid>
+            <Grid> 
                 {!editProfile &&
                 <>
                     <Grid.Col sm={4}>
@@ -261,7 +261,7 @@ export const ProfileView = () => {
                                             type="file" 
                                             accept="image/*" style={{display:"none"}}
                                             onChange={async(e:any) => {
-                                                let file = (e.target.files[0])
+                                                const file = (e.target.files[0])
                                                 setAvatarFile(file);
                                             }}
                                         />   
