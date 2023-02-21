@@ -10,16 +10,17 @@ import { useEffect, useState } from "react";
 
 export const SignInView: NextPage = () => {
 	const router = useRouter();
-	const { signIn, isSignedIn } = useAccount();
+	//const { signIn, isSignedIn } = useAccount();
+	const { wallet, checkIsLoggedIn, requestSignIn, requestSignOut } = useNear();
 	//const {data:session, status} = useSession();
 	useEffect(() => {
-		if (isSignedIn) {
+		if (checkIsLoggedIn) {
 			router.push("/sign-up");
-			console.log(isSignedIn);
+			console.log(checkIsLoggedIn);
 		}
 
 		
-	}, [isSignedIn]);
+	}, [checkIsLoggedIn]);
 
 	return (
 		<ContentSection width="xs" className="flex flex-col items-center gap-12">
@@ -38,33 +39,15 @@ export const SignInView: NextPage = () => {
 							/* status === "no_wallet" && "btn-disabled", */
 						)}
 						onClick={() => {
-							signIn("user");
+							requestSignIn();
 						}}
 					>
-						User Role
+						Sign In
 					</button>
-					<p className="w-full text-sm text-center pt-[0.5em] max-w-[30ch] mx-auto">
+					{/* <p className="w-full text-sm text-center pt-[0.5em] max-w-[30ch] mx-auto">
 						Sign in from the perspective of a journalist or user who will create and
 						purchase NFTs.
-					</p>
-				</div>
-
-				<div className="w-full pb-[2rem]">
-					<button
-						className={cloin(
-							"btn btn-lg w-full rounded-md",
-							/* status === "no_wallet" && "btn-disabled", */
-						)}
-						onClick={() => {
-							signIn("verifier");
-						}}
-					>
-						NGO Role
-					</button>
-					<p className="w-full text-sm text-center pt-[0.5em] max-w-[30ch] mx-auto">
-						Sign in from the perspective of a Non-Government Organization (NGO) which
-						verifies the credibility of NFTs.
-					</p>
+					</p> */}
 				</div>
 
 				<div className="w-full pb-[2rem]">
