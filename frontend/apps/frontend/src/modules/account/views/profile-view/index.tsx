@@ -195,6 +195,9 @@ export const ProfileView = () => {
      useEffect(() => {
         getUser();
         
+        if(account){
+            console.log(account);
+        }
     }, []);
  
     useEffect(() => {
@@ -237,7 +240,7 @@ export const ProfileView = () => {
 				},
 			}),
 		);
-	}, [adapter]);
+	}, [adapter]); 
 
 	return (
 		<div>
