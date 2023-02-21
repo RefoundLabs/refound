@@ -52,7 +52,7 @@ export default async function handler(
   }
 
   // get and validate body variables
-  const { username, firstname, lastname, email, bio, twitterHandle, link,  } = req.body;
+  const { username, firstname, lastname, email, bio, twitterHandle, link, accountId } = req.body;
 
   const errorMessage = await validateForm(username, firstname, lastname, email, bio, twitterHandle, link);
   if (errorMessage) {
@@ -68,6 +68,7 @@ export default async function handler(
         lastname: lastname,
         twitterHandle: twitterHandle,
         link: link,
+        walletAddress: accountId
       };
 console.log(email);
 

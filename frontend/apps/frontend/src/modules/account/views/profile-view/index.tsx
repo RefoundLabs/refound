@@ -118,13 +118,14 @@ export const ProfileView = () => {
     
 
   const editUser = async () => {
-        if(email && username && bio && firstName && lastName && twitterHandle && link ){
+        if(account?.accountId && email && username && bio && firstName && lastName && twitterHandle && link ){
             //console.log('category')
             //console.log(category)
+            const accountID = account.accountId;
             const res = await axios
                 .put(
                     "/api/editProfile",
-                    { username,firstName, lastName, email, bio , twitterHandle, link},
+                    { username,firstName, lastName, email, bio , twitterHandle, link, accountID},
                     {
                     headers: {
                         Accept: "application/json",
