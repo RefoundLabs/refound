@@ -47,6 +47,9 @@ export const SiteHeader = () => {
 					<NextLink href="/trial">
 						<a>Free Trial</a>
 					</NextLink>
+					<NextLink href="/waitlist">
+						<a>Waitlist</a>
+					</NextLink>
 				</nav>
 
 				{isSignedIn ? (

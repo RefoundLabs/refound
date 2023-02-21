@@ -14,25 +14,16 @@ const validateEmail = (email: string): boolean => {
 };
 
 const validateForm = async (
-  username: string,
-  firstname: string,
-  lastname: string,
-  email: string, 
-  bio: string,
-  twitterHandle: string,
-  link: string,
-  //images: []
+  email: string,
+  featured: string, 
 ) => {
-  if (username.length < 3) {
-    return { error: "Username must have 3 or more characters" };
-  }
   if (!validateEmail(email)) {
     return { error: "Email is invalid" };
   }
-  if(bio){
-    //console.log(bio);
+  if(featured){
+    console.log('featured'+featured);
+   
   }
-
   const emailUser = await users.findOne({ email: email });
 
   await dbConnect();
@@ -53,32 +44,27 @@ export default async function handler(
   }
 
   // get and validate body variables
-  const { username, firstname, lastname, email, bio, twitterHandle, link,  } = req.body;
+  const { email, avatar } = req.body;
 
-  const errorMessage = await validateForm(username, firstname, lastname, email, bio, twitterHandle, link, avatar);
+  const errorMessage = await validateForm(email, avatar);
   if (errorMessage) {
     return res.status(400).json(errorMessage as ResponseData);
   }
 
-      // create new User on MongoDB
+    // create new User on MongoDB
     const newUser = {
-        username: username,
         email: email,
-        bio: bio,
-        firstname: firstname,
-        lastname: lastname,
-        twitterHandle: twitterHandle,
-        link: link,
+        avatar: avatar
       };
-console.log(email);
-
-      await users.findOneAndUpdate({ email: email }, {$set: newUser}, {returnNewDocument: true})
+      console.log(email);
+      console.log(avatar);
+      await users.findOneAndUpdate({ email: email }, {$set: {avatar:avatar}}, {returnNewDocument: true})
       .then(() =>{
           console.log('success');
-          res.status(200).json({ msg: "Successfuly edited profile " + newUser })
+          res.status(200).json({ msg: "Successfuly edited user "+ {email}+" to avatar: " + avatar })
       })
         .catch((err: string) =>
-        res.status(400).json({ error: "Error on '/api/editProfile': " + err })
+        res.status(400).json({ error: "Error on '/api/editFeature': " + err })
         );
 
 
