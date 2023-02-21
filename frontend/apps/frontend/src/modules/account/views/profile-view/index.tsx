@@ -214,7 +214,7 @@ export const ProfileView = () => {
 
         //edit avatar
         if(avatarFile){
-            const base64file= getBase64(avatarFile, (result:string) => {
+            getBase64(avatarFile, (result:string) => {
                 //console.log('base64image'+result);
                 setAvatar(result);
             });
