@@ -53,7 +53,9 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 
 		const nearConnection = await connect({
 			...NEAR_CONFIG,
-			keyStore: new keyStores.BrowserLocalStorageKeyStore(),
+			keyStore:  typeof window === "undefined"
+			? new keyStores.InMemoryKeyStore()
+			: new keyStores.BrowserLocalStorageKeyStore()
 		});
 		setNear(nearConnection);
 

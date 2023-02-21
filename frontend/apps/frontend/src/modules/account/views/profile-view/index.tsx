@@ -173,7 +173,7 @@ export const ProfileView = () => {
 	return (
 		<div>
         {//account &&
-        <div style={{minHeight:"85vh", marginTop:"5%"}}>
+        <div style={{minHeight:"85vh", margin:"5%"}}>
             <Grid>
                 <Grid.Col sm={3}><h1 style={{marginLeft:"2%"}}>Profile</h1></Grid.Col>
             </Grid>
@@ -182,12 +182,12 @@ export const ProfileView = () => {
                 {!editProfile &&
                 <>
                     <Grid.Col sm={4}>
-                        <div style={{margin:"2% 0%"}}>
+                        <div style={{margin:"2% 25%"}}>
                             {!avatar && <CgProfile size="2em"/>}
                             {avatar && <img src={avatar}  ></img>}
                         </div>
                         <h4>Username: {username}</h4>
-						<p>Name: {firstName} {lastName}</p>
+                        <p>Name: {firstName} {lastName}</p>
                         <p>Bio: {bio}</p>
                             {twitterHandle && 
                             <span ><Link href={"https://twitter.com/"+ twitterHandle} target="_blank"><FiTwitter></FiTwitter></Link></span>

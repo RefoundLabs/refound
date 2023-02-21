@@ -40,12 +40,12 @@ export const WaitListView: NextPage = () => {
 
 
     const createUser = async () => {
-      console.log('create newsletter fired')
+      console.log('create user fired')
       if(firstname && lastname && email && twitterHandle && link){
           const res = await axios
           .post(
               "/api/waitlist",
-              { firstname , lastname, email, twitterHandle, link },
+              { email, firstname, lastname, twitterHandle, link },
               {
               headers: {
                   Accept: "application/json",
