@@ -23,6 +23,7 @@ import { Field, Form, Formik } from "formik";
 export const WaitListView: NextPage = () => {
 	const router = useRouter();
 	const [submitted , setSubmitted ] = useState();
+  const [username , setUsername ] = useState();
 	const [email , setEmail ] = useState();
 	const [firstname , setFirstName ] = useState();
   const [lastname , setLastName ] = useState();
@@ -41,11 +42,11 @@ export const WaitListView: NextPage = () => {
 
     const createUser = async () => {
       console.log('create user fired')
-      if(firstname && lastname && email && twitterHandle && link){
+      if(username && firstname && lastname && email && twitterHandle && link){
           const res = await axios
           .post(
               "/api/waitlist",
-              { email, firstname, lastname, twitterHandle, link },
+              { username, email, firstname, lastname, twitterHandle, link },
               {
               headers: {
                   Accept: "application/json",
@@ -81,6 +82,18 @@ export const WaitListView: NextPage = () => {
             {(props) => (
               <Form style={{ width: "100%" }}>
                 <Box mb={4}>
+                <Field name="username">
+                    {() => (
+                     <>
+                        <Text>Username:</Text>
+                        <Input
+                          value={username}
+                          onChange={(e:any) => setUsername(e.target.value)}
+                          placeholder="Username"
+                        />
+                       </>
+                    )}
+                  </Field>
                   <Field name="email">
                     {() => (
                      <>
@@ -108,7 +121,7 @@ export const WaitListView: NextPage = () => {
                   <Field name="lastname">
                     {() => (
                       <>
-                        <Text>Last Name:</Text>
+                        <Text>Last Name:<em style={{fontSize:"0.5em", color: "grey"}}>optional</em></Text>
                         <Input
                           value={lastname}
                           onChange={(e:any) => setLastName(e.target.value)}
@@ -120,7 +133,7 @@ export const WaitListView: NextPage = () => {
                   <Field name="twitterHandle">
                     {() => (
                       <>
-                        <Text>Twitter Handle:</Text>
+                        <Text>Twitter Handle:<em style={{fontSize:"0.5em", color: "grey"}}>optional</em></Text>
                         <Input
                           value={twitterHandle}
                           onChange={(e:any) => setTwitterHandle(e.target.value)}
@@ -132,7 +145,7 @@ export const WaitListView: NextPage = () => {
                   <Field name="link">
                     {() => (
                       <>
-                        <Text>Other Link:</Text>
+                        <Text>Other Link:<em style={{fontSize:"0.5em", color: "grey"}}>other social media, medium, substack, or a link to your creative work.</em></Text>
                         <Input
                           value={link}
                           onChange={(e:any) => setLink(e.target.value)}
@@ -141,11 +154,13 @@ export const WaitListView: NextPage = () => {
                        </>
                     )}
                   </Field>
-                  <Button
-                    mt={6} 
-                    type="submit" style={{backgroundColor:"green"}}
-                  >Submit
-                  </Button>
+                  <div style={{ textAlign:"center"}}>
+                    <Button
+                      mt={12}  
+                      type="submit" style={{backgroundColor:"black", width:"100%"}}
+                    >Submit
+                    </Button>
+                  </div>
                 </Box>
               </Form>
             )}
