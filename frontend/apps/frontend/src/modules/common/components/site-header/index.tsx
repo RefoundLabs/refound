@@ -36,28 +36,20 @@ export const SiteHeader = () => {
 					{status === "DISCONNECTED" ? "Sign In" : "Sign Out"}
 				</button> */}
 				<nav className="flex flex-row gap-4 font-bold">
-					<NextLink href="/create">
-						<a>Create</a>
-					</NextLink>
-
-					<NextLink href="/discover">
-						<a>Discover</a>
-					</NextLink>
-
-					<NextLink href="/trial">
-						<a>Free Trial</a>
-					</NextLink>
-					<NextLink href="/waitlist">
-						<a>Waitlist</a>
-					</NextLink>
+					<NextLink href="/create"><a>Create</a></NextLink>
+					<NextLink href="/discover"><a>Discover</a></NextLink>
+					<NextLink href="/trial"><a>Free Trial</a></NextLink>
+					<NextLink href="/waitlist"><a>Waitlist</a></NextLink>
 				</nav>
 
 				{isSignedIn ? (
-					<div className="flex flex-row items-center justify-center gap-2">
+					<div style={{cursor:"pointer"}} className="flex flex-row items-center justify-center gap-2">
 						<div className="flex flex-row justify-center gap-4 rounded-full badge">
-							<NextLink href="/profile">
-								<span className="text-background">{trimText(id, 15)}</span>
-								<span className="text-background">as {role}</span>
+							<NextLink href="/profile" >
+								<div>
+									<span className="text-background">{trimText(id, 15)}</span>
+									<span className="text-background">as {role}</span>
+								</div>
 							</NextLink>
 						</div>
 

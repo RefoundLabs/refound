@@ -3,7 +3,6 @@ import { ContentSection } from "@modules/ui/content-section";
 import { cloin } from "@utils/styling/cloin";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import NextLink from "next/link";
 import { config } from "@config/config";
 import axios from "axios";
 import { lazy, useCallback, useEffect, useMemo, useState } from 'react';
@@ -20,6 +19,7 @@ import {
 	Button, Text, Box, Alert
   } from '@mantine/core';
 import { Field, Form, Formik } from "formik";
+import NextLink from 'next/link';
 export const WaitListView: NextPage = () => {
 	const router = useRouter();
 	const [submitted , setSubmitted ] = useState();
@@ -31,6 +31,7 @@ export const WaitListView: NextPage = () => {
   const [link , setLink ] = useState();
 	const [alert , setAlert ] = useState("");
   const [success , setSuccess ] = useState("");
+  const [userInWaitlist, setUserInWailist] = useState(false);
 
 	const formSubmit = (actions: any) => {
 		actions.setSubmitting(false);
@@ -39,6 +40,38 @@ export const WaitListView: NextPage = () => {
     createUser();
 	  };
 
+    useEffect(() => {
+      if (username){
+        console.log(username);
+        getUser();
+      }
+      if(userInWaitlist){
+        setAlert("User in waitlist already");
+      }
+    }, [username, email, firstname, lastname, twitterHandle, link]); 
+
+    const getUser = async() => {
+      if(username){
+          console.log(username);
+          const res = await axios
+          .get(
+              "/api/getUser?username="+username,
+              {
+              headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+              }
+              }
+          )
+          .then(async (response) => {
+              setUserInWailist(true);
+          })
+          .catch((error) => {
+              console.log(error);
+          });
+          //console.log(res);
+      }
+    }
 
     const createUser = async () => {
       console.log('create user fired')
@@ -80,6 +113,8 @@ export const WaitListView: NextPage = () => {
             {(props) => (
               <Form style={{ width: "100%" }}>
                 <Box mb={4}>
+                {!userInWaitlist &&
+                <>
                 <Field name="username">
                     {() => (
                      <>
@@ -152,13 +187,19 @@ export const WaitListView: NextPage = () => {
                        </>
                     )}
                   </Field>
-                  <div style={{ textAlign:"center"}}>
-                    <Button
-                      mt={12}  
-                      type="submit" style={{backgroundColor:"black", width:"100%"}}
-                    >Submit
-                    </Button>
-                  </div>
+                  
+                    <div style={{ textAlign:"center"}}>
+                      <Button
+                        mt={12}  
+                        type="submit" style={{backgroundColor:"black", width:"100%"}}
+                      >Submit
+                      </Button>
+                    </div>
+                  </>
+                  }
+                  {userInWaitlist &&
+                    <Button style={{backgroundColor:"black", width:"100%", marginTop:'10px'}}><NextLink href="/profile"><a>Go To Your Profile</a></NextLink></Button>
+                  }
                 </Box>
               </Form>
             )}

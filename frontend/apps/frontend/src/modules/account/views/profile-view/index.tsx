@@ -59,7 +59,6 @@ export const ProfileView = () => {
     const { adapter } = usePostContracts();
 	const [posts, setPosts] = useState<Nullable<Post[]>>(undefined);
 
-
     const handleEditPressed= () => {
         getUser();
         setEditProfile(true)
@@ -101,6 +100,8 @@ export const ProfileView = () => {
             .then(async (response) => {
                 //console.log(response.data.data);
                 setUsername(response.data.data.username);
+                setFirstName(response.data.data.firstname);
+                setLastName(response.data.data.lastname);
 				setEmail(response.data.data.email);
                 setBio(response.data.data.bio);
                 setTwitterHandle(response.data.data.twitterHandle);
@@ -109,7 +110,7 @@ export const ProfileView = () => {
             })
             .catch((error) => {
                 console.log(error);
-                setAlert(error.response.data.error);
+                //setAlert(error.response.data.error);
             });
             //console.log(res);
         }
@@ -243,20 +244,21 @@ export const ProfileView = () => {
 				},
 			}),
 		);
-	}, [adapter]); 
+	}, [adapter, posts]); 
 
 	return (
-		<div>
-        {//account &&
-        <div style={{minHeight:"85vh", margin:"5%"}}>
+		<div style={{minHeight:"85vh", margin:"5%"}}>
             <Grid>
-                <Grid.Col sm={3}><h1 style={{marginLeft:"2%", fontSize:'2em'}}>Profile</h1></Grid.Col>
-            </Grid>
+                <Grid.Col itemID="title" sm={3}><h1 style={{marginLeft:"2%", fontSize:'2em'}}>Profile</h1></Grid.Col>
+             </Grid>
             <hr></hr>
+        {account &&
+        <div >
+           
             <Grid> 
                 {!editProfile &&
                 <>
-                    <Grid.Col sm={4}>
+                    <Grid.Col sm={4} itemID="profile">
                         <Card style={{marginTop:"5%", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}>
                             <div style={{margin:"2% 25%"}}>
                                 {!avatar && 
@@ -291,19 +293,20 @@ export const ProfileView = () => {
                             <h4>Username: {username}</h4>
                             <p>Name: {firstName} {lastName}</p>
                             <p>Bio: {bio}</p>
-                                {twitterHandle && 
-                                <span ><Link href={"https://twitter.com/"+ twitterHandle} target="_blank"><FiTwitter></FiTwitter></Link></span>
+                            {twitterHandle && 
+                                <Link href={"https://twitter.com/"+ twitterHandle.toString()} key="twitter" target="_blank"><FiTwitter></FiTwitter></Link>
                             }
                             {link && 
-                                <span ><Link href={link} target="_blank"><FiGlobe></FiGlobe></Link></span>
+                                <Link href={link.toString()} key="link" target="_blank"><FiGlobe></FiGlobe></Link>
                             }
+                            {account?.accountId && <p>wallet address: {account.accountId}</p>}
                             <br></br>
                             {imageAlert && <Alert style={{backgroundColor:"red"}}>{imageAlert}</Alert>}
                             {imageMessage && <Alert style={{backgroundColor:"green"}}>{imageMessage}</Alert>}
                             <Button onClick={handleEditPressed} style={{margin:"0% 1%!important", backgroundColor:"lightblue"}} size="xs">Edit Profile <FiEdit2 style={{marginLeft:"5px"}}/></Button>
                         </Card>
                     </Grid.Col>
-                    <Grid.Col sm={8}>
+                    <Grid.Col sm={8} itemID="nfts">
                         <Card style={{marginTop:"5%", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}>
                             <h1>NFTs</h1>
                             {/* <section className="flex flex-col w-full px-contentPadding max-w-screen-lg mx-auto min-h-[101vh]">

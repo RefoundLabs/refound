@@ -11,8 +11,10 @@ import { useEffect, useState } from "react";
 export const SignInView: NextPage = () => {
 	const router = useRouter();
 	const { signIn, isSignedIn } = useAccount();
+
 	
 	useEffect(() => {
+
 		if (isSignedIn) {
 			router.push("/sign-up");
 			console.log(isSignedIn);

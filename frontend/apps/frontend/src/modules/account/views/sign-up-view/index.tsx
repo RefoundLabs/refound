@@ -35,6 +35,7 @@ import AxiosResponse from "axios";
 
 
 export const SignUpView = () => {
+  const { account } = useAccount();
 
 	const router = useRouter();
 	const [submitted , setSubmitted ] = useState();
@@ -46,6 +47,8 @@ export const SignUpView = () => {
 	const [link , setLink ] = useState();
 	const [alert , setAlert ] = useState("");
 	const [success , setSuccess ] = useState("");
+  const [userInWaitlist, setUserInWailist] = useState(false);
+  const [accountExists, setAccountExists] = useState(false);
 
 	const formSubmit = (actions: any) => {
 		actions.setSubmitting(false);
@@ -57,30 +60,84 @@ export const SignUpView = () => {
 
 
 	const createUser = async () => {
-		console.log('create newsletter fired')
-		if(username && firstname && lastname && email && twitterHandle && link){
-			const res = await axios
-			.post(
-				"/api/waitlist",
-				{ username , firstname , lastname, email, twitterHandle, link },
-				{
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				},
-				}
-			)
-			.then(async () => {
-				//redirectToHome();
-				setSuccess("Succesfully signed up!");
-			}) 
-			.catch((error:any) => {
-				console.log(error);
-				setAlert(error.response.data.error);
-			});
-			console.log(res);
-		}
+		console.log('create account fired')
+    const accountId = account?.accountId;
+
+    getUser();
+      if(userInWaitlist && accountId && username && firstname && email){
+          const res = await axios
+          .post(
+            "/api/createAccount",
+            { username, email, firstname, lastname, twitterHandle, link, accountId},
+            {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            }
+          )
+          .then(async () => {
+            //redirectToHome();
+            setSuccess("Succesfully created account!");
+          }) 
+          .catch((error:any) => {
+            console.log(error);
+            setAlert(error.response.data.error);
+          });
+          console.log(res);
+        } 
 	};
+
+  const getUser = async() => {
+    if(username){
+        console.log(username);
+        const res = await axios
+        .get(
+            "/api/getUser?username="+username,
+            {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            }
+            }
+        )
+        .then(async (response) => {
+            setUserInWailist(true);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+        //console.log(res);
+    }
+  }
+
+    useEffect(() => {
+      if (username){
+        console.log(username);
+        getUser();
+      }
+      
+      if(account){
+          console.log(account);
+          const accountID = account.accountId;
+          console.log(accountID)
+      }
+      
+  }, []);
+
+    useEffect(() => {
+      if (username){
+        console.log(username);
+        getUser();
+      }
+      if(accountExists){
+        router.push('/profile')
+      }
+      if(userInWaitlist){
+        setAlert("");
+      }
+    }, [account, username, email, firstname, lastname, twitterHandle, link]); 
+  
 
 	return (
 		<ContentSection width="sm" className="flex flex-col items-center gap-12">
@@ -97,14 +154,12 @@ export const SignUpView = () => {
 				</li>
 			</ul>
 
-			<h1 className="text-2xl font-bold">Create Your Account</h1>
+			<h1 className="text-2xl font-bold">Create Your Account with your claimed Refound handle</h1>
 
 			
-
-
 		<div className="w-full pt-16 pb-4">
 			<Formik
-            initialValues={{}} // { email: "", password: "" }
+            initialValues={{username:username, email:email, firstname:firstname, lastname:lastname, twitterHandle:twitterHandle, link:link, walletAddress:account?.accountId}} // { email: "", password: "" }
             validateOnChange={false}
             validateOnBlur={false}
             onSubmit={(_, actions) => {
@@ -114,6 +169,19 @@ export const SignUpView = () => {
             {(props) => (
               <Form style={{ width: "100%" }}>
                 <Box mb={4}>
+                <Field name="username">
+                  {() => (
+                  <>
+                    <Text>Username:</Text>
+                    <Input size="xs"
+                    value={username}
+                    onChange={(e:any) => setUsername(e.target.value)}
+                    placeholder={username || "username"} style={{marginBottom:'20px'}}
+                    />
+                  </>
+                  )}
+                </Field>
+                {userInWaitlist && <>
                   <Field name="email">
                     {() => (
                      <>
@@ -121,7 +189,7 @@ export const SignUpView = () => {
                         <Input
                           value={email}
                           onChange={(e:any) => setEmail(e.target.value)}
-                          placeholder="Email Address"
+                          placeholder="Email Address"  style={{marginBottom:'10px'}}
                         />
                        </>
                     )}
@@ -133,7 +201,7 @@ export const SignUpView = () => {
                         <Input
                           value={firstname}
                           onChange={(e:any) => setFirstName(e.target.value)}
-                          placeholder="First Name"
+                          placeholder="First Name" style={{marginBottom:'10px'}}
                         />
                        </>
                     )}
@@ -145,23 +213,12 @@ export const SignUpView = () => {
                         <Input
                           value={lastname}
                           onChange={(e:any) => setLastName(e.target.value)}
-                          placeholder="Last Name"
+                          placeholder="Last Name" style={{marginBottom:'10px'}}
                         />
                        </>
                     )}
                     </Field>
-                <Field name="username">
-                  {() => (
-                  <>
-                    <Text>Username:</Text>
-                    <Input size="xs"
-                    value={username}
-                    onChange={(e:any) => setUsername(e.target.value)}
-                    placeholder={username || "username"}
-                    />
-                  </>
-                  )}
-                </Field>
+                
                   <Field name="twitterHandle">
                     {() => (
                       <>
@@ -169,7 +226,7 @@ export const SignUpView = () => {
                         <Input
                           value={twitterHandle}
                           onChange={(e:any) => setTwitterHandle(e.target.value)}
-                          placeholder="Twitter Handle"
+                          placeholder="Twitter Handle" style={{marginBottom:'10px'}}
                         />
                        </>
                     )}
@@ -181,7 +238,19 @@ export const SignUpView = () => {
                         <Input
                           value={link}
                           onChange={(e:any) => setLink(e.target.value)}
-                          placeholder="Other Link"
+                          placeholder="Other Link" style={{marginBottom:'10px'}}
+                        />
+                       </>
+                    )}
+                  </Field>
+                  <Field name="walletAddress">
+                    {() => (account?.accountId && 
+                      <>
+                        <Text>Wallet Address:</Text>
+                        <Input disabled
+                          value={account.accountId}
+                          onChange={(e:any) => console.log()}
+                          placeholder="" style={{marginBottom:'10px'}}
                         />
                        </>
                     )}
@@ -191,6 +260,7 @@ export const SignUpView = () => {
                     type="submit" style={{backgroundColor:"green"}}
                   >Submit
                   </Button>
+                </>}
                 </Box>
               </Form>
             )}

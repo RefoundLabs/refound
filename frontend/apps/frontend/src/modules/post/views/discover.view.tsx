@@ -12,7 +12,7 @@ export const DiscoverView = () => {
 
 	useEffect(() => {
 		if (!adapter) return;
-
+		if(adapter){
 		adapter.getPosts({}).then((result) =>
 			result.match({
 				ok: (posts) => setPosts(posts),
@@ -21,7 +21,14 @@ export const DiscoverView = () => {
 				},
 			}),
 		);
-	}, [adapter]);
+		console.log(adapter)
+	}
+
+		
+		if(posts) console.log(posts);
+
+		console.log('discover page')
+	}, [adapter, posts]);
 
 	return (
 		<section className="flex flex-col w-full px-contentPadding max-w-screen-lg mx-auto min-h-[101vh]">

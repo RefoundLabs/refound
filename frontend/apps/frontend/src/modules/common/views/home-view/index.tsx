@@ -21,7 +21,8 @@ import DecentralizedIcon from "../../../../../public/assets/decentralizedicon.pn
 import  ChainIcon from "../../../../../public/assets/beneficiaryicon.png";
 import Image from "next/image";
 import type { NextPage } from "next";
-import { Grid, Card, CardContent, Typography, CardMedia } from "@mui/material";
+import { Grid, Card } from "@mantine/core";
+import { CardContent, Typography, CardMedia} from "@mui/material";
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
 // import { useRefoundContracts } from "@modules/common/hooks/celo-context";
@@ -68,19 +69,8 @@ export const HomeView: NextPage = () => {
 						</p>
 
 						<div className="flex flex-row gap-4">
-							<NextLink href="/sign-in">
-								<a className="btn btn-lg" style={{ borderRadius: "15px" }}>
-									Sign Up
-								</a>
-							</NextLink>
-							<NextLink href="/learn-more">
-								<a
-									className="btn btn-lg btn-outline"
-									style={{ borderRadius: "15px" }}
-								>
-									Learn More
-								</a>
-							</NextLink>
+							<NextLink href="/sign-in"><a className="btn btn-lg" style={{ borderRadius: "15px" }}>Sign Up</a></NextLink>
+							<NextLink href="/learn-more"><a className="btn btn-lg btn-outline" style={{ borderRadius: "15px" }}>Learn More</a></NextLink>
 						</div>
 					</div>
 
@@ -91,9 +81,6 @@ export const HomeView: NextPage = () => {
 				</div>
 			</section>
 			<Grid
-				container
-				justifyContent="center"
-				sm={8}
 				style={{ margin: "0 auto", padding: "5%", paddingTop: "2%", paddingBottom: "1%" }}
 			>
 				<Typewriter
@@ -104,23 +91,19 @@ export const HomeView: NextPage = () => {
 					}}
 				/>
 			</Grid>
-			<Grid container>
-				<Grid item md={4}></Grid>
-				<Grid item sm={12} md={4} style={{ margin: "0 2%" }}>
+			<Grid >
+				<Grid.Col  md={4}></Grid.Col>
+				<Grid.Col  sm={12} md={4} style={{ margin: "0 2%" }}>
 					<p style={{ display: "inline-block", marginRight: "20px" }}>Powered by</p>
 					<span style={{ display: "inline-block", marginRight: "20px" }}><Image src={NextJsIcon} width="100" height="20" style={{ paddingRight: "20px" }}/></span>
 					<span style={{ display: "inline-block", marginRight: "20px" }}><Image src={NearIcon} width="100" height="20" style={{ paddingRight: "20px" }}/></span>
 					<span style={{ display: "inline-block", marginRight: "20px" }}><Image src={ipfsIcon} width="30" height="30" style={{ paddingRight: "20px" }}/></span>
 					<span style={{ display: "inline-block", marginRight: "20px" }}><Image src={w3jsIcon} width="30" height="30" style={{ paddingRight: "20px" }}/></span>
-				</Grid>
-				<Grid item md={4}></Grid>
+				</Grid.Col>
+				<Grid.Col  md={4}></Grid.Col>
 			</Grid>
-			<Grid
-				container
-				justifyContent="center"
-				style={{ margin: "0 auto", padding: "5%", paddingTop: "2%" }}
-			>
-				<Grid item sm={8}>
+			<Grid style={{ margin: "0 auto", padding: "5%", paddingTop: "2%" }}>
+				<Grid.Col  sm={8}>
 					<p style={{ textAlign: "center", lineHeight: "1.8em" }}>
 						Refound’s mission is part of the Regenerative Finance (ReFi) movement,
 						specifically to leverage blockchain technology to help journalists and
@@ -130,7 +113,7 @@ export const HomeView: NextPage = () => {
 						platform to share their content, monetize it, and maintain anonymity and
 						safety by using a wallet sign-in.
 					</p>
-				</Grid>
+				</Grid.Col>
 			</Grid>
 
 			<h1
@@ -139,13 +122,12 @@ export const HomeView: NextPage = () => {
 			>
 				Who Are We Building For?
 			</h1>
-			<Grid container justifyContent="center" sm={8} style={{ margin: "0 auto" }}>
-				<Grid item sm={12} md={3} style={{ padding: "3%" }}>
+			<Grid style={{ margin: "0 auto" }}>
+				<Grid.Col sm={12} md={3} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
 								gutterBottom
-								variant="h7"
 								component="div"
 								className="accentColor"
 							>
@@ -161,13 +143,12 @@ export const HomeView: NextPage = () => {
 							<Image src={JournalistIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
-				<Grid item sm={12} md={3} style={{ padding: "3%" }}>
+				</Grid.Col>
+				<Grid.Col sm={12} md={3} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
 								gutterBottom
-								variant="h7"
 								component="div"
 								className="accentColor"
 							>
@@ -182,13 +163,12 @@ export const HomeView: NextPage = () => {
 							<Image src={NGOIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
-				<Grid item sm={12} md={3} style={{ padding: "3%" }}>
+				</Grid.Col>
+				<Grid.Col sm={12} md={3} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
 								gutterBottom
-								variant="h7"
 								component="div"
 								className="accentColor"
 							>
@@ -203,14 +183,13 @@ export const HomeView: NextPage = () => {
 							<Image src={NewsIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
+				</Grid.Col>
 
-				<Grid item sm={12} md={3} style={{ padding: "3%" }}>
+				<Grid.Col sm={12} md={3} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
 								gutterBottom
-								variant="h7"
 								component="div"
 								className="accentColor"
 							>
@@ -225,7 +204,7 @@ export const HomeView: NextPage = () => {
 							<Image src={ConsumersIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
+				</Grid.Col>
 			</Grid>
 
 			<h1
@@ -234,8 +213,8 @@ export const HomeView: NextPage = () => {
 			>
 				Use Cases
 			</h1>
-			<Grid container justifyContent="center" sm={8} style={{ margin: "0 auto" }}>
-				<Grid item sm={12} md={4} style={{ padding: "3%" }}>
+			<Grid style={{ margin: "0 auto" }}>
+				<Grid.Col sm={12} md={4} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
@@ -256,8 +235,8 @@ export const HomeView: NextPage = () => {
 							<Image src={NewsPaperIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
-				<Grid item sm={12} md={4} style={{ padding: "3%" }}>
+				</Grid.Col>
+				<Grid.Col sm={12} md={4} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
@@ -277,9 +256,9 @@ export const HomeView: NextPage = () => {
 							<Image src={WarCrimesIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
+				</Grid.Col>
 
-				<Grid item sm={12} md={4} style={{ padding: "3%" }}>
+				<Grid.Col sm={12} md={4} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
@@ -300,7 +279,7 @@ export const HomeView: NextPage = () => {
 							<Image src={LicenseIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
+				</Grid.Col>
 			</Grid>
 
 			<h1
@@ -310,8 +289,8 @@ export const HomeView: NextPage = () => {
 				Features
 			</h1>
 
-			<Grid container justifyContent="center" sm={8} style={{ margin: "0 auto" }}>
-				<Grid item sm={12} md={6} style={{ padding: "3%" }}>
+			<Grid style={{ margin: "0 auto" }}>
+				<Grid.Col  sm={12} md={6} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 400 }}>
 						<CardContent>
 							<Typography
@@ -331,8 +310,8 @@ export const HomeView: NextPage = () => {
 							<Image src={PublishingIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
-				<Grid item sm={12} md={6} style={{ padding: "3%" }}>
+				</Grid.Col>
+				<Grid.Col sm={12} md={6} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 400 }}>
 						<CardContent>
 							<Typography
@@ -356,10 +335,10 @@ export const HomeView: NextPage = () => {
 							<Image src={PoWIcon} width="100" height="90"/>
 						</CardMedia>
 					</Card>
-				</Grid>
+				</Grid.Col>
 			</Grid>
-			<Grid container justifyContent="center" sm={8} style={{ margin: "0 auto" }}>
-				<Grid item sm={12} md={6} style={{ padding: "3%" }}>
+			<Grid style={{ margin: "0 auto" }}>
+				<Grid.Col sm={12} md={6} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
@@ -381,9 +360,9 @@ export const HomeView: NextPage = () => {
 							<Image src={RevenueIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
+				</Grid.Col>
 
-				<Grid item sm={12} md={6} style={{ padding: "3%" }}>
+				<Grid.Col sm={12} md={6} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
@@ -404,10 +383,10 @@ export const HomeView: NextPage = () => {
 							<Image src={KeyPomIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
+				</Grid.Col>
 			</Grid>
-			<Grid container justifyContent="center" sm={8} style={{ margin: "0 auto" }}>
-				<Grid item sm={12} md={6} style={{ padding: "3%" }}>
+			<Grid  style={{ margin: "0 auto" }}>
+				<Grid.Col sm={12} md={6} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
@@ -429,8 +408,8 @@ export const HomeView: NextPage = () => {
 							<Image src={CameraIcon} width="100" height="70"/>
 						</CardMedia>
 					</Card>
-				</Grid>
-				<Grid item sm={12} md={6} style={{ padding: "3%" }}>
+				</Grid.Col>
+				<Grid.Col sm={12} md={6} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
@@ -450,10 +429,10 @@ export const HomeView: NextPage = () => {
 							<Image src={AutomationIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
+				</Grid.Col>
 			</Grid>
-			<Grid container justifyContent="center" sm={8} style={{ margin: "0 auto" }}>
-				<Grid item sm={12} md={6} style={{ padding: "3%" }}>
+			<Grid  style={{ margin: "0 auto" }}>
+				<Grid.Col sm={12} md={6} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
@@ -476,8 +455,8 @@ export const HomeView: NextPage = () => {
 							<Image src={DecentralizedIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
-				<Grid item sm={12} md={6} style={{ padding: "3%" }}>
+				</Grid.Col>
+				<Grid.Col sm={12} md={6} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 350 }}>
 						<CardContent>
 							<Typography
@@ -497,10 +476,10 @@ export const HomeView: NextPage = () => {
 							<Image src={ChainIcon} width="100" height="100"/>
 						</CardMedia>
 					</Card>
-				</Grid>
+				</Grid.Col>
 			</Grid>
-			<Grid container justifyContent="center" sm={8} style={{ margin: "0 auto" }}>
-				<Grid item sm={12} md={6} style={{ padding: "3%" }}>
+			<Grid style={{ margin: "0 auto" }}>
+				<Grid.Col sm={12} md={6} style={{ padding: "3%" }}>
 					<Card sx={{ maxWidth: 600, height: 300 }}>
 						<CardContent>
 							<Typography
@@ -524,7 +503,7 @@ export const HomeView: NextPage = () => {
 							<Image src={NearIcon} width="100" height="30"/> 
 						</CardMedia>
 					</Card>
-				</Grid>
+				</Grid.Col>
 			</Grid>
 
 			{/* <Grid container justifyContent="left" sm={10} style={{ margin: "0 auto" }}>
@@ -549,7 +528,7 @@ export const HomeView: NextPage = () => {
 					))}
 			</Grid> */}
 
-			<Grid container justifyContent="center" sm={12} style={{ margin: "0 auto" }}>
+			<Grid  style={{ margin: "0 auto" }}>
 				<h1
 					className="font-bold accentColor"
 					style={{
@@ -562,19 +541,9 @@ export const HomeView: NextPage = () => {
 				</h1>
 			</Grid>
 			<Grid
-				container
-				justifyContent="center"
-				sm={8}
 				style={{ margin: "0 auto", marginBottom: "5%" }}
 			>
-				<NextLink href="/sign-in">
-					<a
-						className="btn btn-lg animate-bounce backgroundColorAccent"
-						style={{ borderRadius: "15px" }}
-					>
-						Sign Up
-					</a>
-				</NextLink>
+				<NextLink href="/sign-in"><a className="btn btn-lg animate-bounce backgroundColorAccent" style={{ borderRadius: "15px" }}>Sign Up</a></NextLink>
 			</Grid>
 		</div>
 	);
