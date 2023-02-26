@@ -42,7 +42,7 @@ export const WaitListView: NextPage = () => {
 
     const createUser = async () => {
       console.log('create user fired')
-      if(username && firstname && lastname && email && twitterHandle && link){
+      if(username && firstname && email ){
           const res = await axios
           .post(
             "/api/waitlist",
