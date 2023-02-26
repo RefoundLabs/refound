@@ -76,7 +76,7 @@ export const SignUpView = () => {
 			}) 
 			.catch((error:any) => {
 				console.log(error);
-				setAlert(error);
+				setAlert(error.response.data.error);
 			});
 			console.log(res);
 		}
