@@ -83,9 +83,9 @@ export const WaitListView: NextPage = () => {
                 <Field name="username">
                     {() => (
                      <>
-                        <Text>Username:</Text>
+                        <Text>Username: <em style={{fontSize:"0.5em", color: "grey"}}>choose a handle like Rob.Refound or create your own username</em></Text>
                         <Input
-                          value={username}
+                          value={username} style={{marginBottom:"10px"}}
                           onChange={(e:any) => setUsername(e.target.value)}
                           placeholder="Username"
                         />
@@ -97,7 +97,7 @@ export const WaitListView: NextPage = () => {
                      <>
                         <Text>Email:</Text>
                         <Input
-                          value={email}
+                          value={email} style={{marginBottom:"10px"}}
                           onChange={(e:any) => setEmail(e.target.value)}
                           placeholder="Email Address"
                         />
@@ -109,7 +109,7 @@ export const WaitListView: NextPage = () => {
                       <>
                         <Text>First Name:</Text>
                         <Input
-                          value={firstname}
+                          value={firstname} style={{marginBottom:"10px"}}
                           onChange={(e:any) => setFirstName(e.target.value)}
                           placeholder="First Name"
                         />
@@ -121,7 +121,7 @@ export const WaitListView: NextPage = () => {
                       <>
                         <Text>Last Name:<em style={{fontSize:"0.5em", color: "grey"}}>optional</em></Text>
                         <Input
-                          value={lastname}
+                          value={lastname}  style={{marginBottom:"10px"}}
                           onChange={(e:any) => setLastName(e.target.value)}
                           placeholder="Last Name"
                         />
@@ -133,7 +133,7 @@ export const WaitListView: NextPage = () => {
                       <>
                         <Text>Twitter Handle:<em style={{fontSize:"0.5em", color: "grey"}}>optional</em></Text>
                         <Input
-                          value={twitterHandle}
+                          value={twitterHandle}  style={{marginBottom:"10px"}}
                           onChange={(e:any) => setTwitterHandle(e.target.value)}
                           placeholder="Twitter Handle"
                         />
@@ -145,7 +145,7 @@ export const WaitListView: NextPage = () => {
                       <>
                         <Text>Other Link:<em style={{fontSize:"0.5em", color: "grey"}}>other social media, medium, substack, or a link to your creative work.</em></Text>
                         <Input
-                          value={link}
+                          value={link}  style={{marginBottom:"10px"}}
                           onChange={(e:any) => setLink(e.target.value)}
                           placeholder="Other Link"
                         />

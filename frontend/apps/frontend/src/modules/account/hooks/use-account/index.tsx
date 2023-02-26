@@ -82,7 +82,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 
 	const signIn = async (role: AccountRole) => {
 		sessionStorage.setItem("role", role);
-		
+		console.log('setting role:'+role);
 		await requestSignIn();
 	};
 

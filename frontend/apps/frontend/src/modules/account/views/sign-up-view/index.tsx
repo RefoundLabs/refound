@@ -149,19 +149,19 @@ export const SignUpView = () => {
                         />
                        </>
                     )}
-                  </Field>
-				  <Field name="username">
-						{() => (
-						<>
-							<Text>Username:</Text>
-							<Input size="xs"
-							value={username}
-							onChange={(e:any) => setUsername(e.target.value)}
-							placeholder={username || "username"}
-							/>
-						</>
-						)}
-					</Field>
+                    </Field>
+                <Field name="username">
+                  {() => (
+                  <>
+                    <Text>Username:</Text>
+                    <Input size="xs"
+                    value={username}
+                    onChange={(e:any) => setUsername(e.target.value)}
+                    placeholder={username || "username"}
+                    />
+                  </>
+                  )}
+                </Field>
                   <Field name="twitterHandle">
                     {() => (
                       <>
