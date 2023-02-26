@@ -45,22 +45,20 @@ export const WaitListView: NextPage = () => {
       if(username && firstname && lastname && email && twitterHandle && link){
           const res = await axios
           .post(
-              "/api/waitlist",
-              { username, email, firstname, lastname, twitterHandle, link },
-              {
-              headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json",
-              },
-              }
-          )
-          .then(async () => {
+            "/api/waitlist",
+            { username, email, firstname, lastname, twitterHandle, link },
+            {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            }).then(async () => {
               //redirectToHome();
               setSuccess("Succesfully signed up!");
-          }) 
-          .catch((error:any) => {
+          }).catch((error:any) => {
               console.log(error);
-              setAlert(error);
+              console.log('-error-')
+              setAlert(error.response.data.error);
           });
           console.log(res);
       }

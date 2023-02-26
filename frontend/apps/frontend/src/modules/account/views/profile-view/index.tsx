@@ -109,7 +109,7 @@ export const ProfileView = () => {
             })
             .catch((error) => {
                 console.log(error);
-                setAlert(error);
+                setAlert(error.response.data.error);
             });
             //console.log(res);
         }
@@ -140,7 +140,7 @@ export const ProfileView = () => {
                 })
                 .catch((error) => {
                     //console.log(error);
-                    setAlert(error);
+                    setAlert(error.response.data.error);
                 });
         }
     handleCancelPressed();
@@ -188,7 +188,7 @@ export const ProfileView = () => {
             })
             .catch((error) => {
                 //console.log(error);
-                setImageAlert(error);
+                setImageAlert(error.response.data.error);
             });
         }   
     }
