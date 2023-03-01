@@ -192,7 +192,7 @@ export const ProfileView = () => {
                 setImageAlert(error.response.data.error);
             });
         }   
-    }
+    } 
 
      useEffect(() => {
         getUser();
@@ -259,12 +259,12 @@ export const ProfileView = () => {
                 {!editProfile &&
                 <>
                     <Grid.Col sm={4} itemID="profile">
-                        <Card style={{marginTop:"5%", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}>
-                            <div style={{margin:"2% 25%"}}>
+                        <div style={{marginTop:"5%"}}>
+                            <div style={{margin:"0"}}>
                                 {!avatar && 
                                 <div style={{textAlign:"center"}} onClick={handleClickAvatarChange} >
-                                    <CgProfile style={{display:"inline"}} size="4em"/> 
-                                    <FiCamera style={{display:"inline", cursor:"pointer"}} />
+                                    <CgProfile style={{display:"inline"}} width="80%"/> 
+                                    <FiCamera style={{display:"inline", cursor:"pointer", marginLeft:"5px"}} />
                                     <Input id="avatarFileInput"
                                             value={undefined} 
                                             type="file" 
@@ -276,9 +276,9 @@ export const ProfileView = () => {
                                         />   
                                 </div>}
                                 {avatar && 
-                                <div style={{textAlign:"center"}} onClick={handleClickAvatarChangeExisting}>
-                                    <img src={avatar} width="50px" style={{display:"inline", borderRadius:"15px"}}></img> 
-                                    <FiCamera style={{display:"inline", cursor:"pointer"}}  />
+                                <div style={{textAlign:"left", width:"80%"}} onClick={handleClickAvatarChangeExisting}>
+                                    <img src={avatar} width="80%" style={{display:"inline", borderRadius:"15px"}}></img> 
+                                    <FiCamera style={{display:"inline", cursor:"pointer", marginLeft:"5px"}}  />
                                     <Input id="avatarFileInputExisting"
                                             value={undefined} 
                                             type="file" 
@@ -290,26 +290,30 @@ export const ProfileView = () => {
                                         />    
                                 </div>}
                             </div>
-                            <h4>Username: {username}</h4>
-                            <p>Name: {firstName} {lastName}</p>
-                            <p>Bio: {bio}</p>
-                            {twitterHandle && 
-                                <Link href={"https://twitter.com/"+ twitterHandle.toString()} key="twitter" target="_blank"><FiTwitter></FiTwitter></Link>
-                            }
-                            {link && 
-                                <Link href={link.toString()} key="link" target="_blank"><FiGlobe></FiGlobe></Link>
-                            }
-                            {account?.accountId && <p>wallet address: {account.accountId}</p>}
+                            <div style={{textAlign:"left", width:"80%"}}>
+                                <h4 style={{fontSize:"2em"}}>@{username}</h4>
+                                <p>{firstName} {lastName}</p>
+                                <p style={{fontSize:"0.8em"}}>{bio}</p>
+                                <Grid >
+                                    {twitterHandle && 
+                                        <Grid.Col sm={2}><Link href={"https://twitter.com/"+ twitterHandle.toString()} key="twitter" target="_blank"><FiTwitter></FiTwitter></Link></Grid.Col>
+                                    }
+                                    {link && 
+                                        <Grid.Col sm={2}><Link href={link.toString()} key="link" target="_blank"><FiGlobe></FiGlobe></Link></Grid.Col>
+                                    }
+                                </Grid>
+                                {account?.accountId && <p style={{fontSize:"0.8em"}}>Near Wallet Address: {account.accountId.toString().substring(0,10)}...</p>}
+                            </div>
                             <br></br>
                             {imageAlert && <Alert style={{backgroundColor:"red"}}>{imageAlert}</Alert>}
                             {imageMessage && <Alert style={{backgroundColor:"green"}}>{imageMessage}</Alert>}
-                            <Button onClick={handleEditPressed} style={{margin:"0% 1%!important", backgroundColor:"lightblue"}} size="xs">Edit Profile <FiEdit2 style={{marginLeft:"5px"}}/></Button>
-                        </Card>
+                            <Button onClick={handleEditPressed} style={{margin:"0% 1%!important", backgroundColor:"black"}} size="xs">Edit Profile <FiEdit2 style={{marginLeft:"5px"}}/></Button>
+                        </div>
                     </Grid.Col>
                     <Grid.Col sm={8} itemID="nfts">
-                        <Card style={{marginTop:"5%", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}>
-                            <h1>NFTs</h1>
-                            {/* <section className="flex flex-col w-full px-contentPadding max-w-screen-lg mx-auto min-h-[101vh]">
+                        <div style={{marginTop:"2%"}}>
+                            <h1 style={{fontSize:"2em"}}>Images</h1>
+                            <section className="flex flex-col w-full px-contentPadding max-w-screen-lg mx-auto min-h-[101vh]">
                                 <div className="grid grid-cols-1 gap-4 py-24 md:grid-cols-3">
                                     {posts ? (
                                         posts.map((post) => <PostCard key={post.id} post={post} />)
@@ -317,15 +321,16 @@ export const ProfileView = () => {
                                         <LoadingPage />
                                     )}
                                 </div>
-                            </section> */}
-                        </Card>
+                            </section>
+                        </div>
                     </Grid.Col>
                 </>
                 }
                 {editProfile && //account && 
                 <>
-                    <Grid.Col sm={2}><h1>Edit Profile</h1></Grid.Col>
-                    <Grid.Col sm={8}>                        <Formik
+                    <Grid.Col sm={2}><h1 style={{fontSize:"1.5em"}}>Edit Profile</h1></Grid.Col>
+                    <Grid.Col sm={8} style={{marginTop:"2%"}}>                        
+                    <Formik
                             initialValues={{ username: username, bio: bio, twitterHandle: twitterHandle, link: link}} 
                             validateOnChange={false}
                             validateOnBlur={false}
