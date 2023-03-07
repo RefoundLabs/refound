@@ -69,22 +69,6 @@ export const SignInView: NextPage = () => {
 					</p>
 				</div>
 
-				<div className="w-full pb-[2rem]">
-					<button
-						className={cloin(
-							"btn btn-lg w-full rounded-md",
-							/* status === "no_wallet" && "btn-disabled", */
-						)}
-						onClick={() => {
-							router.push("/onboarding");
-						}}
-					>
-						No Wallet Sign In 
-					</button>
-					<p className="w-full text-sm text-center pt-[0.5em] max-w-[30ch] mx-auto">
-						Sign in with Refound wallet.
-					</p>
-				</div>
 			</div>
 
 			
