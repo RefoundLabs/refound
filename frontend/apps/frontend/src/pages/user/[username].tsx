@@ -130,8 +130,41 @@ const User: NextPage = () => {
            console.log(response.data.data.bio)
         })
         .catch((error) => {
+            //console.log(error);
+            //setAlert(error.response.data.error);
+            getUserByWalletAddress();
+        });
+        //console.log(res);
+    }
+  }
+
+  const getUserByWalletAddress = async() => {
+    console.log('get user')
+    if(username){
+        const res = await axios
+        .get(
+            "/api/getUserByWalletAddress?walletAddress="+username,
+            {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            }
+            }
+        )
+        .then(async (response) => {
+            console.log(response.data.data);
+            setUsername(response.data.data.username);
+            setEmail(response.data.data.email);
+            setFullname(response.data.data.firstname + " " + response.data.data.lastname);
+            setBio(response.data.data.bio);
+            setTwitter(response.data.data.twitterHandle);
+            setLink(response.data.data.link);
+            setAvatar(response.data.data.avatar);
+           console.log(response.data.data.bio)
+        })
+        .catch((error) => {
             console.log(error);
-            setAlert(error);
+            setAlert(error.response.data.error);
         });
         //console.log(res);
     }

@@ -236,7 +236,7 @@ export const ProfileView = () => {
     useEffect(() => {
 		if (!adapter) return;
 
-		adapter.getPosts({}).then((result:any) =>
+		adapter.getUserPosts({}).then((result:any) =>
 			result.match({
 				ok: (posts:any) => setPosts(posts),
 				fail: (error:any) => {
@@ -244,6 +244,7 @@ export const ProfileView = () => {
 				},
 			}),
 		);
+        console.log(posts);
 	}, [adapter, posts]); 
 
 	return (
@@ -316,7 +317,7 @@ export const ProfileView = () => {
                             <section className="flex flex-col w-full px-contentPadding max-w-screen-lg mx-auto min-h-[101vh]">
                                 <div className="grid grid-cols-1 gap-4 py-24 md:grid-cols-3">
                                     {posts ? (
-                                        posts.map((post) => <PostCard key={post.id} post={post} />)
+                                        posts.map((post, index) => <PostCard key={post.id} post={post} />)
                                     ) : (
                                         <LoadingPage />
                                     )}

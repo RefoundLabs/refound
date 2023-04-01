@@ -1,6 +1,7 @@
 import type { Post } from "@modules/post/domain/post.entity";
 import { trimText } from "@utils/trim-text";
 import NextImage from "next/image";
+import Link from "next/link";
 import { InteractionsBadge } from "./interactions";
 
 export const PostCard = ({
@@ -56,7 +57,7 @@ export const PostCard = ({
 						</span>
 					)}
 
-					<span className="text-xs">{owner.split(".")[0]}</span>
+					<span className="text-xs"><Link href={"/user/" + owner}>{owner.split(".")[0]}</Link></span>
 				</div>
 				{/* <AccountBadge profile={creator} /> */}
 			</div>

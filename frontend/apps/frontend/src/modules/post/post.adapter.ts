@@ -1,6 +1,6 @@
 import type { Result } from "@utils/monads";
 import { result } from "@utils/monads";
-import type { WalletConnection } from "near-api-js";
+import { WalletConnection } from "near-api-js";
 import { Contract as NearContract } from "near-api-js";
 import { config } from "@config/config";
 import type { LicenseType, Post } from "./domain/post.entity";
@@ -97,19 +97,20 @@ type SeriesContract = NearContract & SeriesCommands & SeriesQueries;
 export class PostContractAdapter {
 	private static contractAddress = process.env.NEXT_PUBLIC_CONTRACT_SERIES_ADDRESS as string; // TODO: from .env
 
-	// private wallet: WalletConnection;
+	 private wallet: WalletConnection;
 	private contract: SeriesContract;
 
 	private constructor({
-		// walletConnection,
+		walletConnection,
 		contract,
 	}: {
-		// walletConnection: WalletConnection;
+		 walletConnection: WalletConnection;
 		contract: SeriesContract;
 	}) {
-		// this.wallet = walletConnection;
+		this.wallet = walletConnection;
 		this.contract = contract;
 	}
+	
 
 	static async init({
 		walletConnection,
@@ -126,7 +127,7 @@ export class PostContractAdapter {
 				},
 			)) as SeriesContract;
 
-			return result.ok(new PostContractAdapter({ /*  walletConnection, */ contract }));
+			return result.ok(new PostContractAdapter({ walletConnection,  contract }));
 		} catch (error) {
 			console.error(error);
 
@@ -201,7 +202,31 @@ export class PostContractAdapter {
 				(seriesItem) =>
 					// @ts-expect-error: strict typing of config causes error with general number type from series_id
 					!config.content.moderationList.posts.includes(seriesItem.series_id),
+			)
+
+			const posts: Post[] = await Promise.all(
+				series.map(async (item) => this.postDtoToEntity(item)),
 			);
+
+			return result.ok(posts);
+		} catch (error) {
+			console.error(error);
+
+			return result.fail(new Error("Could not get posts."));
+		}
+	}
+
+	async getUserPosts(query: { from_index?: number; limit?: number }): Promise<Result<Post[]>> {
+		console.log(this.wallet.getAccountId())
+
+		try {
+			const series = await (
+				await this.contract.get_series(query)
+			).filter(
+				(seriesItem) =>
+					// @ts-expect-error: strict typing of config causes error with general number type from series_id
+					!config.content.moderationList.posts.includes(seriesItem.series_id),
+			).filter((seriesItem) => {seriesItem.owner_id == this.wallet.getAccountId()});
 
 			const posts: Post[] = await Promise.all(
 				series.map(async (item) => this.postDtoToEntity(item)),
