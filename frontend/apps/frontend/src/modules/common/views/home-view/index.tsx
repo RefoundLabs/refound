@@ -93,7 +93,7 @@ export const HomeView: NextPage = () => {
 			<Grid
 				container
 				justifyContent="center"
-				sm={8}
+				sm={12}
 				style={{ margin: "0 auto", padding: "5%", paddingTop: "2%", paddingBottom: "1%" }}
 			>
 				<Typewriter
@@ -106,7 +106,7 @@ export const HomeView: NextPage = () => {
 			</Grid>
 			<Grid container>
 				<Grid item md={4}></Grid>
-				<Grid item sm={12} md={4} style={{ margin: "0 2%" }}>
+				<Grid item xs={12} sm={6} md={4} style={{ margin: "0 2%" }}>
 					<p style={{ display: "inline-block", marginRight: "20px" }}>Powered by</p>
 					<span style={{ display: "inline-block", marginRight: "20px" }}><Image src={NextJsIcon} width="100" height="20" style={{ paddingRight: "20px" }}/></span>
 					<span style={{ display: "inline-block", marginRight: "20px" }}><Image src={NearIcon} width="100" height="20" style={{ paddingRight: "20px" }}/></span>
@@ -145,7 +145,6 @@ export const HomeView: NextPage = () => {
 						<CardContent>
 							<Typography
 								gutterBottom
-								variant="h7"
 								component="div"
 								className="accentColor"
 							>
@@ -167,7 +166,6 @@ export const HomeView: NextPage = () => {
 						<CardContent>
 							<Typography
 								gutterBottom
-								variant="h7"
 								component="div"
 								className="accentColor"
 							>
@@ -188,7 +186,6 @@ export const HomeView: NextPage = () => {
 						<CardContent>
 							<Typography
 								gutterBottom
-								variant="h7"
 								component="div"
 								className="accentColor"
 							>

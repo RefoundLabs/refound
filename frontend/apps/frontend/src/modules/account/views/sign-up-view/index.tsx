@@ -52,7 +52,6 @@ export const SignUpView = () => {
 
 		//reegister with email and fullname
 			createUser();
-			router.push("/profile");
 		};
 
 
@@ -73,6 +72,7 @@ export const SignUpView = () => {
 			.then(async () => {
 				//redirectToHome();
 				setSuccess("Succesfully signed up!");
+        router.push("/profile");
 			}) 
 			.catch((error:any) => {
 				console.log(error);
