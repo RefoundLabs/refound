@@ -14,17 +14,13 @@ const validateEmail = (email: string): boolean => {
 };
 
 const validateForm = async (
-  username: string,
+  email: string,
   firstname: string,
   lastname: string,
-  email: string,
   twitterHandle: string,
-  bio: string,
-  type: string,
-  avatar: string,
-  walletAddress: string
+  link: string
 ) => {
-  console.log(username, email, firstname, lastname, twitterHandle, bio, type, walletAddress);
+  console.log( email, firstname, lastname, twitterHandle, link);
  
   if (!validateEmail(email)) {
     return { error: "Email is invalid" };
@@ -52,9 +48,9 @@ export default async function handler(
   }
 
   // get and validate body variables
-  const { username, firstname, lastname, email, twitterHandle, bio, type, avatar, walletAddress } = req.body;
+  const { username, email, firstname, lastname, twitterHandle, link } = req.body;
 
-  const errorMessage = await validateForm(username, firstname, lastname, email, twitterHandle, bio, type, avatar, walletAddress);
+  const errorMessage = await validateForm(email, firstname, lastname, twitterHandle, link);
   if (errorMessage) {
     return res.status(400).json(errorMessage as ResponseData);
   }
@@ -62,15 +58,12 @@ export default async function handler(
  
       // create new User on MongoDB
     const newUser = new users({
-        username: username,
+      username: username,
         email: email,
         firstname: firstname,
         lastname: lastname,
         twitterHandle: twitterHandle,
-        bio: bio,
-        type:type,
-        avatar: avatar, 
-        walletAddress:walletAddress
+        link: link
     });
 
     newUser
@@ -79,7 +72,7 @@ export default async function handler(
         res.status(200).json({ msg: "Successfuly created new User: " + newUser })
         )
         .catch((err: string) =>
-        res.status(400).json({ error: "Error on '/api/register': " + err })
+        res.status(400).json({ error: "Error on '/api/waitlist': " + err })
         );
   }
 

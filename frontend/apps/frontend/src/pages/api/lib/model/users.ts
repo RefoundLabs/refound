@@ -4,6 +4,11 @@ const Schema = mongoose.Schema;
 
 const usersSchema = new Schema(
     {
+        email: {
+            type: String,
+            required: true,
+            unique: true
+        },
         username: {
             type: String,
             required: false,
@@ -18,11 +23,6 @@ const usersSchema = new Schema(
             type: String,
             required: false,
             unique: false
-        },
-        email: {
-            type: String,
-            required: true,
-            unique: true
         },
         twitterHandle: {
             type: String,

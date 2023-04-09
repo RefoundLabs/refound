@@ -60,7 +60,8 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		}
 
 		const savedRole = (sessionStorage.getItem("role") as AccountRole) || "user";
-
+		console.log(savedRole);
+		
 		if (!checkIsLoggedIn() || !wallet) {
 			reset();
 			return;
@@ -81,6 +82,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 
 	const signIn = async (role: AccountRole) => {
 		sessionStorage.setItem("role", role);
+		console.log('setting role:'+role);
 		await requestSignIn();
 	};
 

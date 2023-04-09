@@ -20,9 +20,7 @@ const validateForm = async (
   email: string, 
   bio: string,
   twitterHandle: string,
-  link: string,
-  avatar: string,
-  //images: []
+  link: string
 ) => {
   if (username.length < 3) {
     return { error: "Username must have 3 or more characters" };
@@ -34,9 +32,6 @@ const validateForm = async (
     //console.log(bio);
   }
 
-  if(avatar){
-    //console.log('avatar'+avatar);
-  }
   const emailUser = await users.findOne({ email: email });
 
   await dbConnect();
@@ -57,9 +52,9 @@ export default async function handler(
   }
 
   // get and validate body variables
-  const { username, email, bio, twitterHandle, link, firstname, lastname, avatar } = req.body;
+  const { username, firstname, lastname, email, bio, twitterHandle, link, accountId } = req.body;
 
-  const errorMessage = await validateForm(username, firstname, lastname, email, bio, twitterHandle, link, avatar);
+  const errorMessage = await validateForm(username, firstname, lastname, email, bio, twitterHandle, link);
   if (errorMessage) {
     return res.status(400).json(errorMessage as ResponseData);
   }
@@ -73,8 +68,7 @@ export default async function handler(
         lastname: lastname,
         twitterHandle: twitterHandle,
         link: link,
-        avatar: avatar,
-        onboardingFormComplete: false
+        walletAddress: accountId
       };
 console.log(email);
 
