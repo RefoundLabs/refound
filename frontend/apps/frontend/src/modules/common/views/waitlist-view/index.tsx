@@ -113,7 +113,7 @@ export const WaitListView: NextPage = () => {
             {(props) => (
               <Form style={{ width: "100%" }}>
                 <Box mb={4}>
-                {!userInWaitlist &&
+                
                 <>
                 <Field name="username">
                     {() => (
@@ -196,7 +196,7 @@ export const WaitListView: NextPage = () => {
                       </Button>
                     </div>
                   </>
-                  }
+                  
                   {userInWaitlist &&
                     <Button style={{backgroundColor:"black", width:"100%", marginTop:'10px'}}><NextLink href="/profile"><a>Go To Your Profile</a></NextLink></Button>
                   }
