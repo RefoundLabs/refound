@@ -64,7 +64,8 @@ export const WaitListView: NextPage = () => {
               }
           )
           .then(async (response) => {
-            if(response){
+            console.log(response);
+            if(response.data.data != null){
               setUserInWailist(true);
             }
           })

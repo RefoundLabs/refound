@@ -59,6 +59,7 @@ export default async function handler(
     console.log(username);
     try{
         const user = await getUserByUsername(username.toString());
+        console.log(user);
         return res.status(200).json({ success: true, data: user });
     }catch(err: any){
       return res.status(400).json({ error: "Error on '/api/getUser': " + err })
