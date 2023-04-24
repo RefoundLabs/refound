@@ -55,7 +55,6 @@ export const SignUpView = () => {
 
 		//reegister with email and fullname
 			createUser();
-			router.push("/profile");
 		};
 
 

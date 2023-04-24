@@ -81,15 +81,19 @@ export const HomeView: NextPage = () => {
 				</div>
 			</section>
 			<Grid
-				style={{ margin: "0 auto", padding: "5%", paddingTop: "2%", paddingBottom: "1%" }}
+				style={{ margin: "0 auto", padding: "2%", paddingTop: "2%", paddingBottom: "1%" }}
 			>
-				<Typewriter
-					options={{
-						strings: ["	Mint with Proof of Verification."],
-						autoStart: true,
-						loop: true,
-					}}
-				/>
+				<Grid.Col md={3}></Grid.Col>
+				<Grid.Col md={6} xs={12}>
+					<Typewriter
+						options={{
+							strings: ["	Mint with Proof of Verification."],
+							autoStart: true,
+							loop: true,
+						}}
+					/>
+				</Grid.Col>
+				<Grid.Col md={3}></Grid.Col>
 			</Grid>
 			<Grid >
 				<Grid.Col  md={4}></Grid.Col>
@@ -103,7 +107,8 @@ export const HomeView: NextPage = () => {
 				<Grid.Col  md={4}></Grid.Col>
 			</Grid>
 			<Grid style={{ margin: "0 auto", padding: "5%", paddingTop: "2%" }}>
-				<Grid.Col  sm={8}>
+				<Grid.Col md={2}></Grid.Col>
+				<Grid.Col md={8} xs={12}>
 					<p style={{ textAlign: "center", lineHeight: "1.8em" }}>
 						Refound’s mission is part of the Regenerative Finance (ReFi) movement,
 						specifically to leverage blockchain technology to help journalists and
@@ -114,6 +119,7 @@ export const HomeView: NextPage = () => {
 						safety by using a wallet sign-in.
 					</p>
 				</Grid.Col>
+				<Grid.Col md={2}></Grid.Col>
 			</Grid>
 
 			<h1
@@ -528,22 +534,26 @@ export const HomeView: NextPage = () => {
 					))}
 			</Grid> */}
 
-			<Grid  style={{ margin: "0 auto" }}>
-				<h1
-					className="font-bold accentColor"
-					style={{
-						fontSize: "3em",
-						padding: "2%",
-						textAlign: "center",
-					}}
-				>
-					Mint the art of journalism back to life and start publishing.
-				</h1>
+			<Grid >
+				<Grid.Col sm={12}>
+					<h1
+						className="font-bold accentColor"
+						style={{
+							fontSize: "3em",
+							padding: "2%",
+							textAlign: "center",
+						}}
+					>
+						Mint the art of journalism back to life and start publishing.
+					</h1>
+				</Grid.Col>
 			</Grid>
 			<Grid
-				style={{ margin: "0 auto", marginBottom: "5%" }}
+				style={{ margin: "0 auto", marginBottom: "5%", textAlign:"center" }}
 			>
-				<NextLink href="/sign-in"><a className="btn btn-lg animate-bounce backgroundColorAccent" style={{ borderRadius: "15px" }}>Sign Up</a></NextLink>
+				<Grid.Col sm={4}></Grid.Col>
+				<Grid.Col sm={4}><NextLink href="/sign-in"><a className="btn btn-lg animate-bounce backgroundColorAccent" style={{ borderRadius: "15px"}}>Sign Up</a></NextLink></Grid.Col>
+				<Grid.Col sm={4}></Grid.Col>
 			</Grid>
 		</div>
 	);
