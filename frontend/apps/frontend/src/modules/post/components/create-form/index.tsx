@@ -125,6 +125,14 @@ export const CreateForm = () => {
 	const { adapter } = usePostContracts();
 	const { isSignedIn } = useAccount();
 	const [captureModalOpen, setCaptureModalOpen] = useState(false);
+	const [articleText, setArticleText] = useState("");
+	const [locationTaken, setLocationTaken] = useState("");
+	const [dateTaken, setDateTaken] = useState("");
+	const [datePosted, setDatePosted] = useState("");
+	const [price, setPrice] = useState("");
+	const [tags, setTags] = useState("");
+	const [dateGoLive, setDateGoLive] = useState("");
+	const [dateEnd, setDateEnd] = useState("");
 	const { uploadFile, ipfsReady } = useIpfs();
 
 	const validateForm = async (): Promise<
@@ -146,6 +154,14 @@ export const CreateForm = () => {
 				metadata: {
 					title: title.trim(),
 					description,
+					articleText, 
+					locationTaken,
+					dateTaken,
+					datePosted,
+					price,
+					tags,
+					dateGoLive,
+					dateEnd
 				},
 			};
 
@@ -189,6 +205,14 @@ export const CreateForm = () => {
 					title: creationProps.metadata.title,
 					description: creationProps.metadata.description,
 					ipfsLink: ipfsImageLink,
+					articleText: creationProps.metadata.articleText,
+					locationTaken: creationProps.metadata.locationTaken,
+					dateTaken: creationProps.metadata.dateTaken,
+					datePosted: creationProps.metadata.datePosted,
+					price: creationProps.metadata.price,
+					tags: creationProps.metadata.tags,
+					dateGoLive: creationProps.metadata.dateGoLive,
+					dateEnd: creationProps.metadata.dateEnd
 				})
 			).unwrapOrElse((error) => {
 				throw error;
@@ -264,6 +288,99 @@ export const CreateForm = () => {
 								: undefined
 						}
 					/>
+
+				<label className={S.fieldLabel}>
+					<span className={S.fieldLabelText}>Location Taken</span>
+					<input
+						className={S.fieldInput}
+						name="locationTaken"
+						type="text"
+						placeholder="Location Taken"
+						onChange={(e) => {
+							setLocationTaken(e.target.value);
+						}}
+					/>
+				</label>
+
+				<label className={S.fieldLabel}>
+					<span className={S.fieldLabelText}>Date Taken</span>
+					<input
+						className={S.fieldInput}
+						name="dateTaken"
+						type="date"
+						placeholder="Date Taken"
+						onChange={(e) => {
+							setDateTaken(e.target.value);
+						}}
+					/>
+				</label>
+
+				<label className={S.fieldLabel}>
+					<span className={S.fieldLabelText}>Date Posted</span>
+					<input
+						className={S.fieldInput}
+						name="datePosted"
+						type="date"
+						placeholder="Date Posted"
+						onChange={(e) => {
+							setDatePosted(e.target.value);
+						}}
+					/>
+				</label>
+
+				<label className={S.fieldLabel}>
+					<span className={S.fieldLabelText}>Go Live Date</span>
+					<input
+						className={S.fieldInput}
+						name="dateGoLive"
+						type="date"
+						placeholder="Go Live Date"
+						onChange={(e) => {
+							setDateGoLive(e.target.value);
+						}}
+					/>
+				</label>
+
+				<label className={S.fieldLabel}>
+					<span className={S.fieldLabelText}>End Date</span>
+					<input
+						className={S.fieldInput}
+						name="dateEnd"
+						type="date"
+						placeholder="End Date"
+						onChange={(e) => {
+							setDateEnd(e.target.value);
+						}}
+					/>
+				</label>
+
+				<label className={S.fieldLabel}>
+					<span className={S.fieldLabelText}>Price</span>
+					<input
+						className={S.fieldInput}
+						name="price"
+						type="text"
+						placeholder="Price in NEAR"
+						onChange={(e) => {
+							setPrice(e.target.value);
+						}}
+					/>
+				</label>
+
+				<label className={S.fieldLabel}>
+					<span className={S.fieldLabelText}>Tags</span>
+					<input
+						className={S.fieldInput}
+						name="tags"
+						type="text"
+						placeholder="tags, separated by commas"
+						onChange={(e) => {
+							setTags(e.target.value);
+						}}
+					/>
+				</label>
+
+			
 
 					<button
 						type="button"

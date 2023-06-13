@@ -4,7 +4,7 @@ import NextImage from "next/image";
 import { InteractionsBadge } from "./interactions";
 
 export const PostCard = ({
-	post: { imageLink, title, description, id, owner, isVerified, voteCount },
+	post: { imageLink, title, description, id, owner, isVerified, voteCount, locationTaken, dateTaken, datePosted, dateGoLive, dateEnd, tags, articleText },
 }: {
 	post: Post;
 }) => {
@@ -27,6 +27,13 @@ export const PostCard = ({
 						<span />
 						<div className="translate-y-[100%] duration-150 group-hover:translate-y-0 p-2 text-white text-sm">
 							{description && <p className="">{trimText(description, 90)}</p>}
+							{locationTaken && <p className="">Location: {locationTaken}</p>}
+							{dateTaken && <p className="">Date Taken: {dateTaken}</p>}
+							{datePosted && <p className="">Date Posted: {datePosted}</p>}
+							{dateGoLive && <p className="">{dateGoLive}</p>}
+							{dateEnd && <p className="">{dateEnd}</p>}
+							{tags && <p className="">Tags: {tags}</p>}
+							
 
 							<div className="flex flex-row justify-between w-full mt-2">
 								<InteractionsBadge voteCount={voteCount} />
@@ -38,6 +45,7 @@ export const PostCard = ({
                                 {new Date(createdAt).toDateString()}
                             </time> */}
 							</div>
+							{articleText && <p className="">{articleText}</p>}
 						</div>
 					</figcaption>
 				</figure>
@@ -56,7 +64,7 @@ export const PostCard = ({
 						</span>
 					)}
 
-					<span className="text-xs">{owner.split(".")[0]}</span>
+					<a href={"http://localhost:3001/user/" + owner} target="_blank"><span className="text-xs">{owner.split(".")[0]}</span></a>
 				</div>
 				{/* <AccountBadge profile={creator} /> */}
 			</div>

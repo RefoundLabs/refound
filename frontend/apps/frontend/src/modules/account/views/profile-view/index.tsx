@@ -238,13 +238,18 @@ export const ProfileView = () => {
 
 		adapter.getPosts({}).then((result:any) =>
 			result.match({
-				ok: (posts:any) => setPosts(posts),
+				ok: (posts:any) => setPosts(posts.filter((item:any) => item.owner === account?.accountId)),
 				fail: (error:any) => {
 					toast.error(error.message, "no-posts");
 				},
 			}),
 		);
-	}, [adapter, posts]); 
+
+        //filter posts by posts.id/posts.owner == account.id
+       
+        console.log(posts);
+        console.log(avatar);
+    }, [adapter, posts]); 
 
 	return (
 		<div style={{minHeight:"85vh", margin:"5%"}}>

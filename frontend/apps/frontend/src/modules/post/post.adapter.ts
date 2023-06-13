@@ -24,6 +24,15 @@ type TokenMetadata = {
 	extra?: string;
 	reference?: string;
 	reference_hash?: Base64VecU8;
+
+	articleText?: string;
+	locationTaken?: string;
+	dateTaken?:string;
+	datePosted?:string;
+	dateGoLive?:string;
+	dateEnd?:string;
+	price?:number;
+	tags?:string;
 };
 
 type VotingSeries = {
@@ -165,6 +174,14 @@ export class PostContractAdapter {
 			title: series.metadata.title || "Untitled",
 			description: series.metadata.description || "",
 			imageLink: series.metadata.media || "/placeholder.jpeg",
+			articleText: series.metadata.articleText || "",
+			locationTaken: series.metadata.locationTaken || "",
+			dateTaken: series.metadata.dateTaken || "",
+			datePosted: series.metadata.datePosted || "",
+			price: series.metadata.price || 0,
+			tags: series.metadata.tags || "",
+			dateGoLive: series.metadata.dateGoLive || "",
+			dateEnd: series.metadata.dateEnd || "",
 			isVerified: series.verified,
 			voteCount,
 			userHasVoted,
@@ -267,10 +284,24 @@ export class PostContractAdapter {
 		title,
 		description,
 		ipfsLink,
+		articleText,
+		tags,
+		price,
+		dateTaken,
+		datePosted,
+		dateGoLive,
+		dateEnd
 	}: {
 		title: string;
 		description: string;
 		ipfsLink: string;
+		articleText: string;
+		tags: string;
+		price: string;
+		dateTaken: string;
+		datePosted: string;
+		dateGoLive: string;
+		dateEnd: string;
 	}): Promise<Result<true>> {
 		try {
 			// TODO: currently enormous query just to find next id

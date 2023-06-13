@@ -76,6 +76,7 @@ export const LicensePost = ({ post }: { post: Post }) => {
 						}}
 					>
 						<option value={LicenseType.SingleUse}>Single Use</option>
+						<option value={LicenseType.Web3License}>Web3 License</option>
 						<option value={LicenseType.PrintLicense}>Print License</option>
 						<option value={LicenseType.WebLicense}>Web License</option>
 						<option value={LicenseType.Outright}>Outright</option>
