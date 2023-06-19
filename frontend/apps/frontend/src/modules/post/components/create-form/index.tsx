@@ -21,6 +21,9 @@ import { AlertBar } from "@modules/common/components/alert-bar/alert-bar";
 import { useAccount } from "@modules/account/hooks/use-account";
 import NextLink from "next/link";
 
+import ReactQuill from "react-quill"
+import 'react-quill/dist/quill.snow.css'
+
 type FormData = {
 	title?: string;
 	image?: File;
@@ -119,6 +122,11 @@ const reducer = (state: ReducerState, action: ReducerActions): ReducerState => {
 	}
 };
 
+
+
+type CustomElement = { type: 'paragraph'; children: CustomText[] }
+type CustomText = { text: string }
+
 export const CreateForm = () => {
 	const router = useRouter();
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
@@ -130,10 +138,28 @@ export const CreateForm = () => {
 	const [dateTaken, setDateTaken] = useState("");
 	const [datePosted, setDatePosted] = useState("");
 	const [price, setPrice] = useState("");
+	const [editorState, setEditorState] = useState("");
 	const [tags, setTags] = useState("");
 	const [dateGoLive, setDateGoLive] = useState("");
 	const [dateEnd, setDateEnd] = useState("");
 	const { uploadFile, ipfsReady } = useIpfs();
+
+	const modules = {
+		toolbar: [
+		  [{ 'header': [1, 2, false] }],
+		  ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+		  [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+		  ['link', 'image'],
+		  ['clean']
+		],
+	}
+   
+	const  formats = [
+		'header',
+		'bold', 'italic', 'underline', 'strike', 'blockquote',
+		'list', 'bullet', 'indent',
+		'link', 'image'
+	  ]
 
 	const validateForm = async (): Promise<
 		Result<{ image: File; metadata: Omit<PostCreationProps, "ipfsLink"> }>
@@ -243,6 +269,14 @@ export const CreateForm = () => {
 		);
 	};
 
+
+  
+  
+  const handleChange = (value:any) => {
+    setEditorState(value.toString());
+  }
+
+
 	return (
 		<>
 			<div className="w-full py-8 prose text-center">
@@ -275,27 +309,13 @@ export const CreateForm = () => {
 					/>
 				</label>
 
-				<label className={`${S.fieldLabel} items-start`}>
-					<span className={S.fieldLabelText}>Image*</span>
-
-					<FileDropInput
-						setProps={(imageData) => {
-							dispatch({ type: "SET_IMAGE", payload: imageData });
-						}}
-						uploadedImage={
-							state.image && state.width && state.height
-								? { image: state.image, width: state.width, height: state.height }
-								: undefined
-						}
-					/>
-
 				<label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>Location Taken</span>
+					<span className={S.fieldLabelText}>Location</span>
 					<input
 						className={S.fieldInput}
 						name="locationTaken"
 						type="text"
-						placeholder="Location Taken"
+						placeholder="Please add exact location information (city/state or province, and country or region)"
 						onChange={(e) => {
 							setLocationTaken(e.target.value);
 						}}
@@ -380,10 +400,25 @@ export const CreateForm = () => {
 					/>
 				</label>
 
-			
+
+				<label className={`${S.fieldLabel} items-start`}>
+					<span className={S.fieldLabelText}>Image*</span>
+
+					<FileDropInput 
+						setProps={(imageData) => {
+							dispatch({ type: "SET_IMAGE", payload: imageData });
+						}}
+						
+						uploadedImage={
+							state.image && state.width && state.height
+								? { image: state.image, width: state.width, height: state.height }
+								: undefined
+						}
+					/>
 
 					<button
 						type="button"
+						style={{marginTop:"20px", marginBottom:"20px"}}
 						className="btn btn-block"
 						onClick={(e) => {
 							e.preventDefault();
@@ -393,6 +428,12 @@ export const CreateForm = () => {
 					>
 						Take a Photo
 					</button>
+
+					<ReactQuill value={editorState}
+					modules={modules}
+					formats={formats}
+					onChange={handleChange} style={{width:"100%"}} />
+    
 				</label>
 
 				{!isSignedIn && (
