@@ -33,7 +33,6 @@ export const PostCard = ({
 							{dateGoLive && <p className="">{dateGoLive}</p>}
 							{dateEnd && <p className="">{dateEnd}</p>}
 							{tags && <p className="">Tags: {tags}</p>}
-							
 
 							<div className="flex flex-row justify-between w-full mt-2">
 								<InteractionsBadge voteCount={voteCount} />

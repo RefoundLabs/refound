@@ -5,7 +5,7 @@ import { toast } from "@services/toast/toast";
 import type { Result } from "@utils/monads";
 import { result } from "@utils/monads";
 import { useRouter } from "next/router";
-import type { MouseEventHandler } from "react";
+import { MouseEventHandler, useEffect } from "react";
 import { useState } from "react";
 import { useReducer } from "react";
 
@@ -24,12 +24,27 @@ import NextLink from "next/link";
 import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css'
 
+import PlacesAutocomplete from 'react-places-autocomplete';
+import {
+	geocodeByAddress,
+	geocodeByPlaceId,
+	getLatLng,
+  } from 'react-places-autocomplete';
+
 type FormData = {
 	title?: string;
 	image?: File;
 	width?: number;
 	height?: number;
 	description?: string;
+	articleText: string;
+	locationTaken: string;
+	dateTaken: string;
+	datePosted: string;
+	price: number;
+	tags: string;
+	dateGoLive: string;
+	dateEnd: string;
 };
 
 type ReducerState = {
@@ -44,6 +59,14 @@ const initialReducerState: ReducerState = {
 	width: 0,
 	height: 0,
 	description: "",
+	articleText: "", 
+	locationTaken: "",
+	dateTaken: "",
+	datePosted: "",
+	price: 0,
+	tags: "",
+	dateGoLive: "",
+	dateEnd: "",
 	validationStatus: "IDLE",
 	submissionStatus: "IDLE",
 	validationErrors: [],
@@ -60,6 +83,14 @@ type ReducerActions =
 			};
 	  }
 	| { type: "SET_DESCRIPTION"; payload: FormData["description"] }
+	| { type: "SET_LOCATIONTAKEN"; payload: FormData["locationTaken"] }
+	| { type: "SET_ARTICLETEXT"; payload: FormData["articleText"] }
+	| { type: "SET_DATETAKEN"; payload: FormData["dateTaken"] }
+	| { type: "SET_DATEPOSTED"; payload: FormData["datePosted"] }
+	| { type: "SET_PRICE"; payload: FormData["price"] }
+	| { type: "SET_TAGS"; payload: FormData["tags"] }
+	| { type: "SET_DATEGOLIVE"; payload: FormData["dateGoLive"] }
+	| { type: "SET_DATEEND"; payload: FormData["dateEnd"] }
 	| { type: "SUBMIT_START" }
 	| { type: "VALIDATION_START" }
 	| { type: "VALIDATION_PASS" }
@@ -90,6 +121,62 @@ const reducer = (state: ReducerState, action: ReducerActions): ReducerState => {
 			return {
 				...state,
 				description: action.payload,
+				validationStatus: "IDLE",
+				submissionStatus: "IDLE",
+			};
+		case "SET_LOCATIONTAKEN":
+			return {
+				...state,
+				locationTaken: action.payload,
+				validationStatus: "IDLE",
+				submissionStatus: "IDLE",
+			};
+		case "SET_ARTICLETEXT":
+			return {
+				...state,
+				articleText: action.payload,
+				validationStatus: "IDLE",
+				submissionStatus: "IDLE",
+			};
+		case "SET_TAGS":
+			return {
+				...state,
+				tags: action.payload,
+				validationStatus: "IDLE",
+				submissionStatus: "IDLE",
+			};
+		case "SET_PRICE":
+			return {
+				...state,
+				price: action.payload,
+				validationStatus: "IDLE",
+				submissionStatus: "IDLE",
+			};
+		case "SET_DATETAKEN":
+			return {
+				...state,
+				dateTaken: action.payload,
+				validationStatus: "IDLE",
+				submissionStatus: "IDLE",
+			};
+		case "SET_DATEPOSTED":
+			return {
+				...state,
+				datePosted: action.payload,
+				validationStatus: "IDLE",
+				submissionStatus: "IDLE",
+			};
+		case "SET_DATEGOLIVE":
+			return {
+				...state,
+				dateGoLive: action.payload,
+				validationStatus: "IDLE",
+				submissionStatus: "IDLE",
+			};
+		case "SET_DATEEND":
+			return {
+				...state,
+				dateEnd: action.payload,
 				validationStatus: "IDLE",
 				submissionStatus: "IDLE",
 			};
@@ -133,15 +220,7 @@ export const CreateForm = () => {
 	const { adapter } = usePostContracts();
 	const { isSignedIn } = useAccount();
 	const [captureModalOpen, setCaptureModalOpen] = useState(false);
-	const [articleText, setArticleText] = useState("");
-	const [locationTaken, setLocationTaken] = useState("");
-	const [dateTaken, setDateTaken] = useState("");
-	const [datePosted, setDatePosted] = useState("");
-	const [price, setPrice] = useState("");
 	const [editorState, setEditorState] = useState("");
-	const [tags, setTags] = useState("");
-	const [dateGoLive, setDateGoLive] = useState("");
-	const [dateEnd, setDateEnd] = useState("");
 	const { uploadFile, ipfsReady } = useIpfs();
 
 	const modules = {
@@ -161,12 +240,23 @@ export const CreateForm = () => {
 		'link', 'image'
 	  ]
 
+	useEffect (() => {
+		console.log(state)
+	})
+
 	const validateForm = async (): Promise<
 		Result<{ image: File; metadata: Omit<PostCreationProps, "ipfsLink"> }>
 	> => {
 		dispatch({ type: "VALIDATION_START" });
 		try {
-			const { title, image, description } = state;
+			const { title, image, description, articleText, 
+				locationTaken,
+				dateTaken,
+				datePosted,
+				price,
+				tags,
+				dateGoLive,
+				dateEnd } = state;
 
 			if (!title?.trim() || !isString(title)) throw new Error("Title is missing.");
 			if (title.length < 10) throw new Error("Title is too short.");
@@ -217,6 +307,8 @@ export const CreateForm = () => {
 				throw err;
 			});
 
+			console.log(creationProps);
+
 			const ipfsImageLink = (
 				await uploadFile({
 					title: creationProps.metadata.title,
@@ -231,14 +323,14 @@ export const CreateForm = () => {
 					title: creationProps.metadata.title,
 					description: creationProps.metadata.description,
 					ipfsLink: ipfsImageLink,
-					articleText: creationProps.metadata.articleText,
 					locationTaken: creationProps.metadata.locationTaken,
 					dateTaken: creationProps.metadata.dateTaken,
 					datePosted: creationProps.metadata.datePosted,
+					dateGoLive: creationProps.metadata.dateGoLive,
+					dateEnd: creationProps.metadata.dateEnd,
 					price: creationProps.metadata.price,
 					tags: creationProps.metadata.tags,
-					dateGoLive: creationProps.metadata.dateGoLive,
-					dateEnd: creationProps.metadata.dateEnd
+					articleText: creationProps.metadata.articleText,
 				})
 			).unwrapOrElse((error) => {
 				throw error;
@@ -269,11 +361,17 @@ export const CreateForm = () => {
 		);
 	};
 
-
+	const handleSelect = (address:any) => {
+		geocodeByAddress(address)
+		  .then(results => getLatLng(results[0]))
+		  .then(latLng => console.log('Success', latLng))
+		  .catch(error => console.error('Error', error));
+	  };
   
   
   const handleChange = (value:any) => {
     setEditorState(value.toString());
+	//dispatch({ type: "SET_ARTICLETEXET", payload: value.toString(); });
   }
 
 
@@ -317,7 +415,7 @@ export const CreateForm = () => {
 						type="text"
 						placeholder="Please add exact location information (city/state or province, and country or region)"
 						onChange={(e) => {
-							setLocationTaken(e.target.value);
+							dispatch({ type: "SET_LOCATIONTAKEN", payload: e.target.value });
 						}}
 					/>
 				</label>
@@ -330,7 +428,7 @@ export const CreateForm = () => {
 						type="date"
 						placeholder="Date Taken"
 						onChange={(e) => {
-							setDateTaken(e.target.value);
+							dispatch({ type: "SET_DATETAKEN", payload: e.target.value });
 						}}
 					/>
 				</label>
@@ -343,7 +441,7 @@ export const CreateForm = () => {
 						type="date"
 						placeholder="Date Posted"
 						onChange={(e) => {
-							setDatePosted(e.target.value);
+							dispatch({ type: "SET_DATEPOSTED", payload: e.target.value });
 						}}
 					/>
 				</label>
@@ -356,7 +454,7 @@ export const CreateForm = () => {
 						type="date"
 						placeholder="Go Live Date"
 						onChange={(e) => {
-							setDateGoLive(e.target.value);
+							dispatch({ type: "SET_DATEGOLIVE", payload: e.target.value });
 						}}
 					/>
 				</label>
@@ -369,7 +467,7 @@ export const CreateForm = () => {
 						type="date"
 						placeholder="End Date"
 						onChange={(e) => {
-							setDateEnd(e.target.value);
+							dispatch({ type: "SET_DATEEND", payload: e.target.value });
 						}}
 					/>
 				</label>
@@ -379,10 +477,10 @@ export const CreateForm = () => {
 					<input
 						className={S.fieldInput}
 						name="price"
-						type="text"
+						type="number"
 						placeholder="Price in NEAR"
 						onChange={(e) => {
-							setPrice(e.target.value);
+							dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
 						}}
 					/>
 				</label>
@@ -395,7 +493,7 @@ export const CreateForm = () => {
 						type="text"
 						placeholder="tags, separated by commas"
 						onChange={(e) => {
-							setTags(e.target.value);
+							dispatch({ type: "SET_TAGS", payload: e.target.value });
 						}}
 					/>
 				</label>
@@ -429,10 +527,10 @@ export const CreateForm = () => {
 						Take a Photo
 					</button>
 
-					<ReactQuill value={editorState}
+					{/* <ReactQuill value={editorState}
 					modules={modules}
 					formats={formats}
-					onChange={handleChange} style={{width:"100%"}} />
+					onChange={handleChange} style={{width:"100%"}} /> */}
     
 				</label>
 

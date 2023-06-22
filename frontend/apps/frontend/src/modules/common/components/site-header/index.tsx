@@ -19,6 +19,7 @@ export const SiteHeader = () => {
 					<h1 className="font-normal leading-none text-[2em]">refound</h1>
 				</a>
 			</NextLink>
+			<script src={"https://maps.googleapis.com/maps/api/js?key=" + process.env.NEXT_PUBLIC_GOOGLE_API_KEY + "&libraries=places"}></script>
 
 			<div className="flex flex-row items-center gap-8">
 				{/* <button

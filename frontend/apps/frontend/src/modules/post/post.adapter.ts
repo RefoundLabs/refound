@@ -284,24 +284,26 @@ export class PostContractAdapter {
 		title,
 		description,
 		ipfsLink,
-		articleText,
-		tags,
-		price,
+		locationTaken,
 		dateTaken,
 		datePosted,
 		dateGoLive,
-		dateEnd
+		dateEnd,
+		price,
+		tags,
+		articleText,
 	}: {
 		title: string;
 		description: string;
 		ipfsLink: string;
-		articleText: string;
-		tags: string;
-		price: string;
+		locationTaken:string;
 		dateTaken: string;
 		datePosted: string;
 		dateGoLive: string;
 		dateEnd: string;
+		price: number;
+		tags: string;
+		articleText: string;
 	}): Promise<Result<true>> {
 		try {
 			// TODO: currently enormous query just to find next id
@@ -322,6 +324,14 @@ export class PostContractAdapter {
 						title,
 						description,
 						media: ipfsLink,
+						locationTaken: locationTaken,
+						articleText: articleText,
+						tags: tags,
+						price:price,
+						dateTaken:dateTaken,
+						datePosted:datePosted,
+						dateGoLive: dateGoLive,
+						dateEnd: dateEnd
 					},
 				},
 				undefined,

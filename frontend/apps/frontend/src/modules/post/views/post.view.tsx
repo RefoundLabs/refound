@@ -44,7 +44,8 @@ export const PostView = () => {
 				},
 			}),
 		);
-	}, [postIdQuery, adapter]);
+		console.log(post);
+	}, [postIdQuery, adapter, post]);
 
 	if (notFound) return <NotFoundPage />;
 
@@ -86,6 +87,7 @@ export const PostView = () => {
 							@{post.owner}
 						</span>
 					</p>
+					
 
 					{post.isVerified && (
 						<span className="rounded-full badge badge-lg badge-success">
@@ -100,6 +102,12 @@ export const PostView = () => {
 					{post.description && (
 						<p className="text-base max-w-[50ch] mt-4">{post.description}</p>
 					)}
+					{post.locationTaken && <p className="">Location: {post.locationTaken}</p>}
+					{post.dateTaken && <p className="">Date Taken: {post.dateTaken}</p>}
+					{post.datePosted && <p className="">Date Posted: {post.datePosted}</p>}
+					{post.dateGoLive && <p className="">{post.dateGoLive}</p>}
+					{post.dateEnd && <p className="">{post.dateEnd}</p>}
+					{post.tags && <p className="">Tags: {post.tags}</p>}
 				</figure>
 
 				<div className="flex flex-row flex-wrap justify-between w-full gap-8">
