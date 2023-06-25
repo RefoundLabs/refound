@@ -20,7 +20,8 @@ import { FileDropInput } from "./file-drop-input";
 import { AlertBar } from "@modules/common/components/alert-bar/alert-bar";
 import { useAccount } from "@modules/account/hooks/use-account";
 import NextLink from "next/link";
-
+import axios from "axios";
+import AxiosResponse from "axios";
 import PlacesAutocomplete from 'react-places-autocomplete';
 import {
 	geocodeByAddress,
@@ -211,14 +212,17 @@ const reducer = (state: ReducerState, action: ReducerActions): ReducerState => {
 type CustomElement = { type: 'paragraph'; children: CustomText[] }
 type CustomText = { text: string }
 
+
 export const CreateForm = () => {
 	const router = useRouter();
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
 	const { adapter } = usePostContracts();
 	const { isSignedIn } = useAccount();
+	const [userInWaitlist, setUserInWailist] = useState(false);
 	const [captureModalOpen, setCaptureModalOpen] = useState(false);
 	const [editorState, setEditorState] = useState("");
 	const { uploadFile, ipfsReady } = useIpfs();
+	const { account } = useAccount();
 
 	const modules = {
 		toolbar: [
@@ -238,8 +242,39 @@ export const CreateForm = () => {
 	  ]
 
 	useEffect (() => {
-		//console.log(state)
+		getUser();
+	}, [])
+
+	useEffect(() => {
+		if(userInWaitlist){
+			console.log(userInWaitlist)
+		}
 	})
+
+	const getUser = async() => {
+		if(account?.accountId){
+			console.log(account?.accountId);
+			const res = await axios
+			.get(
+				"/api/getUser?walletAddress="+account?.accountId,
+				{
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				}
+				}
+			)
+			.then(async (response) => {
+				console.log(response);
+				setUserInWailist(true);
+			})
+			.catch((error) => {
+				console.log(error);
+				setUserInWailist(false);
+			});
+			//console.log(res);
+		}
+	  }
 
 	const validateForm = async (): Promise<
 		Result<{ image: File; metadata: PostCreationProps}>
@@ -261,6 +296,8 @@ export const CreateForm = () => {
 			if (!image?.name || image.size === 0) throw new Error("File is missing.");
 
 			if (!description) throw new Error("Description is missing.");
+
+			if(!userInWaitlist) throw new Error("You are not in the waitlist, you cannot create a post.");
 
 			const creationProps = {
 				image,
@@ -292,6 +329,11 @@ export const CreateForm = () => {
 			if (!adapter) {
 				toast.error("Please sign in to create a post", "not-signed-create");
 				return result.fail(new Error("Please sign in before creating post."));
+			}
+
+			if (!userInWaitlist) {
+				toast.error("Please sign up in the waitlist to create a post", "not-waitlist");
+				return result.fail(new Error("Please sign up in the waitlist before creating post."));
 			}
 
 			if (!ipfsReady) {
