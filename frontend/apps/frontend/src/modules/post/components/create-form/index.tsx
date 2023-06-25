@@ -21,9 +21,6 @@ import { AlertBar } from "@modules/common/components/alert-bar/alert-bar";
 import { useAccount } from "@modules/account/hooks/use-account";
 import NextLink from "next/link";
 
-import ReactQuill from "react-quill"
-import 'react-quill/dist/quill.snow.css'
-
 import PlacesAutocomplete from 'react-places-autocomplete';
 import {
 	geocodeByAddress,
