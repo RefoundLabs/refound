@@ -252,6 +252,7 @@ export const CreateForm = () => {
 	})
 
 	const getUser = async() => {
+		console.log(account?.accountId)
 		if(account?.accountId){
 			console.log(account?.accountId);
 			const res = await axios
@@ -383,7 +384,7 @@ export const CreateForm = () => {
 
 	const onSubmit: MouseEventHandler<HTMLButtonElement> = (e) => {
 		e.preventDefault();
-
+		getUser();
 		createPost().then((confirmation) =>
 			confirmation.match({
 				ok: () => {
