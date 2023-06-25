@@ -197,17 +197,17 @@ const User: NextPage = () => {
                             </div>
                             <div style={{textAlign:"left", width:"80%"}}>
                                 <h4 style={{fontSize:"2em"}}>@{username}</h4>
-                                <p>{fullname}</p>
-                                <p style={{fontSize:"0.8em"}}>{bio}</p>
+                                <p style={{fontSize:"1.5em"}}>{fullname}</p>
+                                <p style={{fontSize:"1.25em"}}>{bio}</p>
                                 <Grid >
                                     {twitter && 
-                                        <Grid.Col sm={1}><Link href={"https://twitter.com/"+ twitter.toString()} key="twitter" target="_blank"><FiTwitter></FiTwitter></Link></Grid.Col>
+                                        <Grid.Col sm={1}><Link href={"https://twitter.com/"+ twitter.toString()} key="twitter" target="_blank"><FiTwitter style={{fontSize:"1.5em", color:"#24C5EF"}}></FiTwitter></Link></Grid.Col>
                                     }
                                     {link && 
-                                        <Grid.Col sm={1}><Link href={link.toString()} key="link" target="_blank"><FiGlobe></FiGlobe></Link></Grid.Col>
+                                        <Grid.Col sm={1}><Link href={link.toString()} key="link" target="_blank"><FiGlobe style={{fontSize:"1.5em", color:"#24C5EF"}}></FiGlobe></Link></Grid.Col>
                                     }
                                 </Grid>
-                                {account?.accountId && <p style={{fontSize:"0.8em", marginTop:"20px"}}>Near Wallet Address: {walletAddress.substring(0,10)}...</p>}
+                                {account?.accountId && <p style={{fontSize:"1.25em", marginTop:"20px"}}>Near Wallet Address: {walletAddress.substring(0,10)}...</p>}
                             </div>
                             <br></br>
                             {alert && <Alert style={{backgroundColor:"red"}}>{alert}</Alert>}

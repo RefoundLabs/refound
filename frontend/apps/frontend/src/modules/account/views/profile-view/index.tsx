@@ -107,7 +107,7 @@ export const ProfileView = () => {
 				setEmail(response.data.data.email);
                 setBio(response.data.data.bio);
                 setTwitterHandle(response.data.data.twitterHandle);
-                setLink(response.data.data.link1);
+                setLink(response.data.data.link);
                 setAvatar(response.data.data.avatar);
                 setWalletAddress(response.data.data.walletAddress)
             })
@@ -304,17 +304,17 @@ export const ProfileView = () => {
                             </div>
                             <div style={{textAlign:"left", width:"80%"}}>
                                 <h4 style={{fontSize:"2em"}}>@{username}</h4>
-                                <p>{firstName} {lastName}</p>
-                                <p style={{fontSize:"0.8em"}}>{bio}</p>
+                                <h5 style={{fontSize:"1.5em"}}>{firstName} {lastName}</h5>
+                                <h5 style={{fontSize:"1.25em"}}>{bio}</h5>
                                 <Grid >
                                     {twitterHandle && 
-                                        <Grid.Col sm={2}><Link href={"https://twitter.com/"+ twitterHandle.toString()} key="twitter" target="_blank"><FiTwitter></FiTwitter></Link></Grid.Col>
+                                        <Grid.Col sm={1}><Link href={"https://twitter.com/"+ twitterHandle.toString()} key="twitter" target="_blank"><FiTwitter style={{fontSize:"1.5em", color:"#24C5EF"}}></FiTwitter></Link></Grid.Col>
                                     }
                                     {link && 
-                                        <Grid.Col sm={2}><Link href={link.toString()} key="link" target="_blank"><FiGlobe></FiGlobe></Link></Grid.Col>
+                                        <Grid.Col sm={1}><Link href={link.toString()} key="link" target="_blank"><FiGlobe style={{fontSize:"1.5em", color:"#24C5EF"}}></FiGlobe></Link></Grid.Col>
                                     }
                                 </Grid>
-                                {account?.accountId && <p style={{fontSize:"0.8em"}}>Near Wallet Address: {account.accountId.toString().substring(0,10)}...</p>}
+                                {account?.accountId && <h5 style={{fontSize:"1.25em"}}>Near Wallet Address: {account.accountId.toString().substring(0,10)}...</h5>}
                             </div>
                             <br></br>
                             {imageAlert && <Alert style={{backgroundColor:"red"}}>{imageAlert}</Alert>}
