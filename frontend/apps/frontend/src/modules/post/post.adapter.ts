@@ -219,6 +219,7 @@ export class PostContractAdapter {
 		}
 	}
 
+
 	/**
 	 * Returns table of who has verified the post to how many times they have verified
 	 */

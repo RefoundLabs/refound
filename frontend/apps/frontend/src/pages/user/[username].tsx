@@ -41,6 +41,7 @@ const User: NextPage = () => {
     const { account } = useAccount();
 
     const [username, setUsername] = useState("");
+    const [walletAddress, setWalletAddress] = useState("");
     const [fullname, setFullname] = useState("");
     const [email, setEmail] = useState("");
     const [bio, setBio] = useState("");
@@ -52,12 +53,13 @@ const User: NextPage = () => {
     const [message, setMessage] = useState("");
     const { adapter } = usePostContracts();
 	const [posts, setPosts] = useState<Nullable<Post[]>>(undefined);
+    const [filteredPosts, setFilteredPosts] = useState<Nullable<Post[]>>(undefined);
 
     const router = useRouter();
     useEffect(()=>{
 
           if(!email){
-            console.log('get user')
+            //console.log('get user')
             getUser();
           }
       
@@ -66,7 +68,7 @@ const User: NextPage = () => {
   useEffect(() => {
 
     if(!email){
-        console.log('get user')
+        //console.log('get user')
         getUser();
     }else{
         //console.log('get posts');
@@ -76,39 +78,51 @@ const User: NextPage = () => {
         // }
     }
 
-    if(username){
-        console.log(username);
-    }
-
     
   }, [username, fullname, email, images, avatar, bio, link, twitter])
 
 
     useEffect(()=>{
         if(!router.isReady) return;
-        console.log(router.query);
+        //console.log(router.query);
         if(router.query.username){
-            setUsername(router.query.username.toString());
+            if(router.query.username.length == 64){
+                //console.log('set wallet adress')
+                //console.log(router.query.username)
+                setWalletAddress(router.query.username.toString())
+            }else{
+                setUsername(router.query.username.toString());
+            }
         }
     }, [router.isReady]);
 
     useEffect(() => {
 		if (!adapter) return;
 
-		adapter.getPosts({}).then((result:any) =>
-			result.match({
-				ok: (posts:any) => setPosts(posts),
-				fail: (error:any) => {
-					toast.error(error.message, "no-posts");
-				},
-			}),
-		);
-	}, [adapter, posts]); 
+        if(!posts){
+            adapter.getPosts({}).then((result:any) =>
+                result.match({
+                    ok: (posts:any) => { setPosts(posts)},
+                    fail: (error:any) => {
+                        toast.error(error.message, "no-posts");
+                    },
+                }),
+            );
+        }
+
+        if(posts && walletAddress){
+            const newPosts = posts.filter((item:any) => item.owner.includes(walletAddress));
+            setFilteredPosts(newPosts);
+        }else if(posts && username && !walletAddress){
+            const newPosts = posts.filter((item:any) => item.owner.includes(username));
+            setFilteredPosts(newPosts);
+        }
+	}, [adapter, posts, filteredPosts]); 
 
 
   const getUser = async() => {
     console.log('get user')
-    if(username){
+    if(username && username.length != 64){
         const res = await axios
         .get(
             "/api/getUser?username="+username,
@@ -122,6 +136,7 @@ const User: NextPage = () => {
         .then(async (response) => {
             console.log(response.data.data);
             setEmail(response.data.data.email);
+            setWalletAddress(response.data.data.walletAddress);
             setFullname(response.data.data.firstname + " " + response.data.data.lastname);
             setBio(response.data.data.bio);
             setTwitter(response.data.data.twitterHandle);
@@ -131,9 +146,36 @@ const User: NextPage = () => {
         })
         .catch((error) => {
             console.log(error);
-            setAlert(error);
+            //setAlert(error.toString());
+
         });
         //console.log(res);
+    }else if(walletAddress){
+        const res = await axios
+        .get(
+            "/api/getUser?walletAddress="+walletAddress,
+            {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            }
+            }
+        )
+        .then(async (response) => {
+            console.log(response.data.data);
+            setEmail(response.data.data.email);
+            setFullname(response.data.data.firstname + " " + response.data.data.lastname);
+            setUsername(response.data.data.username);
+            setBio(response.data.data.bio);
+            setTwitter(response.data.data.twitterHandle);
+            setLink(response.data.data.link);
+            setAvatar(response.data.data.avatar);
+           console.log(response.data.data.bio)
+        })
+        .catch((error) => {
+            console.log(error);
+            //setAlert(error);
+        });
     }
   }
 
@@ -145,8 +187,8 @@ const User: NextPage = () => {
                         <div style={{marginTop:"5%"}}>
                             <div style={{margin:"0"}}>
                                 {!avatar && 
-                                <div style={{textAlign:"center"}} >
-                                    <CgProfile style={{display:"inline"}} width="80%"/> 
+                                <div style={{width:"100%"}} >
+                                    <CgProfile style={{display:"inline", fontSize:"5em", margin:"0 auto"}} /> 
                                 </div>}
                                 {avatar && 
                                 <div style={{textAlign:"left", width:"80%"}}>
@@ -165,7 +207,7 @@ const User: NextPage = () => {
                                         <Grid.Col sm={1}><Link href={link.toString()} key="link" target="_blank"><FiGlobe></FiGlobe></Link></Grid.Col>
                                     }
                                 </Grid>
-                                {account?.accountId && <p style={{fontSize:"0.8em"}}>Near Wallet Address: {account.accountId.toString().substring(0,10)}...</p>}
+                                {account?.accountId && <p style={{fontSize:"0.8em", marginTop:"20px"}}>Near Wallet Address: {walletAddress.substring(0,10)}...</p>}
                             </div>
                             <br></br>
                             {alert && <Alert style={{backgroundColor:"red"}}>{alert}</Alert>}
@@ -177,11 +219,11 @@ const User: NextPage = () => {
                         <div>
                             <>
                                 <h1 style={{fontSize:"2em"}}>Images</h1>
-                                {posts && 
+                                {filteredPosts && 
                                     <section className="flex flex-col w-full px-contentPadding max-w-screen-lg mx-auto min-h-[101vh]">
                                         <div className="grid grid-cols-1 gap-4 py-24 md:grid-cols-3">
-                                            {posts ? (
-                                                posts.map((post) => <PostCard key={post.id} post={post} />)
+                                            {filteredPosts ? (
+                                                filteredPosts.map((post) => <PostCard key={post.id} post={post} />)
                                             ) : (
                                                 <LoadingPage />
                                             )}

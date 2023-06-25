@@ -84,9 +84,9 @@ export const PostView = () => {
 
 					<p className="text-sm font-bold">
 						by{" "}
-						<span className="text-black inline-block text-sm pt-[0.25em] pb-[0.4em] leading-none mr-[0.5em]">
+						<a href={"https://refound.app/user/" + post.owner}><span className="text-black inline-block text-sm pt-[0.25em] pb-[0.4em] leading-none mr-[0.5em]">
 							@{post.owner}
-						</span>
+						</span></a>
 					</p>
 					
 

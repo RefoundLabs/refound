@@ -4,7 +4,7 @@ import NextImage from "next/image";
 import { InteractionsBadge } from "./interactions";
 
 export const PostCard = ({
-	post: { imageLink, title, description, id, owner, isVerified, voteCount, locationTaken, dateTaken, datePosted, dateGoLive, dateEnd, tags, articleText },
+	post: { imageLink, title, description, id, owner, isVerified, voteCount },
 }: {
 	post: Post;
 }) => {
@@ -36,7 +36,6 @@ export const PostCard = ({
                                 {new Date(createdAt).toDateString()}
                             </time> */}
 							</div>
-							{articleText && <p className="">{articleText}</p>}
 						</div>
 					</figcaption>
 				</figure>
@@ -55,7 +54,7 @@ export const PostCard = ({
 						</span>
 					)}
 
-					<a href={"http://localhost:3001/user/" + owner} target="_blank"><span className="text-xs">{owner.split(".")[0].substring(0,20)}</span></a>
+					<a href={"http://localhost:3001/user/" + owner}><span className="text-xs">{owner.split(".")[0].substring(0,20)}</span></a>
 				</div>
 				{/* <AccountBadge profile={creator} /> */}
 			</div>

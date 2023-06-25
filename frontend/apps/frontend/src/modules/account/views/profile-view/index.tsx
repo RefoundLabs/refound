@@ -42,6 +42,7 @@ export const ProfileView = () => {
     const [editProfile, setEditProfile] = useState(false);
 
     const [username, setUsername] = useState("");
+    const [walletAddress, setWalletAddress] = useState("");
     const [email, setEmail] = useState("");
     const [bio, setBio] = useState("");
     const [firstName, setFirstName] = useState("");
@@ -58,6 +59,7 @@ export const ProfileView = () => {
 
     const { adapter } = usePostContracts();
 	const [posts, setPosts] = useState<Nullable<Post[]>>(undefined);
+    const [filteredPosts, setFilteredPosts] = useState<Nullable<Post[]>>(undefined);
 
     const handleEditPressed= () => {
         getUser();
@@ -107,6 +109,7 @@ export const ProfileView = () => {
                 setTwitterHandle(response.data.data.twitterHandle);
                 setLink(response.data.data.link1);
                 setAvatar(response.data.data.avatar);
+                setWalletAddress(response.data.data.walletAddress)
             })
             .catch((error) => {
                 console.log(error);
@@ -236,20 +239,24 @@ export const ProfileView = () => {
     useEffect(() => {
 		if (!adapter) return;
 
-		adapter.getPosts({}).then((result:any) =>
-			result.match({
-				ok: (posts:any) => setPosts(posts.filter((item:any) => item.owner === account?.accountId)),
-				fail: (error:any) => {
-					toast.error(error.message, "no-posts");
-				},
-			}),
-		);
+        if(!posts){
+            adapter.getPosts({}).then((result:any) =>
+                result.match({
+                    ok: (posts:any) => { setPosts(posts)},
+                    fail: (error:any) => {
+                        toast.error(error.message, "no-posts");
+                    },
+                }),
+            );
+        }
 
-        //filter posts by posts.id/posts.owner == account.id
-       
+        if(posts && account?.accountId){
+            const newPosts = posts.filter((item:any) => item.owner.includes(account?.accountId));
+            setFilteredPosts(newPosts);
+        }
         console.log(posts);
         console.log(avatar);
-    }, [adapter, posts]); 
+    }, [adapter, posts, filteredPosts]); 
 
 	return (
 		<div style={{minHeight:"85vh", margin:"5%"}}>
@@ -320,8 +327,8 @@ export const ProfileView = () => {
                             <h1 style={{fontSize:"2em"}}>Images</h1>
                             <section className="flex flex-col w-full px-contentPadding max-w-screen-lg mx-auto min-h-[101vh]">
                                 <div className="grid grid-cols-1 gap-4 py-24 md:grid-cols-3">
-                                    {posts ? (
-                                        posts.map((post) => <PostCard key={post.id} post={post} />)
+                                    {filteredPosts ? (
+                                        filteredPosts.map((post) => <PostCard key={post.id} post={post} />)
                                     ) : (
                                         <LoadingPage />
                                     )}
