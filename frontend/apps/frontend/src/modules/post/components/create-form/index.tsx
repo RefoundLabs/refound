@@ -241,11 +241,11 @@ export const CreateForm = () => {
 	  ]
 
 	useEffect (() => {
-		console.log(state)
+		//console.log(state)
 	})
 
 	const validateForm = async (): Promise<
-		Result<{ image: File; metadata: Omit<PostCreationProps, "ipfsLink"> }>
+		Result<{ image: File; metadata: PostCreationProps}>
 	> => {
 		dispatch({ type: "VALIDATION_START" });
 		try {
@@ -269,18 +269,19 @@ export const CreateForm = () => {
 				image,
 				metadata: {
 					title: title.trim(),
-					description,
-					articleText, 
-					locationTaken,
-					dateTaken,
-					datePosted,
-					price,
-					tags,
-					dateGoLive,
-					dateEnd
+					description: description,
+					ipfsLink: "",
+					locationTaken: locationTaken,
+					dateTaken: dateTaken,
+					datePosted: datePosted,
+					dateGoLive:dateGoLive,
+					dateEnd:dateEnd,
+					price:price,
+					tags:tags,
+					articleText: articleText, 
 				},
 			};
-
+				//console.log(creationProps)
 			dispatch({ type: "VALIDATION_PASS" });
 			return result.ok(creationProps);
 		} catch (err) {
@@ -306,9 +307,7 @@ export const CreateForm = () => {
 			const creationProps = (await validateForm()).unwrapOrElse((err) => {
 				throw err;
 			});
-
-			console.log(creationProps);
-
+			
 			const ipfsImageLink = (
 				await uploadFile({
 					title: creationProps.metadata.title,
@@ -325,7 +324,7 @@ export const CreateForm = () => {
 					ipfsLink: ipfsImageLink,
 					locationTaken: creationProps.metadata.locationTaken,
 					dateTaken: creationProps.metadata.dateTaken,
-					datePosted: creationProps.metadata.datePosted,
+					datePosted: new Date().toLocaleDateString(),
 					dateGoLive: creationProps.metadata.dateGoLive,
 					dateEnd: creationProps.metadata.dateEnd,
 					price: creationProps.metadata.price,
@@ -352,7 +351,7 @@ export const CreateForm = () => {
 			confirmation.match({
 				ok: () => {
 					toast.success("Post created!");
-					router.push("/account");
+					router.push("/profile");
 				},
 				fail: () => {
 					toast.error("Failed to create post.");
@@ -433,20 +432,7 @@ export const CreateForm = () => {
 					/>
 				</label>
 
-				<label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>Date Posted</span>
-					<input
-						className={S.fieldInput}
-						name="datePosted"
-						type="date"
-						placeholder="Date Posted"
-						onChange={(e) => {
-							dispatch({ type: "SET_DATEPOSTED", payload: e.target.value });
-						}}
-					/>
-				</label>
-
-				<label className={S.fieldLabel}>
+				{/* <label className={S.fieldLabel}>
 					<span className={S.fieldLabelText}>Go Live Date</span>
 					<input
 						className={S.fieldInput}
@@ -483,7 +469,7 @@ export const CreateForm = () => {
 							dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
 						}}
 					/>
-				</label>
+				</label> */}
 
 				<label className={S.fieldLabel}>
 					<span className={S.fieldLabelText}>Tags</span>
@@ -491,7 +477,7 @@ export const CreateForm = () => {
 						className={S.fieldInput}
 						name="tags"
 						type="text"
-						placeholder="tags, separated by commas"
+						placeholder="relevant tags, separated by commas"
 						onChange={(e) => {
 							dispatch({ type: "SET_TAGS", payload: e.target.value });
 						}}

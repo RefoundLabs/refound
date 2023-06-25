@@ -24,15 +24,7 @@ type TokenMetadata = {
 	extra?: string;
 	reference?: string;
 	reference_hash?: Base64VecU8;
-
-	articleText?: string;
-	locationTaken?: string;
-	dateTaken?:string;
-	datePosted?:string;
-	dateGoLive?:string;
-	dateEnd?:string;
-	price?:number;
-	tags?:string;
+	
 };
 
 type VotingSeries = {
@@ -152,8 +144,10 @@ export class PostContractAdapter {
 	private async postDtoToEntity(series: JsonSeries): Promise<Post> {
 		console.log({ postDtoToEntity1: this.contract });
 		let userHasVoted = false;
-
+		
+		console.log('output post')
 		console.log({ postDtoToEntity2: this.contract });
+		console.log(series);
 
 		const voteCount = await this.contract
 			.get_votes({ id: `${series.series_id}` })
@@ -174,14 +168,7 @@ export class PostContractAdapter {
 			title: series.metadata.title || "Untitled",
 			description: series.metadata.description || "",
 			imageLink: series.metadata.media || "/placeholder.jpeg",
-			articleText: series.metadata.articleText || "",
-			locationTaken: series.metadata.locationTaken || "",
-			dateTaken: series.metadata.dateTaken || "",
-			datePosted: series.metadata.datePosted || "",
-			price: series.metadata.price || 0,
-			tags: series.metadata.tags || "",
-			dateGoLive: series.metadata.dateGoLive || "",
-			dateEnd: series.metadata.dateEnd || "",
+			extra: series.metadata.extra || "",
 			isVerified: series.verified,
 			voteCount,
 			userHasVoted,
@@ -316,27 +303,36 @@ export class PostContractAdapter {
 			// TODO: Should be calculated based on bytes to be stored.
 			const yoctoDeposit = "10000000000000000000000";
 
+			
+			const extra = {
+				locationTaken : locationTaken,
+				dateTaken  :dateTaken,
+				datePosted :datePosted,
+				dateGoLive : dateGoLive,
+				dateEnd: dateEnd,
+				price : price,
+				tags : tags,
+				articleText: articleText
+			}
+
 			// TODO: is there some kind of confirmation we can get out of contract calls?
 			await this.contract.create_series(
 				{
 					id: nextId, // TODO: what is this?
 					metadata: {
-						title,
-						description,
+						title: title,
+						description: description,
 						media: ipfsLink,
-						locationTaken: locationTaken,
-						articleText: articleText,
-						tags: tags,
-						price:price,
-						dateTaken:dateTaken,
-						datePosted:datePosted,
-						dateGoLive: dateGoLive,
-						dateEnd: dateEnd
+
+						extra: JSON.stringify(extra)
 					},
 				},
 				undefined,
 				yoctoDeposit,
 			);
+
+			console.log(locationTaken);
+			console.log(tags);
 
 			return result.ok(true);
 		} catch (error) {

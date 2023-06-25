@@ -65,9 +65,13 @@ type PostTableBase = {
 	creator: ProfileTable["id"];
 	owner?: string;
 	title: string;
-	created_at: Timestamp;
-	tags: string[];
-	location?: string;
+	dateTaken: Timestamp;
+	tags?: string[];
+	locationTaken?: string;
+	datePosted: Timestamp;
+	dateGoLive?: Timestamp;
+	dateEnd?: Timestamp;
+	price?:string;
 };
 
 export type PostTable =
@@ -77,13 +81,26 @@ export type PostTable =
 			width?: number;
 			height?: number;
 			image_link: string;
-			taken_on?: Timestamp;
+			dateTaken: Timestamp;
+			tags?: string[];
+			locationTaken?: string;
+			datePosted: Timestamp;
+			dateGoLive?: Timestamp;
+			dateEnd?: Timestamp;
+			price?:string;
 	  } & PostTableBase)
 	| ({
 			post_type: "ARTICLE";
 			body: string;
 			description?: string;
 			cover_image?: PostTable["id"];
+			dateTaken: Timestamp;
+			tags?: string[];
+			locationTaken?: string;
+			datePosted: Timestamp;
+			dateGoLive?: Timestamp;
+			dateEnd?: Timestamp;
+			price?:string;
 	  } & PostTableBase);
 
 export type PostTableImage = Extract<PostTable, { post_type: "IMAGE" }>;

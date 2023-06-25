@@ -26,14 +26,6 @@ export const PostCard = ({
                     </div> */}
 						<span />
 						<div className="translate-y-[100%] duration-150 group-hover:translate-y-0 p-2 text-white text-sm">
-							{description && <p className="">{trimText(description, 90)}</p>}
-							{locationTaken && <p className="">Location: {locationTaken}</p>}
-							{dateTaken && <p className="">Date Taken: {dateTaken}</p>}
-							{datePosted && <p className="">Date Posted: {datePosted}</p>}
-							{dateGoLive && <p className="">{dateGoLive}</p>}
-							{dateEnd && <p className="">{dateEnd}</p>}
-							{tags && <p className="">Tags: {tags}</p>}
-
 							<div className="flex flex-row justify-between w-full mt-2">
 								<InteractionsBadge voteCount={voteCount} />
 								{/* <InteractionsBadge interactionList={interactions} /> */}
@@ -63,7 +55,7 @@ export const PostCard = ({
 						</span>
 					)}
 
-					<a href={"http://localhost:3001/user/" + owner} target="_blank"><span className="text-xs">{owner.split(".")[0]}</span></a>
+					<a href={"http://localhost:3001/user/" + owner} target="_blank"><span className="text-xs">{owner.split(".")[0].substring(0,20)}</span></a>
 				</div>
 				{/* <AccountBadge profile={creator} /> */}
 			</div>

@@ -48,6 +48,13 @@ export type ImagePostMetadataSchema = {
 	description: string;
 	image: IpfsUrl;
 	name: string;
+	locationTaken: string;
+	dateTaken: string;
+	datePosted:string;
+	dateGoLive: string;
+	dateEnd : string;
+	price:price;
+	tags:tags;
 };
 
 export type ArticlePostMetadataSchema = {
@@ -74,5 +81,13 @@ export type ArticlePostMetadataSchema = {
 		  }
 	>;
 	description?: string;
+	articleText: articleText;
 	name: string;
+	locationTaken: string;
+	dateTaken: string;
+	datePosted:string;
+	dateGoLive: string;
+	dateEnd : string;
+	price:price;
+	tags:tags;
 };

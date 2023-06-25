@@ -34,7 +34,7 @@ const parseImagePost = ({
 	data: ImagePostMetadataSchema;
 	postId: number;
 }): Extract<PostTable, { postType: "IMAGE" }> => {
-	const { name, image, description, attributes } = data;
+	const { name, image, description, locationTaken, dateTaken, datePosted, dateGoLive, dateEnd, price, attributes } = data;
 
 	if (isNothing(name)) throw new Error(`Name could not be parsed for post ${postId}`);
 	if (isNothing(image)) throw new Error(`Image could not be parsed for post ${postId}`);
@@ -95,18 +95,21 @@ const parseImagePost = ({
 
 	// POST
 	const post: PostTable = {
-		created_at: createdAt,
 		creator: creatorId,
-		description,
-		height,
+		description: description,
+		height: height,
 		id: postId,
 		image_link: imageLink,
-		location,
+		locationTaken: locationTaken,
+		dateTaken: dateTaken,
+		datePosted: datePosted,
+		dateGoLive: dateGoLive,
+		dateEnd: dateEnd, 
+		price: price,
 		post_type: "IMAGE",
-		tags,
-		taken_on: takenOn,
+		tags: tags,
 		title: name,
-		width,
+		width: width,
 	};
 
 	return post;
@@ -123,7 +126,7 @@ const parseArticlePost = async ({
 	data: ArticlePostMetadataSchema;
 	postId: number;
 }): Promise<Extract<PostTable, { postType: "ARTICLE" }>> => {
-	const { name, description, attributes } = data;
+	const { name, description, locationTaken, dateTaken, datePosted, dateGoLive, dateEnd, price, attributes } = data;
 
 	if (isNothing(name)) throw new Error(`Name could not be parsed for post ${postId}`);
 
@@ -171,15 +174,17 @@ const parseArticlePost = async ({
 
 	const post: PostTable = {
 		body,
+		description: description,
 		cover_image: coverImageId,
-		created_at: createdAt,
-		creator: creatorId,
-		description,
+		locationTaken: createdAt,
 		id: postId,
-		location,
 		post_type: "ARTICLE",
 		tags,
-		title: name,
+		dateTaken: dateTaken,
+		datePosted: datePosted,
+		dateGoLive: dateGoLive,
+		dateEnd: dateEnd, 
+		price: price,
 	};
 
 	return post;
