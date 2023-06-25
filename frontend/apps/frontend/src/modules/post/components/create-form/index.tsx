@@ -399,18 +399,18 @@ export const CreateForm = () => {
 		);
 	};
 
-	const handleSelect = (address:any) => {
-		geocodeByAddress(address)
-		  .then(results => getLatLng(results[0]))
-		  .then(latLng => console.log('Success', latLng))
-		  .catch(error => console.error('Error', error));
-	  };
+// 	const handleSelect = (address:any) => {
+// 		geocodeByAddress(address)
+// 		  .then(results => getLatLng(results[0]))
+// 		  .then(latLng => console.log('Success', latLng))
+// 		  .catch(error => console.error('Error', error));
+// 	  };
   
   
-  const handleChange = (value:any) => {
-    setEditorState(value.toString());
-	//dispatch({ type: "SET_ARTICLETEXET", payload: value.toString(); });
-  }
+//   const handleChange = (value:any) => {
+//     setEditorState(value.toString());
+// 	//dispatch({ type: "SET_ARTICLETEXET", payload: value.toString(); });
+//   }
 
 
 	return (
