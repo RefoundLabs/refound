@@ -362,7 +362,7 @@ export const CreateForm = () => {
 					description: creationProps.metadata.description,
 					ipfsLink: ipfsImageLink,
 					locationTaken: creationProps.metadata.locationTaken,
-					dateTaken: creationProps.metadata.dateTaken,
+					dateTaken: new Date(creationProps.metadata.dateTaken).toLocaleDateString(),
 					datePosted: new Date().toLocaleDateString(),
 					dateGoLive: creationProps.metadata.dateGoLive,
 					dateEnd: creationProps.metadata.dateEnd,
