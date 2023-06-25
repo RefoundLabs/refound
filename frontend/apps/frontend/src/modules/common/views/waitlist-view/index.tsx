@@ -91,6 +91,7 @@ export const WaitListView: NextPage = () => {
             }).then(async () => {
               //redirectToHome();
               setSuccess("Succesfully signed up!");
+              setUserInWailist(true);
           }).catch((error:any) => {
               console.log(error);
               console.log('-error-')
@@ -201,7 +202,7 @@ export const WaitListView: NextPage = () => {
                   </>
                   
                   {userInWaitlist &&
-                    <Button style={{backgroundColor:"black", width:"100%", marginTop:'10px'}}><NextLink href="/profile"><a>Go To Your Profile</a></NextLink></Button>
+                    <Button style={{backgroundColor:"black", width:"100%", marginTop:'10px'}}><NextLink href="/sign-in"><a>Sign-In and Setup your Profile!</a></NextLink></Button>
                   }
                 </Box>
               </Form>
