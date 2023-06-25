@@ -249,6 +249,7 @@ export const CreateForm = () => {
 		if(userInWaitlist){
 			console.log(userInWaitlist)
 		}
+		
 	})
 
 	const getUser = async() => {
