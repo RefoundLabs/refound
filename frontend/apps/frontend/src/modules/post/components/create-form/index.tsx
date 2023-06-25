@@ -297,8 +297,6 @@ export const CreateForm = () => {
 
 			if (!description) throw new Error("Description is missing.");
 
-			if(!userInWaitlist) throw new Error("You are not in the waitlist, you cannot create a post.");
-
 			const creationProps = {
 				image,
 				metadata: {
