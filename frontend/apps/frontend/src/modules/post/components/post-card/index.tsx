@@ -54,7 +54,7 @@ export const PostCard = ({
 						</span>
 					)}
 
-					<a href={"http://localhost:3001/user/" + owner}><span className="text-xs">{owner.split(".")[0].substring(0,20)}</span></a>
+					<a href={"https://refound.app/user/" + owner}><span className="text-xs">{owner.split(".")[0].substring(0,20)}</span></a>
 				</div>
 				{/* <AccountBadge profile={creator} /> */}
 			</div>
