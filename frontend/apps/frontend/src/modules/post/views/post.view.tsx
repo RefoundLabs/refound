@@ -103,13 +103,13 @@ export const PostView = () => {
 					{post.description && (
 						<p className="text-base max-w-[50ch] mt-4">{post.description}</p>
 					)}
-					{JSON.parse(post.extra).locationTaken && <p><CgPin style={{display:"inline"}}></CgPin> {JSON.parse(post.extra).locationTaken}</p>}
-					{JSON.parse(post.extra).dateTaken && <p>Date Taken: {JSON.parse(post.extra).dateTaken}</p>}
-					{JSON.parse(post.extra).datePosted && <p>Date Posted: {JSON.parse(post.extra).datePosted}</p>}
-					{/* {JSON.parse(post.extra).dateGoLive && <p className="">{JSON.parse(post.extra).dateGoLive}</p>}
-					{JSON.parse(post.extra).dateEnd && <p className="">{JSON.parse(post.extra).dateEnd}</p>}
-					{JSON.parse(post.extra).price && <p className="">Price: {JSON.parse(post.extra).price}</p>} */}
-					{JSON.parse(post.extra).tags && <p className="">Tags: {JSON.parse(post.extra).tags}</p>}
+					{post.extra && JSON.parse(post.extra).locationTaken && <p><CgPin style={{display:"inline"}}></CgPin> {JSON.parse(post.extra).locationTaken}</p>}
+					{post.extra && JSON.parse(post.extra).dateTaken && <p>Date Taken: {JSON.parse(post.extra).dateTaken}</p>}
+					{post.extra && JSON.parse(post.extra).datePosted && <p>Date Posted: {JSON.parse(post.extra).datePosted}</p>}
+					{/* {post.extra && JSON.parse(post.extra).dateGoLive && <p className="">{JSON.parse(post.extra).dateGoLive}</p>}
+					{post.extra && JSON.parse(post.extra).dateEnd && <p className="">{JSON.parse(post.extra).dateEnd}</p>}
+					{post.extra && JSON.parse(post.extra).price && <p className="">Price: {JSON.parse(post.extra).price}</p>} */}
+					{post.extra && JSON.parse(post.extra).tags && <p className="">Tags: {JSON.parse(post.extra).tags}</p>}
 				</figure>
 
 				<div className="flex flex-row flex-wrap justify-between w-full gap-8">
