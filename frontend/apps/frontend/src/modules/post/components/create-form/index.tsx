@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { MouseEventHandler, useEffect } from "react";
 import { useState } from "react";
 import { useReducer } from "react";
-
+import Router from "next/router";
 import S from "./create-form.module.css";
 import { CaptureModal } from "./capture-modal";
 import { usePostContracts } from "@modules/post/hooks/use-post-contracts";
@@ -214,6 +214,7 @@ type CustomText = { text: string }
 
 
 export const CreateForm = () => {
+	
 	const router = useRouter();
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
 	const { adapter } = usePostContracts();
@@ -347,32 +348,32 @@ export const CreateForm = () => {
 				throw err;
 			});
 			
-			const ipfsImageLink = (
-				await uploadFile({
-					title: creationProps.metadata.title,
-					postImage: creationProps.image,
-				})
-			).unwrapOrElse((error) => {
-				throw error;
-			});
+			// const ipfsImageLink = (
+			// 	await uploadFile({
+			// 		title: creationProps.metadata.title,
+			// 		postImage: creationProps.image,
+			// 	})
+			// ).unwrapOrElse((error) => {
+			// 	throw error;
+			// });
 
-			const success = (
-				await adapter.createPost({
-					title: creationProps.metadata.title,
-					description: creationProps.metadata.description,
-					ipfsLink: ipfsImageLink,
-					locationTaken: creationProps.metadata.locationTaken,
-					dateTaken: new Date(creationProps.metadata.dateTaken).toLocaleDateString(),
-					datePosted: new Date().toLocaleDateString(),
-					dateGoLive: creationProps.metadata.dateGoLive,
-					dateEnd: creationProps.metadata.dateEnd,
-					price: creationProps.metadata.price,
-					tags: creationProps.metadata.tags,
-					articleText: creationProps.metadata.articleText,
-				})
-			).unwrapOrElse((error) => {
-				throw error;
-			});
+			// const success = (
+			// 	await adapter.createPost({
+			// 		title: creationProps.metadata.title,
+			// 		description: creationProps.metadata.description,
+			// 		ipfsLink: ipfsImageLink,
+			// 		locationTaken: creationProps.metadata.locationTaken,
+			// 		dateTaken: new Date(creationProps.metadata.dateTaken).toLocaleDateString(),
+			// 		datePosted: new Date().toLocaleDateString(),
+			// 		dateGoLive: creationProps.metadata.dateGoLive,
+			// 		dateEnd: creationProps.metadata.dateEnd,
+			// 		price: creationProps.metadata.price,
+			// 		tags: creationProps.metadata.tags,
+			// 		articleText: creationProps.metadata.articleText,
+			// 	})
+			// ).unwrapOrElse((error) => {
+			// 	throw error;
+			// });
 
 			dispatch({ type: "SUBMIT_SUCCESS" });
 			return result.ok(true);
@@ -390,13 +391,15 @@ export const CreateForm = () => {
 			confirmation.match({
 				ok: () => {
 					toast.success("Post created!");
-					router.push("/profile");
+					router.push('/profile');
 				},
 				fail: () => {
 					toast.error("Failed to create post.");
+					router.push('/profile');
 				},
 			}),
 		);
+		
 	};
 
 // 	const handleSelect = (address:any) => {

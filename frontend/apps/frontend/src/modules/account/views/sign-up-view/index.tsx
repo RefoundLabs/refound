@@ -76,8 +76,8 @@ export const SignUpView = () => {
             }
           )
           .then(async () => {
-            //redirectToHome();
             setSuccess("Succesfully created account!");
+            router.push('/profile');
           }) 
           .catch((error:any) => {
             console.log(error);
@@ -130,7 +130,7 @@ export const SignUpView = () => {
         getUser();
       }
       if(accountExists){
-        router.push('/profile')
+        router.push('/profile');
       }
       if(userInWaitlist){
         setAlert("");
