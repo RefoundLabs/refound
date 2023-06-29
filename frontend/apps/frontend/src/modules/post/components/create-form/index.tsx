@@ -294,6 +294,7 @@ export const CreateForm = () => {
 				dateEnd } = state;
 
 			if (!title?.trim() || !isString(title)) throw new Error("Title is missing.");
+			if(!tags.includes(",")) throw new Error("Please separate the tags by commas.");
 			if (title.length < 10) throw new Error("Title is too short.");
 
 			if (!image?.name || image.size === 0) throw new Error("File is missing.");
@@ -348,32 +349,32 @@ export const CreateForm = () => {
 				throw err;
 			});
 			
-			// const ipfsImageLink = (
-			// 	await uploadFile({
-			// 		title: creationProps.metadata.title,
-			// 		postImage: creationProps.image,
-			// 	})
-			// ).unwrapOrElse((error) => {
-			// 	throw error;
-			// });
+			const ipfsImageLink = (
+				await uploadFile({
+					title: creationProps.metadata.title,
+					postImage: creationProps.image,
+				})
+			).unwrapOrElse((error) => {
+				throw error;
+			});
 
-			// const success = (
-			// 	await adapter.createPost({
-			// 		title: creationProps.metadata.title,
-			// 		description: creationProps.metadata.description,
-			// 		ipfsLink: ipfsImageLink,
-			// 		locationTaken: creationProps.metadata.locationTaken,
-			// 		dateTaken: new Date(creationProps.metadata.dateTaken).toLocaleDateString(),
-			// 		datePosted: new Date().toLocaleDateString(),
-			// 		dateGoLive: creationProps.metadata.dateGoLive,
-			// 		dateEnd: creationProps.metadata.dateEnd,
-			// 		price: creationProps.metadata.price,
-			// 		tags: creationProps.metadata.tags,
-			// 		articleText: creationProps.metadata.articleText,
-			// 	})
-			// ).unwrapOrElse((error) => {
-			// 	throw error;
-			// });
+			const success = (
+				await adapter.createPost({
+					title: creationProps.metadata.title,
+					description: creationProps.metadata.description,
+					ipfsLink: ipfsImageLink,
+					locationTaken: creationProps.metadata.locationTaken,
+					dateTaken: new Date(creationProps.metadata.dateTaken).toLocaleDateString(),
+					datePosted: new Date().toLocaleDateString(),
+					dateGoLive: creationProps.metadata.dateGoLive,
+					dateEnd: creationProps.metadata.dateEnd,
+					price: creationProps.metadata.price,
+					tags: creationProps.metadata.tags,
+					articleText: creationProps.metadata.articleText,
+				})
+			).unwrapOrElse((error) => {
+				throw error;
+			});
 
 			dispatch({ type: "SUBMIT_SUCCESS" });
 			return result.ok(true);
