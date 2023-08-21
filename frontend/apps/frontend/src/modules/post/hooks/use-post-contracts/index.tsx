@@ -21,12 +21,12 @@ export const PostContractsContextProvider = ({ children }: { children: ReactNode
 	const [adapter, setAdapter] = useState<State["adapter"]>(initialState.adapter);
 
 	useEffect(() => {
-		if (!checkIsLoggedIn() || !wallet) {
-			setAdapter(undefined);
-			console.log('not logged in');
-			//requestSignIn();
-			return;
-		}
+		// if (!checkIsLoggedIn() || !wallet) {
+		// 	setAdapter(undefined);
+		// 	console.log('not logged in');
+		// 	//requestSignIn();
+		// 	return;
+		// }
 
 
 		PostContractAdapter.init({ walletConnection: wallet }).then((result) => {
