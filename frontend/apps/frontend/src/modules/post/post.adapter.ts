@@ -278,6 +278,7 @@ export class PostContractAdapter {
 		dateGoLive,
 		dateEnd,
 		price,
+		copies,
 		tags,
 		articleText,
 	}: {
@@ -287,9 +288,10 @@ export class PostContractAdapter {
 		locationTaken:string;
 		dateTaken: string;
 		datePosted: string;
-		dateGoLive: string;
+		dateGoLive: number//milliseconds;
 		dateEnd: string;
 		price: number;
+		copies: number;
 		tags: string;
 		articleText: string;
 	}): Promise<Result<true>> {
@@ -307,13 +309,11 @@ export class PostContractAdapter {
 			
 			const extra = {
 				locationTaken : locationTaken,
-				dateTaken  :dateTaken,
-				datePosted :datePosted,
-				dateGoLive : dateGoLive,
-				dateEnd: dateEnd,
-				price : price,
+				dateTaken : dateTaken,
 				tags : tags,
-				articleText: articleText
+				//articleText: articleText
+				
+				//add splits here
 			}
 
 			// TODO: is there some kind of confirmation we can get out of contract calls?
@@ -324,9 +324,12 @@ export class PostContractAdapter {
 						title: title,
 						description: description,
 						media: ipfsLink,
-
+						copies: copies,
+						starts_at: dateGoLive,
+						issued_at: new Date().getMilliseconds(),
 						extra: JSON.stringify(extra)
 					},
+					price: price
 				},
 				undefined,
 				yoctoDeposit,

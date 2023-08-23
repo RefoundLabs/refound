@@ -28,10 +28,25 @@ import {
 	geocodeByPlaceId,
 	getLatLng,
   } from 'react-places-autocomplete';
+  import {
+    createStyles,
+    Menu,
+    Center,
+    Header,
+    Container,
+    Group,
+    Burger,
+    Grid, Input, 
+    Card,
+    Button, Text, Box, Alert
+  } from '@mantine/core';
+import { copyFileSync } from "fs";
+import { useRef } from "react";
 
 type FormData = {
 	title?: string;
 	image?: File;
+	audio?: File;
 	width?: number;
 	height?: number;
 	description?: string;
@@ -40,9 +55,10 @@ type FormData = {
 	dateTaken: string;
 	datePosted: string;
 	price: number;
-	tags: string;
-	dateGoLive: string;
-	dateEnd: string;
+	copies: number;
+	tags?: string;
+	dateGoLive?: number;
+	dateEnd?: number;
 };
 
 type ReducerState = {
@@ -54,6 +70,7 @@ type ReducerState = {
 const initialReducerState: ReducerState = {
 	title: "",
 	image: undefined,
+	audio: undefined,
 	width: 0,
 	height: 0,
 	description: "",
@@ -62,9 +79,10 @@ const initialReducerState: ReducerState = {
 	dateTaken: "",
 	datePosted: "",
 	price: 0,
+	copies: 0,
 	tags: "",
-	dateGoLive: "",
-	dateEnd: "",
+	dateGoLive: 0,
+	dateEnd: 0,
 	validationStatus: "IDLE",
 	submissionStatus: "IDLE",
 	validationErrors: [],
@@ -80,12 +98,19 @@ type ReducerActions =
 				height?: FormData["height"];
 			};
 	  }
+	| {
+		type: "SET_AUDIO";
+		payload: {
+			audio?: FormData["audio"];
+		};
+	}
 	| { type: "SET_DESCRIPTION"; payload: FormData["description"] }
 	| { type: "SET_LOCATIONTAKEN"; payload: FormData["locationTaken"] }
 	| { type: "SET_ARTICLETEXT"; payload: FormData["articleText"] }
 	| { type: "SET_DATETAKEN"; payload: FormData["dateTaken"] }
 	| { type: "SET_DATEPOSTED"; payload: FormData["datePosted"] }
 	| { type: "SET_PRICE"; payload: FormData["price"] }
+	| { type: "SET_COPIES"; payload: FormData["copies"] }
 	| { type: "SET_TAGS"; payload: FormData["tags"] }
 	| { type: "SET_DATEGOLIVE"; payload: FormData["dateGoLive"] }
 	| { type: "SET_DATEEND"; payload: FormData["dateEnd"] }
@@ -280,29 +305,32 @@ export const CreateForm = () => {
 	  }
 
 	const validateForm = async (): Promise<
-		Result<{ image: File; metadata: PostCreationProps}>
+		Result<{ image: File; audio: File; metadata: PostCreationProps}>
 	> => {
 		dispatch({ type: "VALIDATION_START" });
 		try {
-			const { title, image, description, articleText, 
+			const { title, image, audio, description, articleText, 
 				locationTaken,
 				dateTaken,
 				datePosted,
-				price,
+				price, copies,
 				tags,
 				dateGoLive,
 				dateEnd } = state;
 
 			if (!title?.trim() || !isString(title)) throw new Error("Title is missing.");
-			if(!tags.includes(",")) throw new Error("Please separate the tags by commas.");
+			if( tags && !tags.includes(",")) throw new Error("Please separate the tags by commas.");
 			if (title.length < 10) throw new Error("Title is too short.");
 
 			if (!image?.name || image.size === 0) throw new Error("File is missing.");
+			if (!audio?.name || audio.size === 0) throw new Error("File is missing.");
+			console.log('audio.size');
 
 			if (!description) throw new Error("Description is missing.");
 
 			const creationProps = {
 				image,
+				audio,
 				metadata: {
 					title: title.trim(),
 					description: description,
@@ -310,9 +338,10 @@ export const CreateForm = () => {
 					locationTaken: locationTaken,
 					dateTaken: dateTaken,
 					datePosted: datePosted,
-					dateGoLive:dateGoLive,
+					dateGoLive: dateGoLive,
 					dateEnd:dateEnd,
 					price:price,
+					copies: copies,
 					tags:tags,
 					articleText: articleText, 
 				},
@@ -349,10 +378,11 @@ export const CreateForm = () => {
 				throw err;
 			});
 			
-			const ipfsImageLink = (
+			const ipfsMediaLink = (
 				await uploadFile({
 					title: creationProps.metadata.title,
 					postImage: creationProps.image,
+					postAudio: creationProps.audio,
 				})
 			).unwrapOrElse((error) => {
 				throw error;
@@ -362,13 +392,14 @@ export const CreateForm = () => {
 				await adapter.createPost({
 					title: creationProps.metadata.title,
 					description: creationProps.metadata.description,
-					ipfsLink: ipfsImageLink,
+					ipfsLink: ipfsMediaLink,
 					locationTaken: creationProps.metadata.locationTaken,
 					dateTaken: new Date(creationProps.metadata.dateTaken).toLocaleDateString(),
 					datePosted: new Date().toLocaleDateString(),
 					dateGoLive: creationProps.metadata.dateGoLive,
 					dateEnd: creationProps.metadata.dateEnd,
 					price: creationProps.metadata.price,
+					copies: creationProps.metadata.copies,
 					tags: creationProps.metadata.tags,
 					articleText: creationProps.metadata.articleText,
 				})
@@ -423,7 +454,61 @@ export const CreateForm = () => {
 				<h1>Create Post</h1>
 			</div>
 			<form className={S.formRoot}>
-				<label className={S.fieldLabel}>
+				<Grid>
+					<Grid.Col sm={6}>
+					<label className={`${S.fieldLabel} items-start`}>
+				
+					<span className={S.fieldLabelText}>Image*</span>
+
+
+					<FileDropInput 
+						setProps={(imageData) => {
+							dispatch({ type: "SET_IMAGE", payload: imageData });
+						}}
+						
+						uploadedImage={
+							state.image && state.width && state.height
+								? { image: state.image, width: state.width, height: state.height }
+								: undefined
+						}
+					/>
+
+					<button
+						type="button"
+						style={{marginTop:"20px", marginBottom:"20px"}}
+						className="btn btn-block"
+						onClick={(e) => {
+							e.preventDefault();
+
+							setCaptureModalOpen(true);
+						}}
+					>
+						Take a Photo
+					</button>
+
+					{/* <ReactQuill value={editorState}
+					modules={modules}
+					formats={formats}
+					onChange={handleChange} style={{width:"100%"}} /> */}
+    
+					<span className={S.fieldLabelText}>Audio* <span style={{fontSize:"0.7em"}}>(max. 30 seconds)</span></span>
+					<FileDropInput 
+						setProps={(audio) => {
+							dispatch({ type: "SET_AUDIO", payload: audio });
+						}}
+						
+						uploadedAudio={
+							state.audio && state.audio.type.length
+								? { audio: state.audio, length: state.audio.type.length }
+								: undefined
+						}
+					/>
+
+				</label>
+			</Grid.Col>
+			<Grid.Col sm={6}>
+					<span className={S.title}>Metadata Details</span>
+					<label className={S.fieldLabel}>
 					<span className={S.fieldLabelText}>Title*</span>
 					<input
 						className={S.fieldInput}
@@ -475,45 +560,6 @@ export const CreateForm = () => {
 					/>
 				</label>
 
-				{/* <label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>Go Live Date</span>
-					<input
-						className={S.fieldInput}
-						name="dateGoLive"
-						type="date"
-						placeholder="Go Live Date"
-						onChange={(e) => {
-							dispatch({ type: "SET_DATEGOLIVE", payload: e.target.value });
-						}}
-					/>
-				</label>
-
-				<label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>End Date</span>
-					<input
-						className={S.fieldInput}
-						name="dateEnd"
-						type="date"
-						placeholder="End Date"
-						onChange={(e) => {
-							dispatch({ type: "SET_DATEEND", payload: e.target.value });
-						}}
-					/>
-				</label>
-
-				<label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>Price</span>
-					<input
-						className={S.fieldInput}
-						name="price"
-						type="number"
-						placeholder="Price in NEAR"
-						onChange={(e) => {
-							dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
-						}}
-					/>
-				</label> */}
-
 				<label className={S.fieldLabel}>
 					<span className={S.fieldLabelText}>Tags</span>
 					<input
@@ -527,41 +573,63 @@ export const CreateForm = () => {
 					/>
 				</label>
 
-
-				<label className={`${S.fieldLabel} items-start`}>
-					<span className={S.fieldLabelText}>Image*</span>
-
-					<FileDropInput 
-						setProps={(imageData) => {
-							dispatch({ type: "SET_IMAGE", payload: imageData });
+				<br></br>
+				<span className={S.title} >Pricing Details</span>
+				<label className={S.fieldLabel}>
+					<span className={S.fieldLabelText}>Go Live Date</span>
+					<input
+						className={S.fieldInput}
+						name="dateGoLive"
+						type="date"
+						placeholder="Go Live Date"
+						onChange={(e) => {
+							dispatch({ type: "SET_DATEGOLIVE", payload: new Date(e.target.value).getMilliseconds() });
 						}}
-						
-						uploadedImage={
-							state.image && state.width && state.height
-								? { image: state.image, width: state.width, height: state.height }
-								: undefined
-						}
 					/>
-
-					<button
-						type="button"
-						style={{marginTop:"20px", marginBottom:"20px"}}
-						className="btn btn-block"
-						onClick={(e) => {
-							e.preventDefault();
-
-							setCaptureModalOpen(true);
-						}}
-					>
-						Take a Photo
-					</button>
-
-					{/* <ReactQuill value={editorState}
-					modules={modules}
-					formats={formats}
-					onChange={handleChange} style={{width:"100%"}} /> */}
-    
 				</label>
+
+				{/* <label className={S.fieldLabel}>
+					<span className={S.fieldLabelText}>End Date</span>
+					<input
+						className={S.fieldInput}
+						name="dateEnd"
+						type="date"
+						placeholder="End Date"
+						onChange={(e) => {
+							dispatch({ type: "SET_DATEEND", payload: e.target.value });
+						}}
+					/>
+				</label> */}
+
+				<label className={S.fieldLabel}>
+					<span className={S.fieldLabelText}>Price</span>
+					<input
+						className={S.fieldInput}
+						name="price"
+						type="number"
+						placeholder="Price in NEAR"
+						onChange={(e) => {
+							dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
+						}}
+					/>
+				</label>
+
+				<label className={S.fieldLabel}>
+					<span className={S.fieldLabelText}># of Editions</span>
+					<input
+						className={S.fieldInput}
+						name="copies"
+						type="number"
+						placeholder="# of Editions"
+						onChange={(e) => {
+							dispatch({ type: "SET_COPIES", payload: parseInt(e.target.value) });
+						}}
+					/>
+				</label>
+
+				
+			</Grid.Col>
+								
 
 				{!isSignedIn && (
 					<AlertBar kind="warning">
@@ -605,6 +673,7 @@ export const CreateForm = () => {
 						</div>
 					</div>
 				)}
+				</Grid>
 			</form>
 			{captureModalOpen && (
 				<CaptureModal
@@ -618,6 +687,8 @@ export const CreateForm = () => {
 					}}
 				/>
 			)}
+		<script src={"https://maps.googleapis.com/maps/api/js?key=" + process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY + "&libraries=places&callback=initMap"} async></script>
 		</>
+		
 	);
 };

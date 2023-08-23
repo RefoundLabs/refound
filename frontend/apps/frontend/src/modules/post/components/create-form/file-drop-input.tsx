@@ -7,7 +7,7 @@ import { getImageDimensions } from "./get-image-dimensions";
 import { PolyButton } from "@modules/common/components/poly-button";
 import { toast } from "@services/toast/toast";
 
-const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png"];
+const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".mp3", ".wav"];
 
 type ReducerState = {
 	dropDepth: number;
@@ -15,6 +15,7 @@ type ReducerState = {
 	file?: File;
 	fileWidth?: number;
 	fileHeight?: number;
+	fileLength?: number;
 };
 
 const initialReducerState: ReducerState = {
@@ -23,6 +24,7 @@ const initialReducerState: ReducerState = {
 	file: undefined,
 	fileWidth: 0,
 	fileHeight: 0,
+	fileLength: 0,
 };
 
 type ReducerAction =
@@ -32,6 +34,10 @@ type ReducerAction =
 			type: "SET_FILE";
 			payload: { file: ReducerState["file"]; fileWidth: number; fileHeight: number };
 	  }
+	  | {
+		type: "SET_AUDIO";
+		payload: { file: ReducerState["file"]; length: number; };
+  }
 	| { type: "RESET" };
 
 const reducer = (state: ReducerState, action: ReducerAction) => {
@@ -61,15 +67,17 @@ const isAcceptableFile = (file: File): boolean => {
 export const FileDropInput = ({
 	setProps,
 	uploadedImage,
+	uploadedAudio
 }: {
-	setProps: (props: { image?: File; width?: number; height?: number }) => void;
+	setProps: (props: { image?: File; width?: number; height?: number; audio?: File; length?: number; }) => void;
 	uploadedImage?: { image: File; width: number; height: number };
+	uploadedAudio?: {audio: File; length: number;};
 }) => {
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
 	const inputRef = useRef(null);
 
 	useEffect(() => {
-		setProps({ image: state.file, width: state.fileWidth, height: state.fileHeight });
+		setProps({ image: state.file, width: state.fileWidth, height: state.fileHeight, audio: uploadedAudio?.audio, length: uploadedAudio?.length});
 	}, [state]);
 
 	useEffect(() => {
@@ -84,6 +92,18 @@ export const FileDropInput = ({
 			});
 		}
 	}, [uploadedImage]);
+
+	useEffect(() => {
+		if (uploadedAudio) {
+			dispatch({
+				type: "SET_AUDIO",
+				payload: {
+					file: uploadedAudio.audio,
+					length: uploadedAudio.length
+				},
+			});
+		}
+	}, [uploadedAudio]);
 
 	const handleDragEnter = (e: DragEvent<HTMLElement>) => {
 		e.preventDefault();
@@ -186,10 +206,10 @@ export const FileDropInput = ({
 				}`}
 			>
 				<div className="flex flex-col items-center justify-center pt-5 pb-6">
-					<div className="flex flex-col items-center justify-center w-full h-full">
+					<div className="flex flex-col items-center justify-center w-full">
 						<svg
 							aria-hidden="true"
-							className="w-10 h-10 mb-3 text-gray-400"
+							className="w-10 h-5 mb-3 text-gray-400"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -205,7 +225,7 @@ export const FileDropInput = ({
 						<p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
 							<span className="font-semibold">Click to upload</span> or drag and drop
 						</p>
-						<p className="text-xs text-gray-500 dark:text-gray-400">PNG or JPG</p>
+						{/* <p className="text-xs text-gray-500 dark:text-gray-400">PNG or JPG</p> */}
 					</div>
 				</div>
 				<input
