@@ -7,7 +7,7 @@ import { getImageDimensions } from "./get-image-dimensions";
 import { PolyButton } from "@modules/common/components/poly-button";
 import { toast } from "@services/toast/toast";
 
-const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".mp3", ".wav"];
+const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".mp3", ".wav", "audio/*"];
 
 type ReducerState = {
 	dropDepth: number;

@@ -42,6 +42,10 @@ import {
   } from '@mantine/core';
 import { copyFileSync } from "fs";
 import { useRef } from "react";
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+
+import BubbleMenu from '@tiptap/extension-bubble-menu'
 
 type FormData = {
 	title?: string;
@@ -249,6 +253,22 @@ export const CreateForm = () => {
 	const [editorState, setEditorState] = useState("");
 	const { uploadFile, ipfsReady } = useIpfs();
 	const { account } = useAccount();
+	const [editor, setEditor] = useState<any>();
+
+	//rich text editor
+	// if (typeof window !== "undefined") {
+	// const editor = useEditor({
+	// 	extensions: [
+	// 	  StarterKit,
+	// 	  BubbleMenu.configure({
+	// 		element: document.querySelector('.menu') as HTMLElement,
+	// 	  })
+	// 	],
+	// 	content: '<p>Write your article here! 🌎️</p>',
+	//   })
+	//   setEditor(editor);
+	// }
+
 
 	const modules = {
 		toolbar: [
@@ -275,8 +295,8 @@ export const CreateForm = () => {
 		if(userInWaitlist){
 			console.log(userInWaitlist)
 		}
-		
-	})
+
+	}, [ editor, editorState])
 
 	const getUser = async() => {
 		console.log(account?.accountId)
@@ -323,7 +343,7 @@ export const CreateForm = () => {
 			if (title.length < 10) throw new Error("Title is too short.");
 
 			if (!image?.name || image.size === 0) throw new Error("File is missing.");
-			if (!audio?.name || audio.size === 0) throw new Error("File is missing.");
+			//if (!audio?.name || audio.size === 0) throw new Error("File is missing.");
 			console.log('audio.size');
 
 			if (!description) throw new Error("Description is missing.");
@@ -400,8 +420,7 @@ export const CreateForm = () => {
 					dateEnd: creationProps.metadata.dateEnd,
 					price: creationProps.metadata.price,
 					copies: creationProps.metadata.copies,
-					tags: creationProps.metadata.tags,
-					articleText: creationProps.metadata.articleText,
+					tags: creationProps.metadata.tags
 				})
 			).unwrapOrElse((error) => {
 				throw error;
@@ -450,7 +469,7 @@ export const CreateForm = () => {
 
 	return (
 		<>
-			<div className="w-full py-8 prose text-center">
+			<div className="w-full py-12 prose text-center">
 				<h1>Create Post</h1>
 			</div>
 			<form className={S.formRoot}>
@@ -491,7 +510,7 @@ export const CreateForm = () => {
 					formats={formats}
 					onChange={handleChange} style={{width:"100%"}} /> */}
     
-					<span className={S.fieldLabelText}>Audio* <span style={{fontSize:"0.7em"}}>(max. 30 seconds)</span></span>
+					{/* <span className={S.fieldLabelText}>Audio* <span style={{fontSize:"0.7em"}}>(max. 30 seconds)</span></span>
 					<FileDropInput 
 						setProps={(audio) => {
 							dispatch({ type: "SET_AUDIO", payload: audio });
@@ -502,7 +521,7 @@ export const CreateForm = () => {
 								? { audio: state.audio, length: state.audio.type.length }
 								: undefined
 						}
-					/>
+					/> */}
 
 				</label>
 			</Grid.Col>
@@ -629,7 +648,32 @@ export const CreateForm = () => {
 
 				
 			</Grid.Col>
-								
+			{/* <div style={{width:'100%', marginTop:"5%"}}>
+				<span className={S.title}>Write An Article</span>
+				<>
+					{editor && <BubbleMenu id='.menu' editor={editor} tippyOptions={{ duration: 100 }}>
+						<button
+						onClick={() => editor.chain().focus().toggleBold().run()}
+						className={editor.isActive('bold') ? 'is-active' : ''}
+						>
+						bold
+						</button>
+						<button
+						onClick={() => editor.chain().focus().toggleItalic().run()}
+						className={editor.isActive('italic') ? 'is-active' : ''}
+						>
+						italic
+						</button>
+						<button
+						onClick={() => editor.chain().focus().toggleStrike().run()}
+						className={editor.isActive('strike') ? 'is-active' : ''}
+						>
+						strike
+						</button>
+					</BubbleMenu>}
+					<EditorContent editor={editor} />
+					</>
+			</div>		 */}
 
 				{!isSignedIn && (
 					<AlertBar kind="warning">

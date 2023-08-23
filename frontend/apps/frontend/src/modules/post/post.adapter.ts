@@ -280,7 +280,6 @@ export class PostContractAdapter {
 		price,
 		copies,
 		tags,
-		articleText,
 	}: {
 		title: string;
 		description: string;
@@ -293,7 +292,6 @@ export class PostContractAdapter {
 		price: number;
 		copies: number;
 		tags: string;
-		articleText: string;
 	}): Promise<Result<true>> {
 		try {
 			// TODO: currently enormous query just to find next id
