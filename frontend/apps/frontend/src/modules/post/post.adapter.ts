@@ -78,7 +78,7 @@ interface SeriesCommands {
 			id: number;
 			metadata: TokenMetadata;
 			royalty?: Record<AccountId, number>;
-			price?: number;
+			price?: string;
 		},
 		gas?: string,
 		deposit?: string,
@@ -289,7 +289,7 @@ export class PostContractAdapter {
 		datePosted: string;
 		dateGoLive: number//milliseconds;
 		dateEnd: string;
-		price: number;
+		price: string;
 		copies: number;
 		tags: string;
 	}): Promise<Result<true>> {
