@@ -6,6 +6,10 @@ import { createContext, useCallback, useContext, useState } from "react";
 import { config } from "@config/config";
 import { useRouter } from "next/router";
 
+import { Web3Auth } from "@web3auth/modal";
+
+
+
 const NEAR_CONFIG: ConnectConfig = {
 	networkId: "testnet",
 	// keyStore: new keyStores.BrowserLocalStorageKeyStore(),
@@ -75,6 +79,24 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 
 			return;
 		}
+
+		// const web3auth = new Web3Auth({
+		// 	clientId: "BNlvcdTZ8l4U1qFhWxpgFr_jms49M8_OkK4MzU-UgcA77dK5u9f_zdVEQCPF2FkjRdAPivQJikFjJdmhucCanr4", // get it from Web3Auth Dashboard
+		// 	web3AuthNetwork: "testnet", // "testnet" or "mainnet, "cyan", "aqua"
+		// 	chainConfig: {
+		// 	  chainNamespace: "other", // for all non EVM and SOLANA chains, use "other"
+		// 	  rpcTarget: "https://rpc.testnet.near.org",
+		// 	  displayName: "Near",
+		// 	  chainId: "near",
+		// 	  blockExplorer: "https://explorer.testnet.near.org",
+		// 	  ticker: "NEAR",
+		// 	  tickerName: "NEAR",
+		// 	},
+		//   });
+		  
+		//   await web3auth.initModal();
+		  
+		//   const web3authProvider = await web3auth.connect(); // web3auth.provider
 
 		console.log("near initialized");
 	}, []);

@@ -102,6 +102,10 @@ export const SignUpView = () => {
         )
         .then(async (response) => {
             setUserInWailist(true);
+            console.log(response.data.data);
+            if(response.data.data.email != ""){
+              setAccountExists(true);
+            }
         })
         .catch((error) => {
             console.log(error);
@@ -134,6 +138,9 @@ export const SignUpView = () => {
       }
       if(userInWaitlist){
         setAlert("");
+      }
+      if(accountExists){
+        setAlert("account already exists!")
       }
     }, [account, username, email, firstname, lastname, twitterHandle, link]); 
   
