@@ -329,14 +329,21 @@ export const CreateForm = () => {
 	> => {
 		dispatch({ type: "VALIDATION_START" });
 		try {
-			const { title, image, audio, description, articleText, 
+			const { 
+				title, 
+				image, 
+				audio, 
+				description, 
+				articleText, 
 				locationTaken,
 				dateTaken,
 				datePosted,
-				price, copies,
+				price, 
+				copies,
 				tags,
 				dateGoLive,
-				dateEnd } = state;
+				dateEnd 
+			} = state;
 
 			if (!title?.trim() || !isString(title)) throw new Error("Title is missing.");
 			if( tags && !tags.includes(",")) throw new Error("Please separate the tags by commas.");
@@ -546,7 +553,7 @@ export const CreateForm = () => {
 						className={S.fieldInput}
 						name="description"
 						type="text"
-						placeholder="A brief description"
+						placeholder="brief description/caption"
 						onChange={(e) => {
 							dispatch({ type: "SET_DESCRIPTION", payload: e.target.value });
 						}}
@@ -559,7 +566,7 @@ export const CreateForm = () => {
 						className={S.fieldInput}
 						name="locationTaken"
 						type="text"
-						placeholder="Please add exact location information (city/state or province, and country or region)"
+						placeholder="Please add district/city/country"
 						onChange={(e) => {
 							dispatch({ type: "SET_LOCATIONTAKEN", payload: e.target.value });
 						}}
@@ -593,7 +600,7 @@ export const CreateForm = () => {
 				</label>
 
 				<br></br>
-				<span className={S.title} >Pricing Details</span>
+				<span className={S.title}>Pricing Details</span>
 				<label className={S.fieldLabel}>
 					<span className={S.fieldLabelText}>Go Live Date</span>
 					<input
@@ -629,6 +636,7 @@ export const CreateForm = () => {
 						placeholder="Price in NEAR"
 						onChange={(e) => {
 							dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
+							console.log(parseInt(e.target.value));
 						}}
 					/>
 				</label>
