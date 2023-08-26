@@ -11,6 +11,16 @@ import Web3 from "web3";
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import {setupModal} from "@near-wallet-selector/modal-ui";
 import {setupNearWallet} from "@near-wallet-selector/near-wallet"
+import { setupNearFi } from "@near-wallet-selector/nearfi";
+import { setupNightly } from "@near-wallet-selector/nightly";
+import { setupNightlyConnect } from "@near-wallet-selector/nightly-connect";
+import { setupSender } from "@near-wallet-selector/sender";
+import { setupWelldoneWallet } from "@near-wallet-selector/welldone-wallet";
+import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import { setupLedger } from "@near-wallet-selector/ledger";
+import { setupHereWallet } from "@near-wallet-selector/here-wallet";
+import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
+import "@near-wallet-selector/modal-ui/styles.css";
 
 const NEAR_CONFIG: ConnectConfig = {
 	networkId: "testnet",
@@ -51,14 +61,17 @@ export const useNear = () => useContext(NearContext);
 
 export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 	const router = useRouter();
-	const [near, setNear] = useState<State["near"]>(initialState.near);
-	const [wallet, setWallet] = useState<State["wallet"]>(initialState.wallet);
+	//const [near, setNear] = useState<State["near"]>(initialState.near);
+	//const [wallet, setWallet] = useState<State["wallet"]>(initialState.wallet);
+	const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_SERIES_ADDRESS as string; // TODO: from .env
+
 	
 	const [web3auth, setWeb3auth] = useState<any>();
   	const [provider, setProvider] = useState<any>();
 	const [selector, setSelector] = useState<any>();
   	const [nearModal, setNearModal] = useState<any>();
 	const [address, setAddress] = useState("");
+	const [accounts, setAccounts] = useState<any>();
 
 	const initNear = useCallback(async () => {
 		if (!window) {
@@ -95,7 +108,11 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		
 	}, []);
 
-	const checkIsLoggedIn = useCallback(() => (wallet ? wallet.isSignedIn() : false), [wallet]);
+	const checkIsLoggedIn = useCallback(() => 
+		{
+			if(selector) return selector.isSignedIn();
+		},
+	[]);
 
 	const requestSignInWeb3Auth = useCallback(async () => {
 		
@@ -120,17 +137,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		setWeb3auth(web3auth);
 		setProvider(web3authProvider);
 
-		const ethersProvider = new ethers.BrowserProvider(provider);
-
-		const signer = await ethersProvider.getSigner();
-
-		// Get user's Ethereum public address
-		const address =   signer.address;
-		setAddress(address);
-
-		console.log(address);
-	
-	}, [address, provider, web3auth]);
+	}, [provider, web3auth]);
 
 	const requestSignInNear = useCallback(async () => {
 		// if (!wallet) {
@@ -142,30 +149,64 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		// 	successUrl: `${config.site.host}/discover`,
 		// 	failureUrl: `${config.site.host}/sign-in`,
 		// });
+		console.log('sign in with near');
 		const selector = await setupWalletSelector({
 			network: "testnet",
-			modules:[setupNearWallet()],
+			modules: [
+				setupMyNearWallet(),
+				setupLedger(),
+				setupNearWallet(),
+				setupSender(),
+				setupNightly(),
+				setupWelldoneWallet(),
+				setupNearFi(),
+				setupMeteorWallet(),
+				setupHereWallet()
+			  ],
 		})
-		setSelector(selector);
+		
 
 		const modal = setupModal(selector, {
-			contractId: "",
+			contractId: contractAddress,
+			theme : "dark"
 		})
 		setNearModal(modal);
-
+		setSelector(selector);
 		modal.show();
+
+		// const wallet = await selector.wallet();
+		// const accounts = await wallet.signIn({ contractId: contractAddress });
+    	// const accounts = await wallet.getAccounts();
+		// setAccounts(accounts);
 		
-	}, [selector, nearModal]);
+		
+	}, [selector, nearModal, accounts]);
 
 	const requestSignOut = useCallback(async () => {
-		if (!wallet) {
-			console.warn("Cannot sign out, wallet not found");
-			return;
+		// if (!wallet) {
+		// 	console.warn("Cannot sign out, wallet not found");
+		// 	return;
+		// }
+
+		// wallet.signOut();
+		// router.push("/");
+
+		//near wallet sign out
+		if(selector){
+			const wallet = await selector.wallet();
+
+			wallet.signOut().catch((err:any) => {
+			console.log("Failed to sign out");
+			console.error(err);
+			});
 		}
 
-		wallet.signOut();
-		router.push("/");
-	}, [wallet]);
+		//web3auth
+		if(web3auth){
+			await web3auth.logout();
+			setProvider(null);
+		}
+	}, []);
 
 	useEffect(() => {
 		initNear();
@@ -174,14 +215,13 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 
 	const value: State = useMemo(
 		() => ({
-			near,
-			wallet,
+			web3auth, nearModal, accounts, selector,
 			checkIsLoggedIn,
 			requestSignInNear,
 			requestSignInWeb3Auth,
 			requestSignOut,
 		}),
-		[near, wallet, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth, requestSignOut],
+		[ web3auth, nearModal, accounts, selector, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth, requestSignOut],
 	);
 
 	return <NearContext.Provider value={value}>{children}</NearContext.Provider>;

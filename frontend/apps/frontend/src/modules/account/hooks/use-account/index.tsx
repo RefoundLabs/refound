@@ -2,6 +2,7 @@ import type { Account } from "near-api-js";
 import type { ReactNode } from "react";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useNear } from "../use-near";
+import type { Wallet } from "ethers";
 
 type AccountRole = "user" | "verifier";
 type WalletType = "near" | "web3auth";
@@ -61,7 +62,9 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		}
 
 		const savedRole = (sessionStorage.getItem("role") as AccountRole) || "user";
+		const savedWallet = (sessionStorage.getItem("walletType") as WalletType) || "near";
 		console.log(savedRole);
+		console.log(savedWallet);
 		
 		if (!checkIsLoggedIn() || !wallet) {
 			reset();
@@ -84,9 +87,10 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 	const signIn = async (type: WalletType) => {
 		sessionStorage.setItem("walletType", type);
 		console.log('setting wallet type:'+type);
-		if(type == "near"){
+		console.log(type);
+		if(type.toString() == "near"){
 			await requestSignInNear();
-		}else if(type == "web3auth"){
+		}else if(type.toString() == "web3auth"){
 			await requestSignInWeb3Auth();
 		}
 		
