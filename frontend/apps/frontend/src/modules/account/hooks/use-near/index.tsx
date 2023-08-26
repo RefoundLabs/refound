@@ -7,8 +7,8 @@ import { config } from "@config/config";
 import { useRouter } from "next/router";
 
 import { Web3Auth } from "@web3auth/modal";
-
-
+import Web3 from "web3";
+import { MetamaskAdapter } from "@web3auth/metamask-adapter";
 
 const NEAR_CONFIG: ConnectConfig = {
 	networkId: "testnet",
@@ -55,50 +55,78 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			return;
 		}
 
-		const nearConnection = await connect({
-			...NEAR_CONFIG,
-			keyStore:  typeof window === "undefined"
-			? new keyStores.InMemoryKeyStore()
-			: new keyStores.BrowserLocalStorageKeyStore()
-		});
-		setNear(nearConnection);
+		// const nearConnection = await connect({
+		// 	...NEAR_CONFIG,
+		// 	keyStore:  typeof window === "undefined"
+		// 	? new keyStores.InMemoryKeyStore()
+		// 	: new keyStores.BrowserLocalStorageKeyStore()
+		// });
+		// setNear(nearConnection);
 
-		if (!nearConnection) {
-			console.error("cannot connect to near");
-			setNear(undefined);
-			setWallet(undefined);
+		// if (!nearConnection) {
+		// 	console.error("cannot connect to near");
+		// 	setNear(undefined);
+		// 	setWallet(undefined);
 
-			return;
-		}
+		// 	return;
+		// }
 
-		const walletConnection = new WalletConnection(nearConnection, null);
-		setWallet(walletConnection);
+		//const walletConnection = new WalletConnection(nearConnection, null);
+		//setWallet(walletConnection);
 
-		if (!WalletConnection) {
-			console.error("cannot connect to near wallet");
+		// if (!WalletConnection) {
+		// 	console.error("cannot connect to near wallet");
 
-			return;
-		}
+		// 	return;
+		// }
 
-		// const web3auth = new Web3Auth({
-		// 	clientId: "BNlvcdTZ8l4U1qFhWxpgFr_jms49M8_OkK4MzU-UgcA77dK5u9f_zdVEQCPF2FkjRdAPivQJikFjJdmhucCanr4", // get it from Web3Auth Dashboard
-		// 	web3AuthNetwork: "testnet", // "testnet" or "mainnet, "cyan", "aqua"
-		// 	chainConfig: {
-		// 	  chainNamespace: "other", // for all non EVM and SOLANA chains, use "other"
-		// 	  rpcTarget: "https://rpc.testnet.near.org",
-		// 	  displayName: "Near",
-		// 	  chainId: "near",
-		// 	  blockExplorer: "https://explorer.testnet.near.org",
-		// 	  ticker: "NEAR",
-		// 	  tickerName: "NEAR",
-		// 	},
-		//   });
+		const web3auth = new Web3Auth({
+			clientId: "BNlvcdTZ8l4U1qFhWxpgFr_jms49M8_OkK4MzU-UgcA77dK5u9f_zdVEQCPF2FkjRdAPivQJikFjJdmhucCanr4", // get it from Web3Auth Dashboard
+			web3AuthNetwork: "testnet", // "testnet" or "mainnet, "cyan", "aqua"
+			chainConfig: {
+			  chainNamespace: "eip155", // for all non EVM and SOLANA chains, use "other"
+			  rpcTarget: "https://rpc.testnet.near.org",
+			  displayName: "Near",
+			  chainId: "near",
+			  blockExplorer: "https://explorer.testnet.near.org",
+			  ticker: "NEAR",
+			  tickerName: "NEAR",
+			},
+		  });
+
+		  const metamaskAdapter = new MetamaskAdapter({
+			clientId: "BNlvcdTZ8l4U1qFhWxpgFr_jms49M8_OkK4MzU-UgcA77dK5u9f_zdVEQCPF2FkjRdAPivQJikFjJdmhucCanr4",
+			sessionTime: 3600, // 1 hour in seconds
+			web3AuthNetwork: "testnet",
+			chainConfig: {
+			  chainNamespace: "eip155",
+			  chainId: "near",
+			  rpcTarget: "https://rpc.testnet.near.org", // This is the public RPC we have added, please pass on your own endpoint while creating an app
+			},
+		  });
 		  
-		//   await web3auth.initModal();
+		  // it will add/update  the metamask adapter in to web3auth class
+		  web3auth.configureAdapter(metamaskAdapter);
 		  
-		//   const web3authProvider = await web3auth.connect(); // web3auth.provider
+		  // You can change the adapter settings by calling the setAdapterSettings() function on the adapter instance.
+		  metamaskAdapter.setAdapterSettings({
+			sessionTime: 86400, // 1 day in seconds
+			chainConfig: {
+			  chainNamespace: "eip155",
+			  chainId: "near",
+			  rpcTarget: "https://rpc.testnet.near.org", // This is the public RPC we have added, please pass on your own endpoint while creating an app
+			},
+			web3AuthNetwork: "testnet",
+		  });
+		  
+		  await web3auth.initModal();
+		  
+		  //const web3authProvider = await web3auth.connect(); // web3auth.provider
+		  //const user = await web3auth.getUserInfo();
+		  //console.log(user);
+		  //setWallet(user.)
 
-		console.log("near initialized");
+			console.log("web3auth initialized");
 	}, []);
 
 	const checkIsLoggedIn = useCallback(() => (wallet ? wallet.isSignedIn() : false), [wallet]);
