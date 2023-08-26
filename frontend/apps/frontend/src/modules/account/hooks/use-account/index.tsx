@@ -4,9 +4,10 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { useNear } from "../use-near";
 
 type AccountRole = "user" | "verifier";
+type WalletType = "near" | "web3auth";
 
 type BaseState = {
-	signIn: (role: AccountRole) => Promise<void>;
+	signIn: (walletType: WalletType) => Promise<void>;
 	signOut: () => Promise<void>;
 };
 
@@ -46,7 +47,7 @@ const AccountContext = createContext<State>(initialState);
 export const useAccount = () => useContext(AccountContext);
 
 export const AccountContextProvider = ({ children }: { children: ReactNode }) => {
-	const { wallet, checkIsLoggedIn, requestSignIn, requestSignOut } = useNear();
+	const { wallet, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth, requestSignOut } = useNear();
 	const [accountState, setAccountState] = useState<AccountState>({ isSignedIn: false });
 
 	const reset = useCallback(() => {
@@ -80,14 +81,19 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		});
 	}, [wallet]);
 
-	const signIn = async (role: AccountRole) => {
-		sessionStorage.setItem("role", role);
-		console.log('setting role:'+role);
-		await requestSignIn();
+	const signIn = async (type: WalletType) => {
+		sessionStorage.setItem("walletType", type);
+		console.log('setting wallet type:'+type);
+		if(type == "near"){
+			await requestSignInNear();
+		}else if(type == "web3auth"){
+			await requestSignInWeb3Auth();
+		}
+		
 	};
 
 	const signOut = async () => {
-		sessionStorage.removeItem("role");
+		sessionStorage.removeItem("walletType");
 		await requestSignOut();
 		reset();
 	};
