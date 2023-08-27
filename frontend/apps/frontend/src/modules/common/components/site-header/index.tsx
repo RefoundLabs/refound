@@ -7,7 +7,7 @@ import { trimText } from "@utils/trim-text";
 // import { useAccount } from "@modules/account/hooks/use-auth";
 
 export const SiteHeader = () => {
-	// const account = useAccount();
+	//const account = useAccount();
 
 	const { isSignedIn, signOut, id, role } = useAccount();
 

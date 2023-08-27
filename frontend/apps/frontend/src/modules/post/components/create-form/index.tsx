@@ -299,6 +299,8 @@ export const CreateForm = () => {
 	}, [ editor, editorState])
 
 	const getUser = async() => {
+		console.log('account');
+		console.log(account);
 		console.log(account?.accountId)
 		if(account?.accountId){
 			console.log(account?.accountId);

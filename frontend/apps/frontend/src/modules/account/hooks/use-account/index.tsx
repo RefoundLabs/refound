@@ -2,8 +2,11 @@ import type { Account } from "near-api-js";
 import type { ReactNode } from "react";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useNear } from "../use-near";
-import type { Wallet } from "ethers";
-
+//import type { Wallet } from "ethers";
+import type {
+	AccountView,
+	CodeResult,
+  } from "near-api-js/lib/providers/provider";
 type AccountRole = "user" | "verifier";
 type WalletType = "near" | "web3auth";
 
@@ -32,7 +35,7 @@ type State = BaseState & AccountState;
 
 const initialState: State = {
 	isSignedIn: false,
-	account: undefined,
+	//account: undefined,
 	balance: undefined,
 	id: undefined,
 	role: undefined,
@@ -48,7 +51,7 @@ const AccountContext = createContext<State>(initialState);
 export const useAccount = () => useContext(AccountContext);
 
 export const AccountContextProvider = ({ children }: { children: ReactNode }) => {
-	const { wallet, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth, requestSignOut } = useNear();
+	const { wallet, account, provider, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth, requestSignOut } = useNear();
 	const [accountState, setAccountState] = useState<AccountState>({ isSignedIn: false });
 
 	const reset = useCallback(() => {
@@ -63,17 +66,26 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 
 		const savedRole = (sessionStorage.getItem("role") as AccountRole) || "user";
 		const savedWallet = (sessionStorage.getItem("walletType") as WalletType) || "near";
+		console.log('session storage')
 		console.log(savedRole);
 		console.log(savedWallet);
 		
-		if (!checkIsLoggedIn() || !wallet) {
+		if (!checkIsLoggedIn() || !account) {
 			reset();
 			return;
 		}
-
-		const account = wallet.account();
-		const { total: totalBalance } = await account.getAccountBalance();
+		
 		const id = account.accountId;
+		const totalBalance = await getAccountBalance(id);
+		console.log(totalBalance);
+
+		// if(savedWallet == "web3auth"){
+		// 	totalBalance = await account.getAccountBalance().toString();
+		// 	console.log(totalBalance);
+		// }else if(savedWallet == "near"){
+		// 	totalBalance = await getAccountBalance(id);
+		// 	console.log("totalabalance" + totalBalance);
+		// }
 
 		setAccountState({
 			isSignedIn: true,
@@ -82,7 +94,25 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 			account,
 			role: savedRole,
 		});
-	}, [wallet]);
+		
+	}, [accountState]);
+
+
+	const getAccountBalance = async ({
+		accountId
+	  }: any) => {
+		try {
+		  const { amount } = await provider.query<AccountView>({
+			request_type: "view_account",
+			finality: "final",
+			account_id: accountId,
+		  });
+		  const bn = (amount).toString();
+		  return bn;
+		} catch {
+		  return  "0";
+		}
+	  };
 
 	const signIn = async (type: WalletType) => {
 		sessionStorage.setItem("walletType", type);
@@ -104,7 +134,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 
 	useEffect(() => {
 		initAccount();
-	}, [wallet]);
+	}, [account]);
 
 	const value: State = {
 		...accountState,

@@ -4,6 +4,7 @@ import type { WalletConnection } from "near-api-js";
 import { Contract as NearContract } from "near-api-js";
 import { config } from "@config/config";
 import type { LicenseType, Post } from "./domain/post.entity";
+import type { Account } from "near-api-js";
 
 type SeriesId = number;
 type Base64VecU8 = string;
@@ -113,13 +114,13 @@ export class PostContractAdapter {
 	}
 
 	static async init({
-		walletConnection,
+		account,
 	}: {
-		walletConnection: WalletConnection;
+		account: Account;
 	}): Promise<Result<PostContractAdapter>> {
 		try {
 			const contract = (await new NearContract(
-				walletConnection.account(),
+				account,
 				this.contractAddress,
 				{
 					viewMethods: queries,
@@ -142,12 +143,12 @@ export class PostContractAdapter {
 	//----------------------------------------
 
 	private async postDtoToEntity(series: JsonSeries): Promise<Post> {
-		console.log({ postDtoToEntity1: this.contract });
+		//console.log({ postDtoToEntity1: this.contract });
 		let userHasVoted = false;
 		
-		console.log('output post')
-		console.log({ postDtoToEntity2: this.contract });
-		console.log(series);
+		//console.log('output post')
+		//console.log({ postDtoToEntity2: this.contract });
+		//console.log(series);
 
 		const voteCount = await this.contract
 			.get_votes({ id: `${series.series_id}` })
