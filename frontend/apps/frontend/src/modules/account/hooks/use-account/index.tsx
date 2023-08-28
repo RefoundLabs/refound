@@ -95,7 +95,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 			role: savedRole,
 		});
 		
-	}, [accountState]);
+	}, [accountState, account]);
 
 
 	const getAccountBalance = async ({

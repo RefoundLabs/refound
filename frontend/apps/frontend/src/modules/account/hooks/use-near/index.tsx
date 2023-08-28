@@ -23,6 +23,7 @@ import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import "@near-wallet-selector/modal-ui/styles.css";
 import type { Provider } from "near-api-js/lib/providers";
+import { textInputRule } from "@tiptap/react";
 
 const NEAR_CONFIG: ConnectConfig = {
 	networkId: "testnet",
@@ -72,6 +73,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 
 	
   	const [provider, setProvider] = useState<any>();
+	const [web3auth, setWeb3Auth] = useState<any>();
 	const [selector, setSelector] = useState<any>();
   	const [nearModal, setNearModal] = useState<any>();
 	const [wallet, setWallet] = useState<any>();
@@ -84,19 +86,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			return;
 		}
 
-		const nearConnection = await connect({
-			...NEAR_CONFIG,
-			keyStore:  typeof window === "undefined"
-			? new keyStores.InMemoryKeyStore()
-			: new keyStores.BrowserLocalStorageKeyStore()
-		});
-		setNear(nearConnection);
-
-		if (!nearConnection) {
-			console.error("cannot connect to near");
-			setNear(undefined);
-			return;
-		}
+		
 
 		//const walletConnection = new WalletConnection(nearConnection, null);
 		//setWallet(walletConnection);
@@ -111,11 +101,14 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 
 	const checkIsLoggedIn = useCallback(() => 
 		{
-			if(selector) {
-				return selector.isSignedIn()
+			if(account) {
+				return true;
+			}
+			if(wallet){
+				return wallet.isSignedIn();
 			}
 		},
-	[]);
+	[account, wallet]);
 
 	const requestSignInWeb3Auth = useCallback(async () => {
 		
@@ -138,13 +131,28 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		await web3auth.initModal();
 		const web3authProvider = await web3auth.connect(); // web3auth.provider
 		setProvider(web3authProvider);
+		setWeb3Auth(web3auth);
 
 		const privateKey = await web3authProvider?.request({ method: "private_key" }) as string;
 
 		// Convert the secp256k1 key to ed25519 key
 		const { getED25519Key } = await import("@toruslabs/openlogin-ed25519");
 		
-		if(near && privateKey){
+		const nearConnection = await connect({
+			...NEAR_CONFIG,
+			keyStore:  typeof window === "undefined"
+			? new keyStores.InMemoryKeyStore()
+			: new keyStores.BrowserLocalStorageKeyStore()
+		});
+		setNear(nearConnection);
+
+		if (!nearConnection) {
+			console.error("cannot connect to near");
+			setNear(undefined);
+			return;
+		}
+
+		if(nearConnection && privateKey){
 			const privateKeyEd25519 = getED25519Key(privateKey).sk.toString("hex");
 
 			// Convert the private key to Buffer
@@ -162,7 +170,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			// accountId is the account address which is where funds will be sent to.
 			const accountId = utils.serialize.base_decode(publicAddress.split(":")[1]).toString("hex");
 
-			const account = await near.account(accountId);
+			const account = await nearConnection.account(accountId);
 			setAccount(account);
 			console.log('web3auth set near account');
 			console.log(account);
@@ -234,8 +242,8 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		}
 
 		//web3auth
-		if(provider){
-			await provider.logout();
+		if(web3auth){
+			await web3auth.logout();
 			setProvider(null);
 		}
 	}, []);
