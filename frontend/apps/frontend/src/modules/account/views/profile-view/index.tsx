@@ -426,6 +426,7 @@ export const ProfileView = () => {
                                     </>
                                     )}
                                 </Field>
+                                <br></br>
                                 <span style={{display:"inline", marginTop:'5%'}}>
                                     <Button type="submit" style={{margin:"0 20%", backgroundColor:"green"}}>Save<FiEdit2 style={{marginLeft:"5px", display:"inline"}}/></Button>
                                     <Button type="button" onClick={handleCancelPressed} style={{margin:"0 2%",backgroundColor:"black", display:"inline"}}>Cancel</Button>

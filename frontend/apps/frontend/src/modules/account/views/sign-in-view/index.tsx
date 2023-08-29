@@ -16,7 +16,7 @@ export const SignInView: NextPage = () => {
 	useEffect(() => {
 
 		if (isSignedIn) {
-			router.push("/sign-up");
+			router.push("/discover");
 			console.log(isSignedIn);
 		}
 

@@ -247,12 +247,11 @@ export const CreateForm = () => {
 	const router = useRouter();
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
 	const { adapter } = usePostContracts();
-	const { isSignedIn } = useAccount();
 	const [userInWaitlist, setUserInWailist] = useState(false);
 	const [captureModalOpen, setCaptureModalOpen] = useState(false);
 	const [editorState, setEditorState] = useState("");
 	const { uploadFile, ipfsReady } = useIpfs();
-	const { account } = useAccount();
+	const { account, isSignedIn } = useAccount();
 	const [editor, setEditor] = useState<any>();
 
 	//rich text editor
@@ -296,7 +295,7 @@ export const CreateForm = () => {
 			console.log(userInWaitlist)
 		}
 
-	}, [ editor, editorState])
+	}, [ editor, editorState, account])
 
 	const getUser = async() => {
 		console.log('account');
