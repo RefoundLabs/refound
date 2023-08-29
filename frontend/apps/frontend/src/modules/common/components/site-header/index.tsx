@@ -49,8 +49,8 @@ export const SiteHeader = () => {
 						<div className="flex flex-row justify-center gap-4 rounded-full badge">
 							<NextLink href="/profile" >
 								<div>
-									<span className="text-background">{trimText(id, 15)}</span>
-									<span className="text-background">as {role}</span>
+									<span className="text-background">{trimText(id, 20)}</span>
+									{/* <span className="text-background"> as {role}</span> */}
 								</div>
 							</NextLink>
 						</div>

@@ -30,8 +30,8 @@ const validateForm = async (
   await dbConnect();
   const claimedHandle = await users.findOne({ username: username });
 
-  if (!claimedHandle) {
-    return {error: "handle has not been claimed. join the waitlist."}
+  if (claimedHandle) {
+    return {error: "Handle has already been claimed. Sign in."}
   }
 
   return null;
@@ -77,16 +77,19 @@ export default async function handler(
     //     res.status(400).json({ error: "Error on '/api/createAccount': " + err })
     //     );
 
-    await users.findOneAndUpdate({ username: username }, 
-      {$set: {
-        username: username,
-        email: email,
-        firstname: firstname,
-        lastname: lastname,
-        twitterHandle: twitterHandle,
-        link: link, 
-        walletAddress: accountId}
-      })
+    // await users.findOneAndUpdate({ username: username }, 
+    //   {$set: {
+    //     username: username,
+    //     email: email,
+    //     firstname: firstname,
+    //     lastname: lastname,
+    //     twitterHandle: twitterHandle,
+    //     link: link, 
+    //     walletAddress: accountId}
+    //   })
+
+    newUser
+        .save()
     .then(() =>{
         console.log('success');
         res.status(200).json({ msg: "Successfuly create account " + newUser })

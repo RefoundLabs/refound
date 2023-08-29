@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "./lib/connectdb";
-import users from "./lib/model/users";
+import waitlist from "./lib/model/waitlist";
 
 interface ResponseData {
   error?: string;
@@ -27,7 +27,7 @@ const validateForm = async (
   }
 
   await dbConnect();
-  const emailUser = await users.findOne({ email: email });
+  const emailUser = await waitlist.findOne({ email: email });
 
   if (emailUser) {
     return { error: "Email already exists" };
@@ -57,7 +57,7 @@ export default async function handler(
 
  
       // create new User on MongoDB
-    const newUser = new users({
+    const newWaitlistUser = new waitlist({
       username: username,
         email: email,
         firstname: firstname,
@@ -66,10 +66,10 @@ export default async function handler(
         link: link
     });
 
-    newUser
+    newWaitlistUser
         .save()
         .then(() =>
-        res.status(200).json({ msg: "Successfuly created new User: " + newUser })
+        res.status(200).json({ msg: "Successfuly created new User: " + newWaitlistUser })
         )
         .catch((err: string) =>
         res.status(400).json({ error: "Error on '/api/waitlist': " + err })

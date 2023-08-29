@@ -35,7 +35,7 @@ import AxiosResponse from "axios";
 
 
 export const SignUpView = () => {
-  const { account } = useAccount();
+  const { account, id } = useAccount();
 
 	const router = useRouter();
 	const [submitted , setSubmitted ] = useState();
@@ -61,9 +61,9 @@ export const SignUpView = () => {
 	const createUser = async () => {
 		console.log('create account fired')
     const accountId = account?.accountId;
-
-    getUser();
-      if(userInWaitlist && accountId && username && firstname && email){
+    console.log(account);
+      if(accountId && firstname){
+        console.log('call api createAccount');
           const res = await axios
           .post(
             "/api/createAccount",
@@ -87,6 +87,37 @@ export const SignUpView = () => {
         } 
 	};
 
+  const getUserInWaitlist = async() => {
+    if(username && email){
+        console.log(username);
+        console.log(email);
+        const res = await axios
+        .get(
+            "/api/getUserInWaitlist?username="+username+"&userEmail="+email,
+            {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            }
+            }
+        )
+        .then(async (response) => {
+            console.log(response.data);
+            if(response.data.data !== null){
+              setUserInWailist(true);
+              setAlert("");
+            }else{
+              setUserInWailist(false);
+              setAlert("User not found in waitlist.");
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+        //console.log(res);
+    }
+  }
+
   const getUser = async() => {
     if(username){
         console.log(username);
@@ -101,9 +132,9 @@ export const SignUpView = () => {
             }
         )
         .then(async (response) => {
-            setUserInWailist(true);
-            console.log(response.data.data);
-            if(response.data.data.email != ""){
+          console.log('get user');
+            console.log(response.data);
+            if(response.data.data !== null){
               setAccountExists(true);
             }
         })
@@ -115,34 +146,34 @@ export const SignUpView = () => {
   }
 
     useEffect(() => {
-      if (username){
-        console.log(username);
-        getUser();
-      }
       
       if(account){
           console.log(account);
           const accountID = account.accountId;
           console.log(accountID)
       }
+
+      if(!account){
+        router.push('/sign-in');
+      }
       
   }, []);
 
     useEffect(() => {
-      if (username){
-        console.log(username);
+      if (username && email){
+        console.log(username, email);
+        getUserInWaitlist();
+      }
+
+      if(userInWaitlist){
         getUser();
       }
+
       if(accountExists){
-        router.push('/profile');
+        setAlert("account already exists!");
+        router.push("/profile");
       }
-      if(userInWaitlist){
-        setAlert("");
-      }
-      if(accountExists){
-        setAlert("account already exists!")
-      }
-    }, [account, username, email, firstname, lastname, twitterHandle, link]); 
+    }, [account, accountExists, username, email, firstname, lastname, twitterHandle, link, userInWaitlist]); 
   
 
 	return (
@@ -160,7 +191,7 @@ export const SignUpView = () => {
 				</li>
 			</ul>
 
-			<h1 className="text-2xl font-bold">Create Your Account with your claimed Refound handle</h1>
+			<h1 className="text-2xl font-bold">Create Your Account with your claimed Refound handle and e-mail</h1>
 
 			
 		<div className="w-full pt-16 pb-4">
@@ -187,8 +218,7 @@ export const SignUpView = () => {
                   </>
                   )}
                 </Field>
-                {userInWaitlist && <>
-                  <Field name="email">
+                <Field name="email">
                     {() => (
                      <>
                         <Text>Email:</Text>
@@ -200,6 +230,9 @@ export const SignUpView = () => {
                        </>
                     )}
                   </Field>
+                  
+                {userInWaitlist && <>
+                 
                   <Field name="firstname">
                     {() => (
                       <>
@@ -261,9 +294,10 @@ export const SignUpView = () => {
                        </>
                     )}
                   </Field>
+                  
                   <Button
                     mt={6} 
-                    type="submit" style={{backgroundColor:"green"}}
+                    type="submit"  disabled={accountExists}  style={{backgroundColor:"green"}}
                   >Submit
                   </Button>
                 </>}

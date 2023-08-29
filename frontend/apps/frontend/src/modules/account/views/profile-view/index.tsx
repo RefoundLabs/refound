@@ -275,7 +275,7 @@ export const ProfileView = () => {
                             <div style={{margin:"0"}}>
                                 {!avatar && 
                                 <div style={{textAlign:"center"}} onClick={handleClickAvatarChange} >
-                                    <CgProfile style={{display:"inline"}} width="80%"/> 
+                                    <CgProfile style={{display:"inline", fontSize:"3em", marginLeft:"-40%"}}/> 
                                     <FiCamera style={{display:"inline", cursor:"pointer", marginLeft:"5px"}} />
                                     <Input id="avatarFileInput"
                                             value={undefined} 
@@ -305,16 +305,17 @@ export const ProfileView = () => {
                             <div style={{textAlign:"left", width:"80%"}}>
                                 <h4 style={{fontSize:"2em"}}>@{username}</h4>
                                 <h5 style={{fontSize:"1.5em"}}>{firstName} {lastName}</h5>
-                                <h5 style={{fontSize:"1.25em"}}>{bio}</h5>
+                                <h5 style={{fontSize:"1.15em"}}>{bio}</h5>
                                 <Grid >
                                     {twitterHandle && 
-                                        <Grid.Col sm={1}><Link href={"https://twitter.com/"+ twitterHandle.toString()} key="twitter" target="_blank"><FiTwitter style={{fontSize:"1.5em", color:"#24C5EF"}}></FiTwitter></Link></Grid.Col>
+                                        <Grid.Col sm={1}><Link href={"https://twitter.com/"+ twitterHandle.toString()} key="twitter" target="_blank"><FiTwitter style={{fontSize:"1.15em", color:"#24C5EF"}}></FiTwitter></Link></Grid.Col>
                                     }
                                     {link && 
-                                        <Grid.Col sm={1}><Link href={link.toString()} key="link" target="_blank"><FiGlobe style={{fontSize:"1.5em", color:"#24C5EF"}}></FiGlobe></Link></Grid.Col>
+                                        <Grid.Col sm={1}><Link href={link.toString()} key="link" target="_blank"><FiGlobe style={{fontSize:"1.15em", color:"#24C5EF"}}></FiGlobe></Link></Grid.Col>
                                     }
                                 </Grid>
-                                {account?.accountId && <h5 style={{fontSize:"1.25em"}}>Near Wallet Address: {account.accountId.toString().substring(0,10)}...</h5>}
+                                <br></br>
+                                {account?.accountId && <p style={{fontSize:"1em"}}>Near Wallet Address: {account.accountId.toString().substring(0,10)}...</p>}
                             </div>
                             <br></br>
                             {imageAlert && <Alert style={{backgroundColor:"red"}}>{imageAlert}</Alert>}
