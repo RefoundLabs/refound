@@ -343,7 +343,7 @@ export const ProfileView = () => {
                             {imageAlert && <Alert style={{backgroundColor:"red"}}>{imageAlert}</Alert>}
                             {imageMessage && <Alert style={{backgroundColor:"green"}}>{imageMessage}</Alert>}
                             <Button onClick={handleEditPressed} style={{margin:"0% 5%!important", marginRight:"5%", backgroundColor:"black"}} size="xs">Edit Profile <FiEdit2 style={{marginLeft:"5px"}}/></Button>
-                            {!verifier && <Button onClick={handleChangeRole} style={{margin:"0% 2%!important", backgroundColor:"grey"}} size="xs">Become A Verified NGO<FiAlertCircle style={{marginLeft:"5px"}}/></Button>}
+                            {!verifier && <Button onClick={handleChangeRole} style={{margin:"0% 2%!important", backgroundColor:"grey"}} size="xs">Become A Verifier<FiAlertCircle style={{marginLeft:"5px"}}/></Button>}
                         </div>
                     </Grid.Col>
                     <Grid.Col sm={8} itemID="nfts">
