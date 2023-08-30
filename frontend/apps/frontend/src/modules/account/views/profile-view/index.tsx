@@ -21,7 +21,7 @@ import { Field, Form, Formik } from "formik";
 import { TextInput, NumberInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { CgMenuGridR, CgProfile, CgCamera } from 'react-icons/cg';
-import {FiEdit2, FiInstagram,FiCamera, FiTwitter, FiGlobe, FiMail} from 'react-icons/fi'
+import {FiEdit2, FiInstagram,FiCamera, FiTwitter, FiGlobe, FiMail, FiAlertCircle} from 'react-icons/fi'
 import {FiArchive, FiUpload} from 'react-icons/fi';
 import {useSession ,signIn, signOut} from 'next-auth/react';
 import { userAgent } from 'next/server';
@@ -56,10 +56,14 @@ export const ProfileView = () => {
     const [message, setMessage] = useState("");
     const [imageAlert, setImageAlert] = useState("");
     const [imageMessage, setImageMessage] = useState("");
+    const [verifier, setVerifier] = useState(false);
 
     const { adapter } = usePostContracts();
 	const [posts, setPosts] = useState<Nullable<Post[]>>(undefined);
     const [filteredPosts, setFilteredPosts] = useState<Nullable<Post[]>>(undefined);
+
+    type AccountRole = "user" | "verifier";
+    const [role, setRole] = useState<any>();
 
     const handleEditPressed= () => {
         getUser();
@@ -162,6 +166,15 @@ export const ProfileView = () => {
         };
     }
     
+    const handleChangeRole = () => {
+        console.log('-----------change role triggered---------')
+        if(role == "user"){
+            sessionStorage.setItem("role", "verifier");
+            setRole("verifier");
+        }
+        
+    }
+
     const handleClickAvatarChange = () => {
         console.log('banner change triggered')
         document.getElementById('avatarFileInput')?.click();
@@ -205,6 +218,8 @@ export const ProfileView = () => {
             const accountID = account.accountId;
             console.log(accountID)
         }
+
+        setRole(sessionStorage.getItem("role") as AccountRole || "user");
     }, []);
  
     useEffect(() => {
@@ -232,7 +247,14 @@ export const ProfileView = () => {
 
             editAvatar();
         }
-    }, [email, username, bio, link, twitterHandle, account, avatar, avatarFile])
+
+        if(role){
+            console.log(role)
+            if(role == "verifier"){
+                setVerifier(true);
+            }
+        }
+    }, [email, username, bio, link, twitterHandle, account, avatar, avatarFile, role])
 
 
     //posts
@@ -302,8 +324,8 @@ export const ProfileView = () => {
                                         />    
                                 </div>}
                             </div>
-                            <div style={{textAlign:"left", width:"80%"}}>
-                                <h4 style={{fontSize:"2em"}}>@{username}</h4>
+                            <div style={{textAlign:"left", width:"100%"}}>
+                                <h4 style={{fontSize:"2em", display:"inline"}}>@{username}</h4> {role && <Button disabled style={{margin:"0% 2%!important", backgroundColor:"green", color:"white", display:"inline"}} size="xs">{role}</Button>}
                                 <h5 style={{fontSize:"1.5em"}}>{firstName} {lastName}</h5>
                                 <h5 style={{fontSize:"1.15em"}}>{bio}</h5>
                                 <Grid >
@@ -320,7 +342,8 @@ export const ProfileView = () => {
                             <br></br>
                             {imageAlert && <Alert style={{backgroundColor:"red"}}>{imageAlert}</Alert>}
                             {imageMessage && <Alert style={{backgroundColor:"green"}}>{imageMessage}</Alert>}
-                            <Button onClick={handleEditPressed} style={{margin:"0% 1%!important", backgroundColor:"black"}} size="xs">Edit Profile <FiEdit2 style={{marginLeft:"5px"}}/></Button>
+                            <Button onClick={handleEditPressed} style={{margin:"0% 5%!important", marginRight:"5%", backgroundColor:"black"}} size="xs">Edit Profile <FiEdit2 style={{marginLeft:"5px"}}/></Button>
+                            {!verifier && <Button onClick={handleChangeRole} style={{margin:"0% 2%!important", backgroundColor:"grey"}} size="xs">Become A Verified NGO<FiAlertCircle style={{marginLeft:"5px"}}/></Button>}
                         </div>
                     </Grid.Col>
                     <Grid.Col sm={8} itemID="nfts">

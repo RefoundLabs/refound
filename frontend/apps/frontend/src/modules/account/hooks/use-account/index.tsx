@@ -116,6 +116,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 
 	const signIn = async (type: WalletType) => {
 		sessionStorage.setItem("walletType", type);
+		sessionStorage.setItem("role", "user")
 		console.log('setting wallet type:'+type);
 		console.log(type);
 		if(type.toString() == "near"){
