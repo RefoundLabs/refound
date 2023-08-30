@@ -2,6 +2,7 @@ type AccountId = string;
 
 export type Post = {
 	id: number;
+	series_id:number;
 	owner: AccountId;
 	owner_id: AccountId;
 	title: string;
@@ -9,6 +10,7 @@ export type Post = {
 	imageLink: string;
 	media:string;
 	extra:string;
+	tags:string;
 	isVerified: boolean;
 	userHasVoted: boolean;
 	voteCount: number;

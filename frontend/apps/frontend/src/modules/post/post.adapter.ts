@@ -173,10 +173,14 @@ export class PostContractAdapter {
 
 		const post: Post = {
 			id: series.series_id,
+			series_id: series.series_id,
+			tags: "",
+			owner_id: series.owner_id,
 			owner: series.owner_id,
 			title: series.metadata.title || "Untitled",
 			description: series.metadata.description || "",
 			imageLink: series.metadata.media || "/placeholder.jpeg",
+			media: "",
 			extra: series.metadata.extra || "",
 			isVerified: series.verified,
 			voteCount,
@@ -197,13 +201,14 @@ export class PostContractAdapter {
 			const seriesDetails = await this.contract.get_series_details({ id: query.id });
 
 			let post = await this.postDtoToEntity(seriesDetails);
-
+			console.log('get post hook')
+			console.log(post);
 				
 			return result.ok(post);
 		} catch (error) {
 			console.error(error);
 			let key = '{"id": ' + query.id + '}';
-			console.log(key)
+			//console.log(key)
 			//return result.fail(new Error("Could not get post."));
 			const rawResult = await provider.query({
 				request_type: "call_function",
@@ -240,7 +245,7 @@ export class PostContractAdapter {
 		let foundPosts = false;
 		let posts : any = [];
 		try {
-			console.log(this.contract);
+			//console.log(this.contract);
 			const series = await (
 				await this.contract.get_series(query)
 			).filter(
@@ -388,9 +393,10 @@ export class PostContractAdapter {
 				
 				//add splits here
 			}
+			console.log('create post')
 			console.log(locationTaken);
 			console.log(tags);
-
+			console.log(nextId)
 
 			// TODO: is there some kind of confirmation we can get out of contract calls?
 			await this.contract.create_series(

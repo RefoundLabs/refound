@@ -17,6 +17,7 @@ import { isString } from "@utils/validation";
 import type { PostContractAdapter } from "@modules/post/post.adapter";
 import { useIpfs } from "@modules/post/hooks/use-ipfs";
 import { FileDropInput } from "./file-drop-input";
+import { AudioFileDropInput } from "./audio-file-drop-input";
 import { AlertBar } from "@modules/common/components/alert-bar/alert-bar";
 import { useAccount } from "@modules/account/hooks/use-account";
 import NextLink from "next/link";
@@ -524,8 +525,8 @@ export const CreateForm = () => {
 					formats={formats}
 					onChange={handleChange} style={{width:"100%"}} /> */}
     
-					{/* <span className={S.fieldLabelText}>Audio* <span style={{fontSize:"0.7em"}}>(max. 30 seconds)</span></span>
-					<FileDropInput 
+					<span className={S.fieldLabelText}>Audio* <span style={{fontSize:"0.7em"}}>(max. 30 seconds)</span></span>
+					<AudioFileDropInput 
 						setProps={(audio) => {
 							dispatch({ type: "SET_AUDIO", payload: audio });
 						}}
@@ -535,7 +536,7 @@ export const CreateForm = () => {
 								? { audio: state.audio, length: state.audio.type.length }
 								: undefined
 						}
-					/> */}
+					/> 
 
 				</label>
 			</Grid.Col>

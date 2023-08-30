@@ -34,8 +34,6 @@ export const PostView = () => {
 			return;
 		}
 
-		console.log({ queryId });
-
 		adapter.getPost({ id: queryId }).then((result) =>
 			result.match({
 				ok: (post) => setPost(post),
@@ -45,7 +43,7 @@ export const PostView = () => {
 				},
 			}),
 		);
-		console.log(post);
+		//console.log(post);
 	}, [postIdQuery, adapter, post]);
 
 	if (notFound) return <NotFoundPage />;

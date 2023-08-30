@@ -31,7 +31,7 @@ const NEAR_CONFIG: ConnectConfig = {
 	nodeUrl: "https://rpc.testnet.near.org",
 	walletUrl: "https://wallet.testnet.near.org",
 	helperUrl: "https://helper.testnet.near.org",
-	// explorerUrl: "https://explorer.testnet.near.org",
+	//explorerUrl: "https://explorer.testnet.near.org",
 };
 
 type State = {
@@ -172,8 +172,8 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 
 			const account = await nearConnection.account(accountId);
 			setAccount(account);
-			console.log('web3auth set near account');
-			console.log(account);
+			//console.log('web3auth set near account');
+			//console.log(account);
 			router.push("/discover");
 		}
 	}, [account, provider]);
@@ -217,7 +217,25 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		setWallet(wallet);
 
 		const accounts = await wallet.getAccounts();
-		setAccount(accounts[0]);
+		
+		if(!near){
+			const nearConnection = await connect({
+				...NEAR_CONFIG,
+				keyStore:  typeof window === "undefined"
+				? new keyStores.InMemoryKeyStore()
+				: new keyStores.BrowserLocalStorageKeyStore()
+			});
+			setNear(nearConnection);
+
+			const account = await nearConnection.account(accounts[0].accountId);
+			setAccount(account);
+			
+		}else{
+			const account = await near.account(accounts[0].accountId);
+			setAccount(account);
+		}
+		
+		
 		
 		router.push("/discover");
 		modal.hide();

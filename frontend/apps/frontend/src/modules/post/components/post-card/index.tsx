@@ -1,13 +1,27 @@
 import type { Post } from "@modules/post/domain/post.entity";
 import { trimText } from "@utils/trim-text";
 import NextImage from "next/image";
+import NextLink from "next/link";
 import { InteractionsBadge } from "./interactions";
+import { useRouter } from "next/router";
 
 export const PostCard = ({
 	post: { imageLink, media, title, description, id, series_id, owner, owner_id, tags, isVerified, voteCount },
 }: {
 	post: Post;
 }) => {
+	const router = useRouter();
+
+	const handleOnClick = () => {
+		if(id){
+			router.push('/posts?id=' + id )
+		}else if(series_id){
+			router.push('/posts?id=' + series_id)
+		}
+		
+	};
+
+
 	return (
 		<article className="flex flex-col gap-2 mb-8 group">
 			<div className="relative">
@@ -45,7 +59,8 @@ export const PostCard = ({
 				</figure>
 				<a
 					className="absolute top-0 bottom-0 left-0 right-0 w-full h-full"
-					href={`/posts?id=${id || series_id}`}
+					//href={`/posts?id=${id || series_id}`}
+					onClick={handleOnClick}
 					aria-label="go to article"
 				/>
 			</div>
@@ -60,7 +75,7 @@ export const PostCard = ({
 					{owner &&
 						<a href={"https://refound.app/user/" + owner }><span className="text-xs">{owner?.split(".")[0].substring(0,20)}</span></a>
 					}
-					{ owner_id &&
+					{!owner && owner_id &&
 						<a href={"https://refound.app/user/" + owner_id}><span className="text-xs">{owner_id?.split(".")[0].substring(0,20)}</span></a>
 					}
 				</div>

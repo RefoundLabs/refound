@@ -7,7 +7,7 @@ import { getImageDimensions } from "./get-image-dimensions";
 import { PolyButton } from "@modules/common/components/poly-button";
 import { toast } from "@services/toast/toast";
 
-const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".mp3", ".wav", "audio/*"];
+const ALLOWED_FILE_EXTENSIONS = [".mp3", ".wav", "audio/*"];
 
 type ReducerState = {
 	dropDepth: number;
@@ -61,37 +61,35 @@ const isAcceptableFile = (file: File): boolean => {
 
 	const fileExtension = `.${splitFileName[splitFileName.length - 1]}`;
 
-	return ALLOWED_IMAGE_EXTENSIONS.includes(fileExtension.toLowerCase());
+	return ALLOWED_FILE_EXTENSIONS.includes(fileExtension.toLowerCase());
 };
 
-export const FileDropInput = ({
+export const AudioFileDropInput = ({
 	setProps,
-	uploadedImage
+	uploadedAudio
 }: {
 	setProps: (props: { image?: File; width?: number; height?: number; audio?: File; length?: number; }) => void;
-	uploadedImage?: { image: File; width: number; height: number };
+	uploadedAudio?: {audio: File; length: number;};
 }) => {
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
 	const inputRef = useRef(null);
 
 	useEffect(() => {
-		setProps({ image: state.file, width: state.fileWidth, height: state.fileHeight});
+		setProps({ image: state.file, width: state.fileWidth, height: state.fileHeight, audio: uploadedAudio?.audio, length: uploadedAudio?.length});
 	}, [state]);
 
+
 	useEffect(() => {
-		if (uploadedImage) {
+		if (uploadedAudio) {
 			dispatch({
-				type: "SET_FILE",
+				type: "SET_AUDIO",
 				payload: {
-					file: uploadedImage.image,
-					fileWidth: uploadedImage.width,
-					fileHeight: uploadedImage.height,
+					file: uploadedAudio.audio,
+					length: uploadedAudio.length
 				},
 			});
 		}
-	}, [uploadedImage]);
-
-	
+	}, [uploadedAudio]);
 
 	const handleDragEnter = (e: DragEvent<HTMLElement>) => {
 		e.preventDefault();
@@ -129,7 +127,7 @@ export const FileDropInput = ({
 		if (!isAcceptableFile(file)) {
 			dispatch({ type: "RESET" });
 			toast.error(
-				`Image must have have one of the following extensions: ${ALLOWED_IMAGE_EXTENSIONS.join(
+				`Image must have have one of the following extensions: ${ALLOWED_FILE_EXTENSIONS.join(
 					", ",
 				)}`,
 				"invalid-image-extension",
@@ -189,30 +187,17 @@ export const FileDropInput = ({
 				onDragEnter={handleDragEnter}
 				onDragLeave={handleDragLeave}
 				onClick={handleClick}
-				className={`relative flex flex-col items-center justify-center w-full h-60 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 overflow-hidden ${
+				className={`relative flex flex-col items-center justify-center w-full h-50 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 overflow-hidden ${
 					state.inDropZone ? "bg-green-200" : ""
 				}`}
 			>
 				<div className="flex flex-col items-center justify-center pt-5 pb-6">
 					<div className="flex flex-col items-center justify-center w-full">
-						<svg
-							aria-hidden="true"
-							className="w-10 h-5 mb-3 text-gray-400"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth="2"
-								d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-							></path>
-						</svg>
-						<p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-							<span className="font-semibold">Click to upload</span> or drag and drop
-						</p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 16 16"> <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z"/> <path d="M10 8a2 2 0 1 1-4 0V3a2 2 0 1 1 4 0v5zM8 0a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3z"/> </svg>
+					<br></br>
+					<p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+						<span className="font-semibold">Click to upload</span> or drag and drop
+					</p>
 						{/* <p className="text-xs text-gray-500 dark:text-gray-400">PNG or JPG</p> */}
 					</div>
 				</div>
@@ -225,7 +210,7 @@ export const FileDropInput = ({
 					onClick={(e) => {
 						e.stopPropagation();
 					}}
-					accept={ALLOWED_IMAGE_EXTENSIONS.join(",")}
+					accept={ALLOWED_FILE_EXTENSIONS.join(",")}
 				/>
 				{state.file && (
 					<figure className="absolute w-full h-full bg-white">

@@ -34,8 +34,8 @@ export const DiscoverView = () => {
 	
 	useEffect(()=>{
 		if(posts) {
-			console.log('posts obj')
-			console.log(posts);
+			//console.log('posts obj')
+			//console.log(posts);
 		}
 		if(!posts) getState();
 
@@ -60,9 +60,9 @@ export const DiscoverView = () => {
 				!config.content.moderationList.posts.includes(item.series_id),
 			);
 
-			console.log('discover get series')
+			//console.log('discover get series')
 			let newPosts = rawposts.map((item:any) => flattenObject(item));
-			console.log(newPosts)
+			//console.log(newPosts)
 			setPosts(newPosts);
 	}
 
