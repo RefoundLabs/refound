@@ -51,7 +51,7 @@ const AccountContext = createContext<State>(initialState);
 export const useAccount = () => useContext(AccountContext);
 
 export const AccountContextProvider = ({ children }: { children: ReactNode }) => {
-	const { wallet, account, provider, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth, requestSignOut } = useNear();
+	const { account, provider, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth, requestSignOut } = useNear();
 	const [accountState, setAccountState] = useState<AccountState>({ isSignedIn: false });
 
 	const reset = useCallback(() => {

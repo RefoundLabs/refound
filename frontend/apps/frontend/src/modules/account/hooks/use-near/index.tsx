@@ -38,8 +38,8 @@ type State = {
 	near?: Near;
 	//wallet?: WalletConnection;
 	wallet?: any;
-	provider: Provider;
-	account: Account;
+	provider?: Provider;
+	account?: Account;
 	checkIsLoggedIn: () => boolean;
 	requestSignInNear: () => Promise<void>;
 	requestSignInWeb3Auth: () => Promise<void>;
@@ -86,7 +86,21 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			return;
 		}
 
-		
+		const nearConnection = await connect({
+			...NEAR_CONFIG,
+			keyStore:  typeof window === "undefined"
+			? new keyStores.InMemoryKeyStore()
+			: new keyStores.BrowserLocalStorageKeyStore()
+		});
+		//console.log(nearConnection)
+		setNear(nearConnection);
+
+		// if (!near) {
+		// 	console.error("cannot connect to near");
+		// 	setNear(undefined);
+		// 	setWallet(undefined);
+		// 	return;
+		// }
 
 		//const walletConnection = new WalletConnection(nearConnection, null);
 		//setWallet(walletConnection);
@@ -96,7 +110,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 
 		// 	return;
 		// }
-
+		console.log("near initialized");
 	}, []);
 
 	const checkIsLoggedIn = useCallback(() => 
@@ -138,21 +152,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		// Convert the secp256k1 key to ed25519 key
 		const { getED25519Key } = await import("@toruslabs/openlogin-ed25519");
 		
-		const nearConnection = await connect({
-			...NEAR_CONFIG,
-			keyStore:  typeof window === "undefined"
-			? new keyStores.InMemoryKeyStore()
-			: new keyStores.BrowserLocalStorageKeyStore()
-		});
-		setNear(nearConnection);
-
-		if (!nearConnection) {
-			console.error("cannot connect to near");
-			setNear(undefined);
-			return;
-		}
-
-		if(nearConnection && privateKey){
+		if(near && privateKey){
 			const privateKeyEd25519 = getED25519Key(privateKey).sk.toString("hex");
 
 			// Convert the private key to Buffer
@@ -170,10 +170,10 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			// accountId is the account address which is where funds will be sent to.
 			const accountId = utils.serialize.base_decode(publicAddress.split(":")[1]).toString("hex");
 
-			const account = await nearConnection.account(accountId);
+			const account = await near.account(accountId);
 			setAccount(account);
 			//console.log('web3auth set near account');
-			//console.log(account);
+			console.log(account);
 			router.push("/discover");
 		}
 	}, [account, provider]);
@@ -208,7 +208,6 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			contractId: contractAddress,
 			theme : "dark"
 		})
-		setNearModal(modal);
 		setSelector(selector);
 		modal.show();
 
@@ -217,27 +216,15 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		setWallet(wallet);
 
 		const accounts = await wallet.getAccounts();
+		setAccount(accounts[0])
 		
-		if(!near){
-			const nearConnection = await connect({
-				...NEAR_CONFIG,
-				keyStore:  typeof window === "undefined"
-				? new keyStores.InMemoryKeyStore()
-				: new keyStores.BrowserLocalStorageKeyStore()
-			});
-			setNear(nearConnection);
-
-			const account = await nearConnection.account(accounts[0].accountId);
-			setAccount(account);
-			
-		}else{
+		if(near){
 			const account = await near.account(accounts[0].accountId);
 			setAccount(account);
-		}
+			router.push("/discover");
+		}	
+	
 		
-		
-		
-		router.push("/discover");
 		modal.hide();
 		
 	}, [wallet, selector, nearModal, account]);
@@ -273,13 +260,13 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 
 	const value: State = useMemo(
 		() => ({
-			wallet, provider, nearModal, account, selector,
+			wallet, provider, account, selector,
 			checkIsLoggedIn,
 			requestSignInNear,
 			requestSignInWeb3Auth,
 			requestSignOut,
 		}),
-		[ wallet, provider, nearModal, account, selector, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth, requestSignOut],
+		[ wallet, provider,  account, selector, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth, requestSignOut],
 	);
 
 	return <NearContext.Provider value={value}>{children}</NearContext.Provider>;
