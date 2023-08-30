@@ -352,8 +352,7 @@ export const CreateForm = () => {
 
 			if (!image?.name || image.size === 0) throw new Error("File is missing.");
 			//if (!audio?.name || audio.size === 0) throw new Error("File is missing.");
-			console.log('audio.size');
-
+			
 			if (!description) throw new Error("Description is missing.");
 
 			const creationProps = {
@@ -374,6 +373,9 @@ export const CreateForm = () => {
 					articleText: articleText, 
 				},
 			};
+			console.log('creation props');
+			console.log(creationProps)
+
 				//console.log(creationProps)
 			dispatch({ type: "VALIDATION_PASS" });
 			return result.ok(creationProps);
@@ -410,11 +412,15 @@ export const CreateForm = () => {
 				await uploadFile({
 					title: creationProps.metadata.title,
 					postImage: creationProps.image,
-					postAudio: creationProps.audio,
+					//postAudio: creationProps.audio,
 				})
 			).unwrapOrElse((error) => {
+				console.log('error ipfs upload')
 				throw error;
 			});
+
+			console.log(creationProps);
+			console.log('creation props')
 
 			const success = (
 				await adapter.createPost({

@@ -5,6 +5,12 @@ import { Contract as NearContract } from "near-api-js";
 import { config } from "@config/config";
 import type { LicenseType, Post } from "./domain/post.entity";
 import type { Account } from "near-api-js";
+const { providers } = require("near-api-js");
+//network config (replace testnet with mainnet or betanet)
+const provider = new providers.JsonRpcProvider(
+  "https://rpc.testnet.near.org"
+);
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
 type SeriesId = number;
 type Base64VecU8 = string;
@@ -119,6 +125,8 @@ export class PostContractAdapter {
 		account: Account;
 	}): Promise<Result<PostContractAdapter>> {
 		try {
+			console.log(account);
+			console.log(this.contractAddress)
 			const contract = (await new NearContract(
 				account,
 				this.contractAddress,
@@ -142,7 +150,7 @@ export class PostContractAdapter {
 	//----------------------------------------
 	//----------------------------------------
 
-	private async postDtoToEntity(series: JsonSeries): Promise<Post> {
+	public async postDtoToEntity(series: JsonSeries): Promise<Post> {
 		//console.log({ postDtoToEntity1: this.contract });
 		let userHasVoted = false;
 		
@@ -188,18 +196,51 @@ export class PostContractAdapter {
 		try {
 			const seriesDetails = await this.contract.get_series_details({ id: query.id });
 
-			const post = await this.postDtoToEntity(seriesDetails);
+			let post = await this.postDtoToEntity(seriesDetails);
 
+				
 			return result.ok(post);
 		} catch (error) {
 			console.error(error);
-
-			return result.fail(new Error("Could not get post."));
+			let key = '{"id": ' + query.id + '}';
+			console.log(key)
+			//return result.fail(new Error("Could not get post."));
+			const rawResult = await provider.query({
+				request_type: "call_function",
+				account_id: "dev-1669390838754-18143842088820",
+				method_name: "get_series_details",
+				args_base64: Buffer.from(key).toString('base64'),
+				finality: "optimistic",
+			  });
+			
+			  const res = JSON.parse(Buffer.from(rawResult.result).toString());
+			  console.log(res);
+			  return result.ok(this.flattenObject(res));
 		}
 	}
 
+	public flattenObject = (obj:any) => {
+		const flattened:any = {}
+	  
+		Object.keys(obj).forEach((key) => {
+		  const value = obj[key]
+	  
+		  if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+			Object.assign(flattened, this.flattenObject(value))
+			obj.key = "";
+		  } else {
+			flattened[key] = value
+		  }
+		})
+	  
+		return flattened
+	  }
+
 	async getPosts(query: { from_index?: number; limit?: number }): Promise<Result<Post[]>> {
+		let foundPosts = false;
+		let posts : any = [];
 		try {
+			console.log(this.contract);
 			const series = await (
 				await this.contract.get_series(query)
 			).filter(
@@ -208,16 +249,49 @@ export class PostContractAdapter {
 					!config.content.moderationList.posts.includes(seriesItem.series_id),
 			);
 
-			const posts: Post[] = await Promise.all(
+			console.log('series');
+			console.log(series);
+
+			posts = await Promise.all(
 				series.map(async (item) => this.postDtoToEntity(item)),
 			);
-
-			return result.ok(posts);
+			foundPosts = true;
+			//return result.ok(posts);
 		} catch (error) {
 			console.error(error);
-
-			return result.fail(new Error("Could not get posts."));
+			 
 		}
+		
+		// if(!foundPosts){
+		// 	try{
+		// 		const rawResult = await provider.query({
+		// 			request_type: "call_function",
+		// 			account_id: "dev-1669390838754-18143842088820",
+		// 			method_name: "get_series",
+		// 			args_base64: "e30=",
+		// 			finality: "optimistic",
+		// 		  });
+				
+		// 		  // format result
+		// 		  const res = JSON.parse(Buffer.from(rawResult.result).toString());
+		// 		  const rawposts = res.filter(
+		// 		  (item:any) =>
+		// 			  !config.content.moderationList.posts.includes(item.series_id),
+		// 		  );
+				  
+		// 		  console.log('get series')
+		// 		  console.log(rawposts);
+		// 		  posts = await Promise.all(
+		// 			  rawposts.map(async (item:any) => this.postDtoToEntity(item)),
+		// 		  );
+		// 		  foundPosts = true;
+		// 		  console.log(posts);
+		// 		  //return result.ok(posts);
+		// 	 }catch{
+		// 		//return result.fail(new Error("Could not get posts."));
+		// 	 }
+		// }
+		return result.ok(posts);
 	}
 
 
@@ -314,6 +388,9 @@ export class PostContractAdapter {
 				
 				//add splits here
 			}
+			console.log(locationTaken);
+			console.log(tags);
+
 
 			// TODO: is there some kind of confirmation we can get out of contract calls?
 			await this.contract.create_series(
@@ -334,8 +411,6 @@ export class PostContractAdapter {
 				yoctoDeposit,
 			);
 
-			console.log(locationTaken);
-			console.log(tags);
 
 			return result.ok(true);
 		} catch (error) {

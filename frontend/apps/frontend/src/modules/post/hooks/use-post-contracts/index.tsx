@@ -17,7 +17,7 @@ const PostContractsContext = createContext<State>(initialState);
 export const usePostContracts = () => useContext(PostContractsContext);
 
 export const PostContractsContextProvider = ({ children }: { children: ReactNode }) => {
-	const { wallet, account, provider, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth } = useNear();
+	const { account, provider, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth } = useNear();
 	const [adapter, setAdapter] = useState<State["adapter"]>(initialState.adapter);
 
 	useEffect(() => {
@@ -27,9 +27,11 @@ export const PostContractsContextProvider = ({ children }: { children: ReactNode
 		// 	requestSignInNear();
 		// 	return;
 		// }
-		console.log('account')
-		console.log(account)
-
+		if(account){
+			console.log('account')
+			console.log(account)	
+		}
+		
 		PostContractAdapter.init({ account: account }).then((result) => {
 			result.match({
 				ok: (contractAdapter) => setAdapter(contractAdapter),
@@ -40,7 +42,7 @@ export const PostContractsContextProvider = ({ children }: { children: ReactNode
 				},
 			});
 		});
-	}, [wallet]);
+	}, [account]);
 
 	const value = useMemo(
 		() => ({

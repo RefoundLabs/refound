@@ -4,7 +4,7 @@ import NextImage from "next/image";
 import { InteractionsBadge } from "./interactions";
 
 export const PostCard = ({
-	post: { imageLink, title, description, id, owner, isVerified, voteCount },
+	post: { imageLink, media, title, description, id, series_id, owner, owner_id, tags, isVerified, voteCount },
 }: {
 	post: Post;
 }) => {
@@ -12,36 +12,40 @@ export const PostCard = ({
 		<article className="flex flex-col gap-2 mb-8 group">
 			<div className="relative">
 				<figure className="relative w-full pb-[80%] overflow-hidden rounded-md">
-					<NextImage src={imageLink} layout="fill" objectFit="cover" alt={title} />
+					<NextImage src={imageLink || media} layout="fill" objectFit="cover" alt={title} />
 					<figcaption className="absolute top-0 bottom-0 left-0 right-0 flex flex-col justify-between transition-opacity duration-300 opacity-0 bg-gradient-to-b from-transparent to-primary/90 group-hover:opacity-100">
-						{/* <div className="w-full p-4">
-                        {tags.map((tag) => (
-                            <span
-                                key={tag}
-                                className="text-white inline-block text-xs bg-black rounded-full px-[0.8em] py-[0.2em] leading-none mr-[0.5em]"
-                            >
-                                {tag}
-                            </span>
-                        ))}
-                    </div> */}
+						{tags &&
+							<div className="w-full p-4">
+								{tags.map((tag:any) => (
+									<span
+										key={tag}
+										className="text-white inline-block text-xs bg-black rounded-full px-[0.8em] py-[0.2em] leading-none mr-[0.5em]"
+									>
+										{tag}
+									</span>
+								))}
+                   		 </div>
+						}
 						<span />
-						<div className="translate-y-[100%] duration-150 group-hover:translate-y-0 p-2 text-white text-sm">
-							<div className="flex flex-row justify-between w-full mt-2">
-								<InteractionsBadge voteCount={voteCount} />
-								{/* <InteractionsBadge interactionList={interactions} /> */}
-								{/* <time
-                                className="text-xs"
-                                dateTime={new Date(createdAt).toISOString()}
-                            >
-                                {new Date(createdAt).toDateString()}
-                            </time> */}
+						{voteCount && 
+							<div className="translate-y-[100%] duration-150 group-hover:translate-y-0 p-2 text-white text-sm">
+								<div className="flex flex-row justify-between w-full mt-2">
+									<InteractionsBadge voteCount={voteCount} />
+									{/* <InteractionsBadge interactionList={interactions} /> */}
+									{/* <time
+									className="text-xs"
+									dateTime={new Date(createdAt).toISOString()}
+								>
+									{new Date(createdAt).toDateString()}
+								</time> */}
+								</div>
 							</div>
-						</div>
+						}
 					</figcaption>
 				</figure>
 				<a
 					className="absolute top-0 bottom-0 left-0 right-0 w-full h-full"
-					href={`/posts?id=${id}`}
+					href={`/posts?id=${id || series_id}`}
 					aria-label="go to article"
 				/>
 			</div>
@@ -53,8 +57,12 @@ export const PostCard = ({
 							NGO Verified
 						</span>
 					)}
-
-					<a href={"https://refound.app/user/" + owner}><span className="text-xs">{owner.split(".")[0].substring(0,20)}</span></a>
+					{owner &&
+						<a href={"https://refound.app/user/" + owner }><span className="text-xs">{owner?.split(".")[0].substring(0,20)}</span></a>
+					}
+					{ owner_id &&
+						<a href={"https://refound.app/user/" + owner_id}><span className="text-xs">{owner_id?.split(".")[0].substring(0,20)}</span></a>
+					}
 				</div>
 				{/* <AccountBadge profile={creator} /> */}
 			</div>

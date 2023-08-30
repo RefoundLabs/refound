@@ -65,7 +65,7 @@ export const PostView = () => {
 
 				<meta property="og:title" content={post.title} />
 				<meta property="og:description" content={post.description} />
-				<meta property="og:image" content={post.imageLink} />
+				<meta property="og:image" content={post.imageLink || post.media} />
 			</NextHead>
 
 			<article className="flex flex-col w-full max-w-screen-lg gap-12 mx-auto my-12 sm:gap-16 sm:py-16 px-contentPadding">
@@ -84,8 +84,8 @@ export const PostView = () => {
 
 					<p className="text-sm font-bold">
 						by{" "}
-						<a href={"https://refound.app/user/" + post.owner}><span className="text-black inline-block text-sm pt-[0.25em] pb-[0.4em] leading-none mr-[0.5em]">
-							@{post.owner}
+						<a href={"https://refound.app/user/" + post.owner || post.owner_id}><span className="text-black inline-block text-sm pt-[0.25em] pb-[0.4em] leading-none mr-[0.5em]">
+							@{post.owner || post.owner_id}
 						</span></a>
 					</p>
 					
@@ -98,7 +98,7 @@ export const PostView = () => {
 				</header>
 
 				<figure className="w-full overflow-hidden rounded-lg">
-					<img src={post.imageLink} alt={post.title} />
+					<img src={post.imageLink || post.media} alt={post.title} />
 
 					{post.description && (
 						<p className="text-base max-w-[50ch] mt-4">{post.description}</p>

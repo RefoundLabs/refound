@@ -13,12 +13,12 @@ import type { Nullable } from "@utils/helper-types";
 
 type State =
 	| {
-			ipfsReady: true;
-			uploadFile: (payload: { postImage: File; title: string; postAudio: File; }) => Promise<Result<string>>;
+		ipfsReady: true;
+		uploadFile: (payload: { postImage: File; title: string; postAudio?: File; }) => Promise<Result<string>>;
 	  }
 	| {
-			ipfsReady: false;
-			uploadFile?: (payload: { postImage: File; title: string; postAudio: File; }) => Promise<Result<string>>;
+		ipfsReady: false;
+		uploadFile?: (payload: { postImage: File; title: string; postAudio: File; }) => Promise<Result<string>>;
 	  };
 
 const initialState: State = {
