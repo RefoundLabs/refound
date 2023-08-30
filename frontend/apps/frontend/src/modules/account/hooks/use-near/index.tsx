@@ -216,7 +216,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		setWallet(wallet);
 
 		const accounts = await wallet.getAccounts();
-		setAccount(accounts[0])
+		//setAccount(accounts[0])
 		
 		if(near){
 			const account = await near.account(accounts[0].accountId);
@@ -266,7 +266,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			requestSignInWeb3Auth,
 			requestSignOut,
 		}),
-		[ wallet, provider,  account, selector, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth, requestSignOut],
+		[ wallet, provider,  account, selector, near, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth, requestSignOut],
 	);
 
 	return <NearContext.Provider value={value}>{children}</NearContext.Provider>;

@@ -509,7 +509,7 @@ export const CreateForm = () => {
 
 					<button
 						type="button"
-						style={{marginTop:"20px", marginBottom:"20px"}}
+						style={{marginTop:"20px", marginBottom:"20px", borderRadius:"10px"}}
 						className="btn btn-block"
 						onClick={(e) => {
 							e.preventDefault();

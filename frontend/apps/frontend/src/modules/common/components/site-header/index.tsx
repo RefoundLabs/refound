@@ -57,7 +57,7 @@ export const SiteHeader = () => {
 
 						<button
 							type="button"
-							className="btn btn-sm"
+							className="btn btn-sm" style={{borderRadius:"10px"}}
 							onClick={() => {
 								signOut();
 							}}
@@ -67,7 +67,7 @@ export const SiteHeader = () => {
 					</div>
 				) : (
 					<NextLink href="/sign-in">
-						<a className="btn">Sign In</a>
+						<a className="btn" style={{borderRadius:"10px"}}>Sign In</a>
 					</NextLink>
 				)}
 
