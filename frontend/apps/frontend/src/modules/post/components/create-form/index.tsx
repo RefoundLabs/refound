@@ -45,6 +45,7 @@ import { copyFileSync } from "fs";
 import { useRef } from "react";
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import { AudioRecorder } from 'react-audio-voice-recorder';
 
 import BubbleMenu from '@tiptap/extension-bubble-menu'
 
@@ -254,6 +255,7 @@ export const CreateForm = () => {
 	const { uploadFile, ipfsReady } = useIpfs();
 	const { account, isSignedIn } = useAccount();
 	const [editor, setEditor] = useState<any>();
+	const [record, setRecord] = useState(false);
 
 	//rich text editor
 	// if (typeof window !== "undefined") {
@@ -481,6 +483,14 @@ export const CreateForm = () => {
 // 	//dispatch({ type: "SET_ARTICLETEXET", payload: value.toString(); });
 //   }
 
+const addAudioElement = (blob: Blob) => {
+    const url = URL.createObjectURL(blob);
+    const audio = document.createElement('audio');
+    audio.src = url;
+    audio.controls = true;
+	console.log(audio);
+    //state.audio = audio;
+  };
 
 	return (
 		<>
@@ -537,6 +547,31 @@ export const CreateForm = () => {
 								: undefined
 						}
 					/> 
+					<br></br>
+					<div>
+						<span>Record Live Audio</span>
+						<AudioRecorder
+							onRecordingComplete={addAudioElement}
+							audioTrackConstraints={{
+							noiseSuppression: true,
+							echoCancellation: true,
+							// autoGainControl,
+							// channelCount,
+							// deviceId,
+							// groupId,
+							// sampleRate,
+							// sampleSize,
+							}}
+							onNotAllowedOrFound={(err) => console.table(err)}
+							downloadOnSavePress={true}
+							downloadFileExtension="webm"
+							mediaRecorderOptions={{
+							audioBitsPerSecond: 128000,
+							}}
+							showVisualizer={true}
+						/>
+					<br />
+					</div>
 
 				</label>
 			</Grid.Col>
