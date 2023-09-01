@@ -28,7 +28,7 @@ export const SignInView: NextPage = () => {
 			<div className="w-full pt-16 pb-4">
 				<h1 className="text-4xl font-bold text-center">Sign In</h1>
 				<p className="w-full text-sm text-center pt-[0.5em] max-w-[50ch] mx-auto">
-					To use this demo, select the wallet you want to use. Web3auth is a non custodial wallet that allows you to create a wallet and login with gmail, or other social accounts. You can also sign in with a Near wallet of your choice.
+					To use this demo, select select the role and wallet which you want to use. Ramper Wallet is a non custodial wallet that allows you to create a wallet and login with gmail, or other social accounts. You can also sign in with a Near wallet of your choice.
 				</p>
 			</div>
 
@@ -40,30 +40,32 @@ export const SignInView: NextPage = () => {
 							/* status === "no_wallet" && "btn-disabled", */
 						)}
 						onClick={() => {
-							signIn("near");
+							signIn("user");
 						}}
 					>
-						Sign in with Near
+							User Role
 					</button>
 					<p className="w-full text-sm text-center pt-[0.5em] max-w-[30ch] mx-auto">
-						Sign in with a Near Wallet.
+						Sign in from the perspective of a journalist or user who will create and
+						purchase NFTs.
 					</p>
 				</div>
 
 				<div className="w-full pb-[2rem]">
-					<button
+				<button
 						className={cloin(
 							"btn btn-lg w-full rounded-md",
 							/* status === "no_wallet" && "btn-disabled", */
 						)}
 						onClick={() => {
-							signIn("web3auth");
+							signIn("verifier");
 						}}
 					>
-						Sign in with Web3auth
+						NGO Role
 					</button>
 					<p className="w-full text-sm text-center pt-[0.5em] max-w-[30ch] mx-auto">
-						Sign in with email or social account
+						Sign in from the perspective of a Non-Government Organization (NGO) which
+						verifies the credibility of NFTs.
 					</p>
 				</div>
 

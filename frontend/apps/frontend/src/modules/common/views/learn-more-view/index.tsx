@@ -102,8 +102,8 @@ export const LearnMoreView: NextPage = () => {
 					</p>
 					<p style={{ marginBottom: "20px" }}>
 						The user experience is easy to use, allowing on-boarding of those not
-						familiar with crypto swiftly with the ease of use of the Near wallet
-						connect.
+						familiar with crypto swiftly with the ease of use of the Near wallet selector
+						and Web3auth, that allows you to login with your e-mail and social accounts.
 					</p>
 				</Grid>
 			</Grid>
@@ -367,14 +367,14 @@ export const LearnMoreView: NextPage = () => {
 					<h1 className="font-bold" style={{ fontSize: "2em" }}>
 						HELPFUL LINKS
 					</h1>
-					<NextLink href="https://docs.alchemy.com/docs/how-to-add-near-aurora-to-metamask">
+					<NextLink href="https://wallet.near.org/transfer-wizard">
 						<a
 							className="hover:underline"
-							href="https://docs.alchemy.com/docs/how-to-add-near-aurora-to-metamask"
+							href="https://wallet.near.org/transfer-wizard"
 							target="_blank"
 							rel="noreferrer"
 						>
-							How To Add Near Aurora To Metamask
+							Near Wallets
 						</a>
 					</NextLink>
 					<div style={{ marginTop: "20px", maxWidth: "800", height: "25vh" }}>

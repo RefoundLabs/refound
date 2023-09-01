@@ -1,10 +1,11 @@
 import type { Result } from "@utils/monads";
 import { result } from "@utils/monads";
-import type { WalletConnection } from "near-api-js";
+import { WalletConnection } from "near-api-js";
+import {Wallet} from "@near-wallet-selector/core";
 import { Contract as NearContract } from "near-api-js";
 import { config } from "@config/config";
 import type { LicenseType, Post } from "./domain/post.entity";
-import type { Account } from "near-api-js";
+import type { Account, ConnectConfig, Near } from "near-api-js";
 const { providers } = require("near-api-js");
 //network config (replace testnet with mainnet or betanet)
 const provider = new providers.JsonRpcProvider(
@@ -120,13 +121,12 @@ export class PostContractAdapter {
 	}
 
 	static async init({
-		account,
+		walletConnection,
 	}: {
-		account: Account;
+		walletConnection: WalletConnection
 	}): Promise<Result<PostContractAdapter>> {
 		try {
-			console.log(account);
-			console.log(this.contractAddress)
+			const account = walletConnection.account();
 			const contract = (await new NearContract(
 				account,
 				this.contractAddress,
@@ -135,6 +135,7 @@ export class PostContractAdapter {
 					changeMethods: commands,
 				},
 			)) as SeriesContract;
+			console.log(contract);
 
 			return result.ok(new PostContractAdapter({ /*  walletConnection, */ contract }));
 		} catch (error) {
@@ -254,8 +255,8 @@ export class PostContractAdapter {
 					!config.content.moderationList.posts.includes(seriesItem.series_id),
 			);
 
-			console.log('series');
-			console.log(series);
+			//console.log('series');
+			//console.log(series);
 
 			posts = await Promise.all(
 				series.map(async (item) => this.postDtoToEntity(item)),

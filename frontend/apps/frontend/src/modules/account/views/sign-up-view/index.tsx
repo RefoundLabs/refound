@@ -154,7 +154,7 @@ export const SignUpView = () => {
       }
 
       if(!account){
-        router.push('/sign-in');
+        //router.push('/sign-in');
       }
       
   }, []);
@@ -191,7 +191,7 @@ export const SignUpView = () => {
 				</li>
 			</ul>
 
-			<h1 className="text-2xl font-bold">Create Your Account with your claimed Refound handle and e-mail</h1>
+			<h1 className="font-bold" style={{fontSize:"1.3em"}}>Create Your Account with your claimed Refound handle and e-mail</h1>
 
 			
 		<div className="w-full pt-16 pb-4">

@@ -17,24 +17,20 @@ const PostContractsContext = createContext<State>(initialState);
 export const usePostContracts = () => useContext(PostContractsContext);
 
 export const PostContractsContextProvider = ({ children }: { children: ReactNode }) => {
-	const { account, provider, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth } = useNear();
+	const { walletConnection, near, account, checkIsLoggedIn, requestSignInNear } = useNear();
 	const [adapter, setAdapter] = useState<State["adapter"]>(initialState.adapter);
 
 	useEffect(() => {
-		// if (!checkIsLoggedIn() || !wallet) {
-		// 	setAdapter(undefined);
-		// 	console.log('not logged in');
-		// 	requestSignInNear();
-		// 	return;
-		// }
-		if(account){
-			console.log('account')
-			console.log(account)	
+		if (!checkIsLoggedIn() || !walletConnection) {
+			setAdapter(undefined);
+			console.log('not logged in');
+			requestSignInNear();
+			return;
 		}
 		
-		PostContractAdapter.init({ account: account }).then((result) => {
+		PostContractAdapter.init({ walletConnection: walletConnection }).then((result) => {
 			result.match({
-				ok: (contractAdapter) => setAdapter(contractAdapter),
+				ok: (contractAdapter: PostContractAdapter) => setAdapter(contractAdapter),
 				fail: (error) => {
 					console.error("Could not init contract");
 					console.error(error);

@@ -53,8 +53,8 @@ export const HomeView: NextPage = () => {
 	return (
 		<div>
 			<section className="relative w-full h-[110vh] pt-headerTopHeight">
-				<div className="relative w-full h-full max-w-screen-2xl p-contentPadding">
-					<div className="relative z-[10] text-stone-800 flex flex-col h-full justify-between pb-[10vh]">
+				<div className="relative w-full h-full max-w-screen-3xl p-contentPadding">
+					<div className="relative z-[12] text-stone-800 flex flex-col h-full justify-between pb-[10vh]">
 						<h1 className="text-[10vw] max-w-[80%] leading-[10vw] font-bold text-stone-800">
 							<span className="text-[8vw] font-normal italic">the</span>{" "}
 							<span className="accentColor">Platform</span>
@@ -74,8 +74,8 @@ export const HomeView: NextPage = () => {
 						</div>
 					</div>
 
-					<figure style={{width:"100%!important",height:"100%"}} className="absolute top-0 bottom-0 right-0 w-[100%] z-0">
-						<Image src={HeroImage} layout="fill" objectFit="cover" />
+					<figure style={{width:"100%!important",height:"100%"}} className="absolute top-0 bottom-0 object-right w-[100%] z-0">
+						<Image src={HeroImage} layout="fill" objectFit="cover"  />
 						<span className="relative block w-full h-full bg-gradient-to-l from-background/80 to-background" />
 					</figure>
 				</div>

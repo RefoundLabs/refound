@@ -1,6 +1,6 @@
 import type { Account } from "near-api-js";
 import type { ReactNode } from "react";
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { useNear } from "../use-near";
 //import type { Wallet } from "ethers";
 import type {
@@ -8,10 +8,9 @@ import type {
 	CodeResult,
   } from "near-api-js/lib/providers/provider";
 type AccountRole = "user" | "verifier";
-type WalletType = "near" | "web3auth";
 
 type BaseState = {
-	signIn: (walletType: WalletType) => Promise<void>;
+	signIn: (role: AccountRole) => Promise<void>;
 	signOut: () => Promise<void>;
 };
 
@@ -29,7 +28,8 @@ type AccountState =
 			balance?: string;
 			id?: string;
 			role?: AccountRole;
-	  };
+	  }
+	  ;
 
 type State = BaseState & AccountState;
 
@@ -38,7 +38,7 @@ const initialState: State = {
 	//account: undefined,
 	balance: undefined,
 	id: undefined,
-	role: undefined,
+	role: "user" as AccountRole,
 	signIn: async () => {
 		console.warn("SignIn not initialized");
 	},
@@ -51,11 +51,11 @@ const AccountContext = createContext<State>(initialState);
 export const useAccount = () => useContext(AccountContext);
 
 export const AccountContextProvider = ({ children }: { children: ReactNode }) => {
-	const { account, provider, checkIsLoggedIn, requestSignInNear, requestSignInWeb3Auth, requestSignOut } = useNear();
-	const [accountState, setAccountState] = useState<AccountState>({ isSignedIn: false });
+	const { account, provider,walletConnection, checkIsLoggedIn, requestSignInNear, requestSignOut } = useNear();
+	const [accountState, setAccountState] = useState<AccountState>(initialState);
 
 	const reset = useCallback(() => {
-		setAccountState({ isSignedIn: false });
+		setAccountState(initialState);
 	}, []);
 
 	const initAccount = useCallback(async () => {
@@ -65,18 +65,16 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		}
 
 		const savedRole = (sessionStorage.getItem("role") as AccountRole) || "user";
-		const savedWallet = (sessionStorage.getItem("walletType") as WalletType) || "near";
 		console.log('session storage')
 		console.log(savedRole);
-		console.log(savedWallet);
-		
-		if (!checkIsLoggedIn() || !account) {
+		if (!checkIsLoggedIn() || !walletConnection) {
 			reset();
 			return;
 		}
 		
+		const account = walletConnection.account();
 		const id = account.accountId;
-		const totalBalance = await getAccountBalance(id);
+		const { total: totalBalance } = await account.getAccountBalance();
 		console.log(totalBalance);
 
 		// if(savedWallet == "web3auth"){
@@ -95,35 +93,26 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 			role: savedRole,
 		});
 		
-	}, [accountState, account]);
+		
+	}, [walletConnection]);
 
 
-	const getAccountBalance = async ({
-		accountId
-	  }: any) => {
-		try {
-		  const { amount } = await provider.query<AccountView>({
-			request_type: "view_account",
-			finality: "final",
-			account_id: accountId,
-		  });
-		  const bn = (amount).toString();
-		  return bn;
-		} catch {
-		  return  "0";
+	const updateRole = useCallback((role:string) => {
+		if(accountState.balance && accountState.id && accountState.account){
+			setAccountState((prevState) => ({
+				...prevState,
+				role: role as AccountRole,
+			  }));
 		}
-	  };
+	}, [accountState]);
 
-	const signIn = async (type: WalletType) => {
-		sessionStorage.setItem("walletType", type);
-		sessionStorage.setItem("role", "user")
-		console.log('setting wallet type:'+type);
-		console.log(type);
-		if(type.toString() == "near"){
-			await requestSignInNear();
-		}else if(type.toString() == "web3auth"){
-			await requestSignInWeb3Auth();
-		}
+	const signIn = async (role: AccountRole) => {
+
+		sessionStorage.setItem("role", role);
+		console.log('setting role type:'+role);
+		console.log(role);
+
+		requestSignInNear();
 		
 	};
 
@@ -137,11 +126,22 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		initAccount();
 	}, [account]);
 
-	const value: State = {
-		...accountState,
-		signIn,
-		signOut,
-	};
+	// const value: State = {
+	// 	...accountState,
+	// 	signIn,
+	// 	signOut,
+	// 	updateRole
+	// };
+
+	const value: State = useMemo(
+		() => ({
+			...accountState,
+			signIn,
+			signOut,
+		 	updateRole
+		}),
+		[  provider,  account, signIn, signOut, updateRole],
+	);
 
 	return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;
 };

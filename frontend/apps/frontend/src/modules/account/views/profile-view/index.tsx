@@ -63,7 +63,7 @@ export const ProfileView = () => {
     const [filteredPosts, setFilteredPosts] = useState<Nullable<Post[]>>(undefined);
 
     type AccountRole = "user" | "verifier";
-    const [role, setRole] = useState<any>();
+    const {role, updateRole} = useAccount();
 
     const handleEditPressed= () => {
         getUser();
@@ -170,7 +170,7 @@ export const ProfileView = () => {
         console.log('-----------change role triggered---------')
         if(role == "user"){
             sessionStorage.setItem("role", "verifier");
-            setRole("verifier");
+            updateRole("verifier");
         }
         
     }
@@ -218,8 +218,11 @@ export const ProfileView = () => {
             const accountID = account.accountId;
             console.log(accountID)
         }
-
-        setRole(sessionStorage.getItem("role") as AccountRole || "user");
+        
+        updateRole(sessionStorage.getItem("role") as AccountRole || "user");
+        console.log(role);
+        console.log('role')
+        
     }, []);
  
     useEffect(() => {
@@ -297,7 +300,7 @@ export const ProfileView = () => {
                             <div style={{margin:"0"}}>
                                 {!avatar && 
                                 <div style={{textAlign:"center"}} onClick={handleClickAvatarChange} >
-                                    <CgProfile style={{display:"inline", fontSize:"3em", marginLeft:"-40%"}}/> 
+                                    <CgProfile style={{display:"inline", fontSize:"3em", marginLeft:"-50%"}}/> 
                                     <FiCamera style={{display:"inline", cursor:"pointer", marginLeft:"5px"}} />
                                     <Input id="avatarFileInput"
                                             value={undefined} 

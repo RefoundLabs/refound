@@ -23,7 +23,7 @@ export const PostCard = ({
 
 
 	return (
-		<article className="flex flex-col gap-2 mb-8 group">
+		<article className="flex flex-col gap-2 mb-8 group" style={{cursor:"pointer"}}>
 			<div className="relative">
 				<figure className="relative w-full pb-[80%] overflow-hidden rounded-md">
 					<NextImage src={imageLink || media} layout="fill" objectFit="cover" alt={title} />
