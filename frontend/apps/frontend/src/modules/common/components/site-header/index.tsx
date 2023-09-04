@@ -21,6 +21,10 @@ export const SiteHeader = () => {
 				</a>
 			</NextLink>
 			<script src={"https://maps.googleapis.com/maps/api/js?key=" + process.env.NEXT_PUBLIC_GOOGLE_API_KEY + "&libraries=places"}></script>
+			{/* <script type="module">import exifr from 'node_modules/exifr/dist/lite.esm.js';</script> */}
+			<script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.legacy.umd.js"></script>
+			
 
 			<div className="flex flex-row items-center gap-8">
 				{/* <button

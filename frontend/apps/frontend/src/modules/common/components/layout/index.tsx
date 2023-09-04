@@ -11,6 +11,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 			<SiteHeader />
 			<main className="w-full overflow-x-hidden min-h-[101vh]">{children}</main>
 			<footer style={{height:"50px", backgroundColor:"lightgrey"}}>
+				
 				<Grid>
 					<Grid.Col sm={2}>
 						<NextLink href="/">

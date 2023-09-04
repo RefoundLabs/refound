@@ -6,8 +6,10 @@ import NextImage from "next/image";
 import { getImageDimensions } from "./get-image-dimensions";
 import { PolyButton } from "@modules/common/components/poly-button";
 import { toast } from "@services/toast/toast";
+// Modern Node.js can import CommonJS
+import exifr from 'exifr' // => exifr/dist/full.umd.cjs
 
-const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".mp3", ".wav", "audio/*"];
+const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg",]; //".png", ".mp3", ".wav", "audio/*"];
 
 type ReducerState = {
 	dropDepth: number;
@@ -88,10 +90,17 @@ export const FileDropInput = ({
 					fileHeight: uploadedImage.height,
 				},
 			});
+
+			//console.log(uploadedImage);
+			parseEXIF(uploadedImage.image);
+
 		}
 	}, [uploadedImage]);
 
-	
+	const parseEXIF = (uploadedFile: File) => {
+		exifr.parse(uploadedFile)
+		.then(output => console.log(output))
+	}
 
 	const handleDragEnter = (e: DragEvent<HTMLElement>) => {
 		e.preventDefault();
@@ -115,6 +124,7 @@ export const FileDropInput = ({
 		dispatch({ type: "SET_IN_DROP_ZONE", payload: true });
 	};
 	const handleDrop = (e: DragEvent<HTMLElement>) => {
+		console.log('handle file drop');
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -125,9 +135,11 @@ export const FileDropInput = ({
 		}
 
 		const file = files[0];
+		console.log(file);
 
 		if (!isAcceptableFile(file)) {
 			dispatch({ type: "RESET" });
+			
 			toast.error(
 				`Image must have have one of the following extensions: ${ALLOWED_IMAGE_EXTENSIONS.join(
 					", ",
@@ -138,6 +150,7 @@ export const FileDropInput = ({
 		}
 
 		getImageDimensions(file).then((dimensions) => {
+			
 			dispatch({
 				type: "SET_FILE",
 				payload: {
@@ -160,6 +173,7 @@ export const FileDropInput = ({
 		const files = [...(e.target.files || [])];
 		if (files.length > 0) {
 			const file = files[0];
+			console.log(file);
 
 			if (!isAcceptableFile(file)) {
 				dispatch({ type: "RESET" });

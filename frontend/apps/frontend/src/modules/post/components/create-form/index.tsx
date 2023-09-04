@@ -298,6 +298,10 @@ export const CreateForm = () => {
 			console.log(userInWaitlist)
 		}
 
+		if(state){
+			console.log(state);
+		}
+
 	}, [ editor, editorState, account])
 
 	const getUser = async() => {

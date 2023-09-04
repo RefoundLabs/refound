@@ -3666,6 +3666,7 @@
     "@near-wallet-selector/nearfi" "^8.5.1"
     "@near-wallet-selector/nightly" "^8.5.1"
     "@near-wallet-selector/nightly-connect" "^8.5.1"
+    "@near-wallet-selector/ramper-wallet" "^8.5.1"
     "@near-wallet-selector/sender" "^8.5.1"
     "@near-wallet-selector/wallet-connect" "^8.5.1"
     "@near-wallet-selector/welldone-wallet" "^8.5.1"
@@ -8396,6 +8397,11 @@
   "integrity" "sha512-Z+ktTxTwv9ILfgKCk32OX3n/doe+OcLTRtqK9pcL+JsP3J1/VW8Uvl4ZjLlKqeW4rzK4oesDOGMEMRIZqtP4Iw=="
   "resolved" "https://registry.npmjs.org/exenv/-/exenv-1.2.2.tgz"
   "version" "1.2.2"
+
+"exifr@^7.1.3":
+  "integrity" "sha512-g/aje2noHivrRSLbAUtBPWFbxKdKhgj/xr1vATDdUXPOFYJlQ62Ft0oy+72V6XLIpDJfHs6gXLbBLAolqOXYRw=="
+  "resolved" "https://registry.npmjs.org/exifr/-/exifr-7.1.3.tgz"
+  "version" "7.1.3"
 
 "exit@^0.1.2":
   "integrity" "sha512-Zk/eNKV2zbjpKzrsQ+n1G6poVbErQxJ0LBOJXaKZ1EViLzH+hrLu9cdXI4zw9dBQJslwBEpbQ2P1oS7nDxs6jQ=="
