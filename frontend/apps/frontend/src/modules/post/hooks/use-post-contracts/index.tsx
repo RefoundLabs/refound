@@ -3,7 +3,7 @@ import { PostContractAdapter } from "@modules/post/post.adapter";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { createContext, useContext, useMemo } from "react";
-
+import {Wallet} from "@near-wallet-selector/core";
 import {signIn, signOut, useSession } from "next-auth/react"
 type State = {
 	adapter?: PostContractAdapter;

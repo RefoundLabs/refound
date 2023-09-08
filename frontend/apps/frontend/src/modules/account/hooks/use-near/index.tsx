@@ -77,7 +77,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 	const [selector, setSelector] = useState<any>();
   	const [nearModal, setNearModal] = useState<any>();
 	//const [wallet, setWallet] = useState<any>();
-	const [account, setAccount] = useState<any>();
+	const [accounts, setAccounts] = useState<any>();
 
 	const initNear = useCallback(async () => {
 		if (!window) {
@@ -102,8 +102,8 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		// 	return;
 		// }
 
-		const walletConnection = new WalletConnection(nearConnection, null);
-		setWalletConnection(walletConnection);
+		// const walletConnection = new WalletConnection(nearConnection, null);
+		// setWalletConnection(walletConnection);
 
 		// if (!WalletConnection) {
 		// 	console.error("cannot connect to near wallet");
@@ -117,7 +117,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			modules: [
 				setupRamperWallet(),
 				setupMyNearWallet(),
-				setupNearWallet(),
+				//setupNearWallet(),
 				setupSender(),
 				setupNightly(),
 				setupWelldoneWallet(),
@@ -140,15 +140,18 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 
 	const checkIsLoggedIn = useCallback(() => 
 		{
-			if(account) {
+			if(accounts) {
 				return true;
 			}
-			// if(walletConnection){
-			// 	return walletConnection.isSignedIn();
-			// }
-			return false;
+			else{
+				return false;
+			}
+
+			//else if(walletConnection){
+		    //		return walletConnection.isSignedIn();
+			//}
 		},
-	[walletConnection, account]);
+	[walletConnection, accounts]);
 
 	const requestSignInNear = useCallback(async () => {
 		if (!nearModal) {
@@ -159,7 +162,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		nearModal.show();
 
 		// const accounts = await walletSelector.getAccounts();
-		//setAccount(accounts[0])
+		// setAccount(accounts[0])
 		
 		// if(near){
 		// 	const account = await near.account(accounts[0].accountId);
@@ -175,26 +178,33 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		// 	setAccount(account);
 		// }
 
-		if(walletConnection && selector){
-			await walletConnection.requestSignIn({
-				contractId: contractAddress,
-				successUrl: `${config.site.host}/discover`,
-				failureUrl: `${config.site.host}/sign-in`,
-			});
+		if(selector){
+			// await walletConnection.requestSignIn({
+			// 	contractId: contractAddress,
+			// 	successUrl: `${config.site.host}/discover`,
+			// 	failureUrl: `${config.site.host}/sign-in`,
+			// });
 
-			let account = walletConnection.account();
-			setAccount(account);
+			// let account = walletConnection.account();
+			// setAccount(account);
+
+			const wallett = await selector.wallet();
+			//setWallet(wallett);
+			const accounts = await wallett.signIn({contractId: contractAddress});
+			setAccounts(accounts);
+			return accounts;
 		}
+		return null;
 		
-	}, [walletConnection, account, nearModal, selector]);
+	}, [walletConnection, accounts, nearModal, selector]);
 
 	const requestSignOut = useCallback(async () => {
-		if (!walletConnection) {
-			console.warn("Cannot sign out, wallet not found");
-			return;
-		}
+		// if (!walletConnection) {
+		// 	console.warn("Cannot sign out, wallet not found");
+		// 	return;
+		// }
 
-		walletConnection.signOut();
+		// walletConnection.signOut();
 		
 
 		//near wallet sign out
@@ -215,12 +225,12 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 
 	const value: State = useMemo(
 		() => ({
-			wallet, walletConnection, provider, account, selector, 
+			wallet, walletConnection, provider, accounts, selector, 
 			checkIsLoggedIn,
 			requestSignInNear,
 			requestSignOut,
 		}),
-		[ wallet, provider, account, walletConnection, selector, near, checkIsLoggedIn, requestSignInNear, requestSignOut],
+		[ wallet, provider, accounts, walletConnection, selector, near, checkIsLoggedIn, requestSignInNear, requestSignOut],
 	);
 
 	return <NearContext.Provider value={value}>{children}</NearContext.Provider>;
