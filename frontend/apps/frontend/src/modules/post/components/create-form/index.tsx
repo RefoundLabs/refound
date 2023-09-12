@@ -267,7 +267,7 @@ export const CreateForm = () => {
 	const [editor, setEditor] = useState<any>();
 	const [record, setRecord] = useState(false);
 
-	Geocode.setApiKey(process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY);
+	Geocode.setApiKey(process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY as string);
 	// set location_type filter . Its optional.
 	// google geocoder returns more that one address for given lat/lng.
 	// In some case we need one address as response for which google itself provides a location_type filter.

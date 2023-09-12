@@ -15,6 +15,7 @@ import { NearContextProvider } from "@modules/account/hooks/use-near";
 import { AccountContextProvider } from "@modules/account/hooks/use-account";
 import { PostContractsContextProvider } from "@modules/post/hooks/use-post-contracts";
 import { IpfsContextProvider } from "@modules/post/hooks/use-ipfs";
+import { WalletSelectorContextProvider } from "../modules/account/hooks/use-near/WalletSelectorContext";
 // import { WalletSelectorContextProvider } from "@modules/auth/hooks/use-auth";
 
 import type { Session } from "next-auth";
@@ -22,20 +23,22 @@ import { SessionProvider } from "next-auth/react";
 
 function MyApp({ Component, pageProps : {session, ...pageProps} }: AppProps) {
 	return (
+		<WalletSelectorContextProvider>
 			<NearContextProvider>
-				<AccountContextProvider>
-					<IpfsContextProvider>
-						<PostContractsContextProvider>
-								<UIProvider>
-									<Layout>
-										<Component {...pageProps} />
-									</Layout>
-									<Toaster position="bottom-center" />
-								</UIProvider>
-						</PostContractsContextProvider>
-					</IpfsContextProvider>
-				</AccountContextProvider>
+					<AccountContextProvider>
+						<IpfsContextProvider>
+							<PostContractsContextProvider>
+									<UIProvider>
+										<Layout>
+											<Component {...pageProps} />
+										</Layout>
+										<Toaster position="bottom-center" />
+									</UIProvider>
+							</PostContractsContextProvider>
+						</IpfsContextProvider>
+					</AccountContextProvider>
 			</NearContextProvider>
+		</WalletSelectorContextProvider>
 	);
 }
 

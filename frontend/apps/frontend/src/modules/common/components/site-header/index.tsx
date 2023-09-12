@@ -4,10 +4,14 @@ import NextLink from "next/link";
 import { useNear } from "@modules/account/hooks/use-near";
 import { useAccount } from "@modules/account/hooks/use-account";
 import { trimText } from "@utils/trim-text";
+import { Header } from "@mantine/core";
+import { useState } from "react";
+
 // import { useAccount } from "@modules/account/hooks/use-auth";
 
 export const SiteHeader = () => {
 	//const account = useAccount();
+	const [enableMobileMenu, setEnableMenu] = useState(false);
 
 	const { isSignedIn, signOut, id, role } = useAccount();
 	console.log(isSignedIn + "isSignedin")
@@ -75,50 +79,7 @@ export const SiteHeader = () => {
 					</NextLink>
 				)}
 
-				{/* {account.status === "connected" && (
-					<>
-						<button
-							type="button"
-							className="btn"
-							onClick={() => {
-								account.signOut();
-							}}
-						>
-							Sign Out
-						</button>
-
-						<span>
-							{account.id} || {account.role}
-						</span>
-					</>
-				)}
-
-				{account.status === "ready" && (
-					<a className="btn" href="/sign-in">
-						Sign In
-					</a>
-				)}
-
-				{account.status === "no_wallet" && (
-					<span className="btn btn-disabled">No Wallet Detected</span>
-				)} */}
-
-				{/* <button
-					type="button"
-					className="btn"
-					onClick={() => {
-						if (status === "connected") {
-							signOut();
-							return;
-						}
-
-						signIn();
-					}}
-				>
-					{isLoggedIn ? "Near Sign Out" : "Near Sign In"}
-				</button> */}
-
-				{/* <Sidebar /> */}
+				
 			</div>
 		</header>
 	);

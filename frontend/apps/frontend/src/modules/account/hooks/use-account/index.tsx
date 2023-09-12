@@ -1,4 +1,4 @@
-import { Account } from "near-api-js";
+import type { Account, ConnectConfig, Near } from "near-api-js";
 import type { ReactNode } from "react";
 import { createContext, useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { useNear } from "../use-near";
@@ -51,7 +51,7 @@ const AccountContext = createContext<State>(initialState);
 export const useAccount = () => useContext(AccountContext);
 
 export const AccountContextProvider = ({ children }: { children: ReactNode }) => {
-	const { account, provider,walletConnection, checkIsLoggedIn, requestSignInNear, requestSignOut } = useNear();
+	const { account, accountId, provider,walletConnection, checkIsLoggedIn, requestSignInNear, requestSignOut } = useNear();
 	const [accountState, setAccountState] = useState<AccountState>(initialState);
 
 	const reset = useCallback(() => {
@@ -72,11 +72,21 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 			return;
 		}
 		
-		const account = walletConnection.account();
-		const id = account.accountId;
-		const { total: totalBalance } = await account.getAccountBalance();
-		console.log(totalBalance);
+		//const account = walletConnection.account();
+		//const id = account.accountId;
+		if(account && accountId){
+			const { total: totalBalance } = await account.getAccountBalance();
+			console.log(totalBalance);
 
+			setAccountState({
+				isSignedIn: true,
+				balance: totalBalance,
+				id: accountId,
+				account: account,
+				role: savedRole,
+			});
+			
+		}
 		//const val = getAccount(id);
 
 		// if(savedWallet == "web3auth"){
@@ -87,14 +97,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		// 	console.log("totalabalance" + totalBalance);
 		// }
 
-		setAccountState({
-			isSignedIn: true,
-			balance: totalBalance,
-			id,
-			account: account,
-			role: savedRole,
-		});
-		
+	
 		
 	}, [walletConnection]);
 
@@ -119,22 +122,6 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 			account_id: id,
 		}));
 	}, [provider]);
-
-	// const getAccountBalance = async ({
-	// 	accountId
-	//   }: any) => {
-	// 	try {
-	// 	  const { amount } = await provider.query<AccountView>({
-	// 		request_type: "view_account",
-	// 		finality: "final",
-	// 		account_id: accountId,
-	// 	  });
-	// 	  const bn = (amount).toString();
-	// 	  return bn;
-	// 	} catch {
-	// 	  return  "0";
-	// 	}
-	//   };
 
 	const signIn = async (role: AccountRole) => {
 
