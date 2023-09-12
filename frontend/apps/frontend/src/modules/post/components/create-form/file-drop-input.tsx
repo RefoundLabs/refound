@@ -1,7 +1,7 @@
 import type { ChangeEvent, DragEvent, MouseEvent } from "react";
 import { useCallback } from "react";
 import { useEffect } from "react";
-import { useReducer, useRef } from "react";
+import { useReducer, useRef, useState } from "react";
 import NextImage from "next/image";
 import { getImageDimensions } from "./get-image-dimensions";
 import { PolyButton } from "@modules/common/components/poly-button";
@@ -18,6 +18,9 @@ type ReducerState = {
 	fileWidth?: number;
 	fileHeight?: number;
 	fileLength?: number;
+	latitude?:string; 
+	longitude?:string; 
+	dateTimeOriginal? :string;
 };
 
 const initialReducerState: ReducerState = {
@@ -27,6 +30,9 @@ const initialReducerState: ReducerState = {
 	fileWidth: 0,
 	fileHeight: 0,
 	fileLength: 0,
+	latitude:"",
+	longitude:"",
+	dateTimeOriginal:""
 };
 
 type ReducerAction =
@@ -34,12 +40,8 @@ type ReducerAction =
 	| { type: "SET_IN_DROP_ZONE"; payload: ReducerState["inDropZone"] }
 	| {
 			type: "SET_FILE";
-			payload: { file: ReducerState["file"]; fileWidth: number; fileHeight: number };
+			payload: { file: ReducerState["file"]; fileWidth: number; fileHeight: number; latitude?:string; longitude?:string; dateTimeOriginal? :string; };
 	  }
-	  | {
-		type: "SET_AUDIO";
-		payload: { file: ReducerState["file"]; length: number; };
-  }
 	| { type: "RESET" };
 
 const reducer = (state: ReducerState, action: ReducerAction) => {
@@ -70,38 +72,60 @@ export const FileDropInput = ({
 	setProps,
 	uploadedImage
 }: {
-	setProps: (props: { image?: File; width?: number; height?: number; audio?: File; length?: number; }) => void;
-	uploadedImage?: { image: File; width: number; height: number };
+	setProps: (props: { image?: File; width?: number; height?: number; latitude?:string; longitude?:string; dateTimeOriginal?:string; }) => void;
+	uploadedImage?: { image: File; width: number; height: number; latitude?:string; longitude?:string; dateTimeOriginal?:string;};
 }) => {
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
+	const [parsed, setParsed] = useState<Boolean>();
 	const inputRef = useRef(null);
 
 	useEffect(() => {
-		setProps({ image: state.file, width: state.fileWidth, height: state.fileHeight});
+		setProps({ image: state.file, width: state.fileWidth, height: state.fileHeight, latitude: uploadedImage?.latitude, longitude: uploadedImage?.longitude, dateTimeOriginal: uploadedImage?.dateTimeOriginal});
 	}, [state]);
 
 	useEffect(() => {
-		if (uploadedImage) {
-			dispatch({
-				type: "SET_FILE",
-				payload: {
-					file: uploadedImage.image,
-					fileWidth: uploadedImage.width,
-					fileHeight: uploadedImage.height,
-				},
-			});
-
-			//console.log(uploadedImage);
+		if (uploadedImage && !parsed){
+			console.log('use effect');
+			console.log(uploadedImage);
 			parseEXIF(uploadedImage.image);
 
 		}
+
+
+		if(uploadedImage && parsed){
+			console.log('parsed image');
+			console.log(uploadedImage);
+		}
 	}, [uploadedImage]);
 
-	const parseEXIF = (uploadedFile: File) => {
-		exifr.parse(uploadedFile)
-		.then(output => console.log(output))
-	}
+	const parseEXIF = async (file: File) => {
+		try {
+		  const output = await exifr.parse(file);
+		  console.log(output.latitude);
+			if(uploadedImage){
+				console.log('set new file');
+				const newFileData = {
+					file: file,
+					fileWidth: uploadedImage.width,
+					fileHeight: uploadedImage.height,
+					latitude: output?.latitude,
+					longitude: output?.longitude,
+					dateTimeOriginal: output?.DateTimeOriginal,
+				};
+			
+				dispatch({
+					type: "SET_FILE",
+					payload: newFileData,
+				});
+			
+				setParsed(true);
 
+			}		
+		} catch (error) {
+		  console.error('parseEXIF: Error parsing EXIF data:', error);
+		}
+	  };
+	  
 	const handleDragEnter = (e: DragEvent<HTMLElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -127,6 +151,7 @@ export const FileDropInput = ({
 		console.log('handle file drop');
 		e.preventDefault();
 		e.stopPropagation();
+
 
 		const files = [...e.dataTransfer.files];
 
@@ -156,12 +181,14 @@ export const FileDropInput = ({
 				payload: {
 					file: files[0],
 					fileWidth: dimensions.width,
-					fileHeight: dimensions.height,
+					fileHeight: dimensions.height, 
 				},
 			});
 			dispatch({ type: "SET_DROP_DEPTH", payload: 0 });
-			dispatch({ type: "SET_IN_DROP_ZONE", payload: false });
+			dispatch({ type: "SET_IN_DROP_ZONE", payload: false })
 		});
+
+		parseEXIF(file);
 	};
 
 	const handleClick = (e: MouseEvent<HTMLElement>) => {
@@ -170,6 +197,7 @@ export const FileDropInput = ({
 	};
 
 	const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+
 		const files = [...(e.target.files || [])];
 		if (files.length > 0) {
 			const file = files[0];
@@ -192,6 +220,7 @@ export const FileDropInput = ({
 				dispatch({ type: "SET_DROP_DEPTH", payload: 0 });
 				dispatch({ type: "SET_IN_DROP_ZONE", payload: false });
 			});
+			parseEXIF(file);
 		}
 	}, []);
 

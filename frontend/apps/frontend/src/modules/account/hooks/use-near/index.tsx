@@ -27,7 +27,7 @@ import "@near-wallet-selector/modal-ui/styles.css";
 import type { Provider } from "near-api-js/lib/providers";
 import { textInputRule } from "@tiptap/react";
 import { MetamaskAdapter } from "@web3auth/metamask-adapter";
-import type {Wallet, AccountState} from "@near-wallet-selector/core";
+import type {Wallet, AccountState, WalletSelector} from "@near-wallet-selector/core";
 
 const NEAR_CONFIG: ConnectConfig = {
 	networkId: "testnet",
@@ -42,6 +42,7 @@ type State = {
 	near?: Near;
 	walletConnection?: WalletConnection;
 	wallet?: Wallet;
+	selector?: WalletSelector;
 	provider?: Provider;
 	account?: Account;
 	checkIsLoggedIn: () => boolean;
@@ -69,12 +70,13 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 	const router = useRouter();
 	const [near, setNear] = useState<State["near"]>(initialState.near);
 	const [wallet, setWallet] = useState<State["wallet"]>(initialState.wallet);
+	const [selector, setSelector] = useState<State["selector"]>(initialState.selector);
 	const [walletConnection, setWalletConnection] = useState<State["walletConnection"]>(initialState.walletConnection);
 	const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_SERIES_ADDRESS as string; // TODO: from .env
 
 	
   	const [provider, setProvider] = useState<any>();
-	const [selector, setSelector] = useState<any>();
+	//const [selector, setSelector] = useState<any>();
   	const [nearModal, setNearModal] = useState<any>();
 	//const [wallet, setWallet] = useState<any>();
 	const [accounts, setAccounts] = useState<any>();
@@ -142,8 +144,10 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		{
 			if(accounts) {
 				return true;
-			}
-			else{
+			}else if (selector)
+			{
+				return true;
+			}else{
 				return false;
 			}
 
@@ -151,7 +155,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		    //		return walletConnection.isSignedIn();
 			//}
 		},
-	[walletConnection, accounts]);
+	[accounts, selector, accounts]);
 
 	const requestSignInNear = useCallback(async () => {
 		if (!nearModal) {
@@ -189,14 +193,15 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			// setAccount(account);
 
 			const wallett = await selector.wallet();
-			//setWallet(wallett);
+			
 			const accounts = await wallett.signIn({contractId: contractAddress});
+			setWallet(wallett);
 			setAccounts(accounts);
-			return accounts;
+			
 		}
 		return null;
 		
-	}, [walletConnection, accounts, nearModal, selector]);
+	}, [walletConnection, accounts, nearModal, wallet, selector]);
 
 	const requestSignOut = useCallback(async () => {
 		// if (!walletConnection) {

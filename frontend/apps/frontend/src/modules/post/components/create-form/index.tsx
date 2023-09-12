@@ -22,6 +22,7 @@ import { AlertBar } from "@modules/common/components/alert-bar/alert-bar";
 import { useAccount } from "@modules/account/hooks/use-account";
 import NextLink from "next/link";
 import axios from "axios";
+import moment from 'moment';
 import AxiosResponse from "axios";
 import PlacesAutocomplete from 'react-places-autocomplete';
 import {
@@ -46,6 +47,7 @@ import { useRef } from "react";
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { AudioRecorder } from 'react-audio-voice-recorder';
+import exifr from 'exifr' // => exifr/dist/full.umd.cjs
 
 import BubbleMenu from '@tiptap/extension-bubble-menu'
 
@@ -57,6 +59,9 @@ type FormData = {
 	height?: number;
 	description?: string;
 	articleText: string;
+	latitude: string;
+	longitude:string;
+	dateTimeOriginal:string;
 	locationTaken: string;
 	dateTaken: string;
 	datePosted: string;
@@ -81,6 +86,9 @@ const initialReducerState: ReducerState = {
 	height: 0,
 	description: "",
 	articleText: "", 
+	latitude: "",
+	longitude:"",
+	dateTimeOriginal:"",
 	locationTaken: "",
 	dateTaken: "",
 	datePosted: "",
@@ -244,6 +252,8 @@ type CustomElement = { type: 'paragraph'; children: CustomText[] }
 type CustomText = { text: string }
 
 
+
+
 export const CreateForm = () => {
 	
 	const router = useRouter();
@@ -331,6 +341,41 @@ export const CreateForm = () => {
 			//console.log(res);
 		}
 	  }
+
+	  const parseEXIF = async (file: File) => {
+		try {
+		  const output = await exifr.parse(file);
+		  console.log('parse exif');
+		  console.log(output);
+			
+			if(output?.longitude && output?.latitude){
+				console.log('set location');
+				dispatch({
+					type: "SET_LOCATIONTAKEN",
+					payload: output.latitude + ", " + output.longitude,
+				});
+				var el = document.getElementById("locationTakenInput") as HTMLInputElement;
+				el.value = output.latitude + ", " + output.longitude;
+				
+
+			}	
+			if(output?.DateTimeOriginal){
+				
+				dispatch({
+					type: "SET_DATETAKEN",
+					payload: output.DateTimeOriginal,
+				});
+
+				var el = document.getElementById("dateTakenInput") as HTMLInputElement;
+				let date = moment(new Date(output.DateTimeOriginal)).format('YYYY-MM-DD');
+				el.value = date;
+				console.log(date);
+			}	
+
+		} catch (error) {
+		  console.error('parseEXIF: Error parsing EXIF data:', error);
+		}
+	  };
 
 	const validateForm = async (): Promise<
 		Result<{ image: File; audio: File; metadata: PostCreationProps}>
@@ -511,11 +556,16 @@ const addAudioElement = (blob: Blob) => {
 
 					<FileDropInput 
 						setProps={(imageData) => {
+							console.log('image data');
+							console.log(imageData);
 							dispatch({ type: "SET_IMAGE", payload: imageData });
+							if(imageData.image){
+								parseEXIF(imageData.image);
+							}
 						}}
 						
 						uploadedImage={
-							state.image && state.width && state.height
+							state.image && state.width && state.height 
 								? { image: state.image, width: state.width, height: state.height }
 								: undefined
 						}
@@ -612,7 +662,7 @@ const addAudioElement = (blob: Blob) => {
 					<input
 						className={S.fieldInput}
 						name="locationTaken"
-						type="text"
+						type="text" id="locationTakenInput"
 						placeholder="Please add district/city/country"
 						onChange={(e) => {
 							dispatch({ type: "SET_LOCATIONTAKEN", payload: e.target.value });
@@ -625,7 +675,7 @@ const addAudioElement = (blob: Blob) => {
 					<input
 						className={S.fieldInput}
 						name="dateTaken"
-						type="date"
+						type="date" id="dateTakenInput"
 						placeholder="Date Taken"
 						onChange={(e) => {
 							dispatch({ type: "SET_DATETAKEN", payload: e.target.value });

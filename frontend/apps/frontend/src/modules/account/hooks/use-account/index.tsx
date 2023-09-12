@@ -1,4 +1,4 @@
-import type { Account } from "near-api-js";
+import { Account } from "near-api-js";
 import type { ReactNode } from "react";
 import { createContext, useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { useNear } from "../use-near";
@@ -77,6 +77,8 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		const { total: totalBalance } = await account.getAccountBalance();
 		console.log(totalBalance);
 
+		//const val = getAccount(id);
+
 		// if(savedWallet == "web3auth"){
 		// 	totalBalance = await account.getAccountBalance().toString();
 		// 	console.log(totalBalance);
@@ -89,7 +91,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 			isSignedIn: true,
 			balance: totalBalance,
 			id,
-			account,
+			account: account,
 			role: savedRole,
 		});
 		
@@ -105,6 +107,34 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 			  }));
 		}
 	}, [accountState]);
+
+	const getAccount = useCallback((id:string): Promise<Account> | undefined => {
+		return provider?.query<AccountView>({
+			request_type: "view_account",
+			finality: "final",
+			account_id: id,
+		})
+		.then((data:any) => ({
+			...data,
+			account_id: id,
+		}));
+	}, [provider]);
+
+	// const getAccountBalance = async ({
+	// 	accountId
+	//   }: any) => {
+	// 	try {
+	// 	  const { amount } = await provider.query<AccountView>({
+	// 		request_type: "view_account",
+	// 		finality: "final",
+	// 		account_id: accountId,
+	// 	  });
+	// 	  const bn = (amount).toString();
+	// 	  return bn;
+	// 	} catch {
+	// 	  return  "0";
+	// 	}
+	//   };
 
 	const signIn = async (role: AccountRole) => {
 

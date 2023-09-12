@@ -68,14 +68,14 @@ export const AudioFileDropInput = ({
 	setProps,
 	uploadedAudio
 }: {
-	setProps: (props: { image?: File; width?: number; height?: number; audio?: File; length?: number; }) => void;
+	setProps: (props: { image?: File; audio?: File; length?: number; }) => void;
 	uploadedAudio?: {audio: File; length: number;};
 }) => {
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
 	const inputRef = useRef(null);
 
 	useEffect(() => {
-		setProps({ image: state.file, width: state.fileWidth, height: state.fileHeight, audio: uploadedAudio?.audio, length: uploadedAudio?.length});
+		setProps({ image: state.file, audio: uploadedAudio?.audio, length: uploadedAudio?.length});
 	}, [state]);
 
 

@@ -3631,14 +3631,14 @@
   dependencies:
     "type-fest" "^2.19.0"
 
-"@repo/common@*", "@repo/common@file:/Users/genesisbarrios/Documents/coding/Web3/refound/frontend/apps/common":
+"@repo/common@*", "@repo/common@file:/Users/genesisbarrios/Documents/coding/web3/hackathons/Refound/refound/frontend/apps/common":
   "resolved" "file:apps/common"
   "version" "1.0.0"
   dependencies:
     "is-ipfs" "^7.0.2"
     "web3" "^1.7.5"
 
-"@repo/frontend@file:/Users/genesisbarrios/Documents/coding/Web3/refound/frontend/apps/frontend":
+"@repo/frontend@file:/Users/genesisbarrios/Documents/coding/web3/hackathons/Refound/refound/frontend/apps/frontend":
   "resolved" "file:apps/frontend"
   "version" "0.1.0"
   dependencies:
@@ -3717,7 +3717,7 @@
     "web3" "^1.7.5"
     "web3.storage" "^4.4.0"
 
-"@repo/indexer@file:/Users/genesisbarrios/Documents/coding/Web3/refound/frontend/apps/indexer":
+"@repo/indexer@file:/Users/genesisbarrios/Documents/coding/web3/hackathons/Refound/refound/frontend/apps/indexer":
   "resolved" "file:apps/indexer"
   "version" "1.0.0"
   dependencies:
@@ -11203,6 +11203,11 @@
   "integrity" "sha512-qYvlv/exQ4+svI3UOvPUpLDF0OMX5euvUH0Ny4N5QyRyhNdgAgUrVH3iUINSzEPLvx0kbo/Bp28GJKIqvE7URw=="
   "resolved" "https://registry.npmjs.org/mock-fs/-/mock-fs-4.14.0.tgz"
   "version" "4.14.0"
+
+"moment@^2.29.4":
+  "integrity" "sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w=="
+  "resolved" "https://registry.npmjs.org/moment/-/moment-2.29.4.tgz"
+  "version" "2.29.4"
 
 "mongodb-connection-string-url@^2.5.4":
   "integrity" "sha512-WvTZlI9ab0QYtTYnuMLgobULWhokRjtC7db9LtcVfJ+Hsnyr5eo6ZtNAt3Ly24XZScGMelOcGtm7lSn0332tPQ=="
