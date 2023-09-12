@@ -76,6 +76,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		//const id = account.accountId;
 		if(account && accountId){
 			const { total: totalBalance } = await account.getAccountBalance();
+			console.log('set acccount state');
 			console.log(totalBalance);
 
 			setAccountState({
@@ -86,6 +87,8 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 				role: savedRole,
 			});
 			
+		}else{
+			console.log("no account")
 		}
 		//const val = getAccount(id);
 
