@@ -16,11 +16,11 @@ export const SiteHeader = () => {
 		<header className="px-sitepad fixed top-0 left-0 right-0 flex flex-row items-center justify-between border-b-2 border-solid h-headerTopHeight border-primary z-[5000] bg-white">
 			<NextLink href="/">
 				<a className="flex flex-row gap-2 items-center justify-center text-[1em]">
-					<img className="w-[1.5em] h-[1.5em] object-contain" src="/favicon-32x32.png" />
+					<img className="w-[1.2em] h-[1.2em] object-contain" src="/favicon-32x32.png" />
 					<h1 className="font-normal leading-none text-[2em]">refound</h1>
 				</a>
 			</NextLink>
-			<script src={"https://maps.googleapis.com/maps/api/js?key=" + process.env.NEXT_PUBLIC_GOOGLE_API_KEY + "&libraries=places"}></script>
+			
 			{/* <script type="module">import exifr from 'node_modules/exifr/dist/lite.esm.js';</script> */}
 			<script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
 			<script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.legacy.umd.js"></script>

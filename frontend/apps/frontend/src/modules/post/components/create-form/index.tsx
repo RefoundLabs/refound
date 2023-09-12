@@ -922,7 +922,6 @@ const addAudioElement = (blob: Blob) => {
 					}}
 				/>
 			)}
-		<script src={"https://maps.googleapis.com/maps/api/js?key=" + process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY + "&libraries=places&callback=initMap"} async></script>
 		</>
 		
 	);
