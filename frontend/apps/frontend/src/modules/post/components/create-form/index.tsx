@@ -313,12 +313,54 @@ export const CreateForm = () => {
 
 	useEffect (() => {
 		getUser();
+		
 	}, [])
+
+	var options = {
+		enableHighAccuracy: true,
+		timeout: 5000,
+		maximumAge: 0,
+	  };
+
+	useEffect(() => {
+		if (navigator.geolocation) {
+			navigator.permissions
+			.query({ name: "geolocation" })
+			.then(function (result) {
+				console.log(result);
+				if (result.state === "granted") {
+				//If granted then you can directly call your function here
+				navigator.geolocation.getCurrentPosition(success, errors, options);
+				} else if (result.state === "prompt") {
+				//If prompt then the user will be asked to give permission
+				navigator.geolocation.getCurrentPosition(success, errors, options);
+				} else if (result.state === "denied") {
+				//If denied then you have to show instructions to enable location
+				}
+			});
+		} else {
+			console.log("Geolocation is not supported by this browser.");
+		}
+	}, []);
+
+	function errors(err:any) {
+		console.warn(`ERROR(${err.code}): ${err.message}`);
+	  }
+
+	function success(pos:any) {
+		var crd = pos.coords;
+		console.log("Your current position is:");
+		console.log(`Latitude : ${crd.latitude}`);
+		console.log(`Longitude: ${crd.longitude}`);
+		console.log(`More or less ${crd.accuracy} meters.`);
+		parseAndSetLocation(crd.latitude, crd.longitude);
+	  }
 
 	useEffect(() => {
 		if(userInWaitlist){
 			console.log(userInWaitlist)
 		}
+		
 
 		if(state){
 			console.log(state);
@@ -354,6 +396,40 @@ export const CreateForm = () => {
 		}
 	  }
 
+	  const parseAndSetLocation = (latitude:string, longitude:string) => {
+		Geocode.fromLatLng(latitude, longitude).then(
+			(response:any) => {
+				const address = response.results[0].formatted_address;
+				console.log(address);
+				let city, state, country;
+					for (let i = 0; i < response.results[0].address_components.length; i++) {
+					for (let j = 0; j < response.results[0].address_components[i].types.length; j++) {
+						switch (response.results[0].address_components[i].types[j]) {
+						case "locality":
+							city = response.results[0].address_components[i].long_name;
+							break;
+						case "administrative_area_level_1":
+							state = response.results[0].address_components[i].long_name;
+							break;
+						case "country":
+							country = response.results[0].address_components[i].long_name;
+							break;
+						}
+					}
+				}
+				dispatch({
+					type: "SET_LOCATIONTAKEN",
+					payload: city + ", " + state + ", " + country,
+				});
+					var el = document.getElementById("locationTakenInput") as HTMLInputElement;
+				el.value = city + ", " + state + ", " + country;
+			},
+			(error:any) => {
+				console.error(error);
+			}
+		);
+	  }
+
 	  const parseEXIF = async (file: File) => {
 		try {
 		  const output = await exifr.parse(file);
@@ -365,40 +441,10 @@ export const CreateForm = () => {
 			
 				//convert to city with react/google api
 				// Get address from latitude & longitude.
-				Geocode.fromLatLng(output.latitude, output.longitude).then(
-					(response:any) => {
-						const address = response.results[0].formatted_address;
-						console.log(address);
-						let city, state, country;
-							for (let i = 0; i < response.results[0].address_components.length; i++) {
-							for (let j = 0; j < response.results[0].address_components[i].types.length; j++) {
-								switch (response.results[0].address_components[i].types[j]) {
-								case "locality":
-									city = response.results[0].address_components[i].long_name;
-									break;
-								case "administrative_area_level_1":
-									state = response.results[0].address_components[i].long_name;
-									break;
-								case "country":
-									country = response.results[0].address_components[i].long_name;
-									break;
-								}
-							}
-						}
-						dispatch({
-							type: "SET_LOCATIONTAKEN",
-							payload: city + ", " + state + ", " + country,
-						});
-							var el = document.getElementById("locationTakenInput") as HTMLInputElement;
-						el.value = city + ", " + state + ", " + country;
-					},
-					(error:any) => {
-						console.error(error);
-					}
-				);
+				parseAndSetLocation(output.latitude, output.longitude)
 
 			}	
-			
+
 			if(output?.DateTimeOriginal){
 				
 				dispatch({
