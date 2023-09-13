@@ -24,7 +24,7 @@ export const PostContractsContextProvider = ({ children }: { children: ReactNode
 		if (!checkIsLoggedIn() || !walletConnection) {
 			setAdapter(undefined);
 			console.log('not logged in');
-			requestSignInNear();
+			//requestSignInNear();
 			return;
 		}
 		

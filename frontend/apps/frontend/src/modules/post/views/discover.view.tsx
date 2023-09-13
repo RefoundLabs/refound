@@ -32,15 +32,15 @@ export const DiscoverView = () => {
 		
 	}, [adapter]);
 	
-	// useEffect(()=>{
-	// 	if(posts) {
-	// 		//console.log('posts obj')
-	// 		//console.log(posts);
-	// 	}
-	// 	if(!posts) getState();
+	useEffect(()=>{
+		if(posts) {
+			//console.log('posts obj')
+			//console.log(posts);
+		}
+		if(!posts) getState();
 
 
-	// }, [posts])
+	}, [posts])
 
 	
 
