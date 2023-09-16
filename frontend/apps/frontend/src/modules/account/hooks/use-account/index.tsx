@@ -1,7 +1,9 @@
-import type { Account, ConnectConfig, Near } from "near-api-js";
+import type {  ConnectConfig, Near } from "near-api-js";
 import type { ReactNode } from "react";
 import { createContext, useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { useNear } from "../use-near";
+import type {Wallet, Account, WalletSelector} from "@near-wallet-selector/core";
+
 //import type { Wallet } from "ethers";
 import type {
 	AccountView,
@@ -51,7 +53,7 @@ const AccountContext = createContext<State>(initialState);
 export const useAccount = () => useContext(AccountContext);
 
 export const AccountContextProvider = ({ children }: { children: ReactNode }) => {
-	const { account, accountId, provider,walletConnection, checkIsLoggedIn, requestSignInNear, requestSignOut } = useNear();
+	const { account, accountId, balance, provider,walletConnection, checkIsLoggedIn, requestSignInNear, requestSignOut } = useNear();
 	const [accountState, setAccountState] = useState<AccountState>(initialState);
 
 	const reset = useCallback(() => {
@@ -74,15 +76,15 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		
 		//const account = walletConnection.account();
 		//const id = account.accountId;
-		if(account && accountId){
-			const { total: totalBalance } = await account.getAccountBalance();
+		if(account && balance){
+			console.log(account);
 			console.log('set acccount state');
-			console.log(totalBalance);
+			console.log(balance);
 
 			setAccountState({
 				isSignedIn: true,
-				balance: totalBalance,
-				id: accountId,
+				balance: balance.toString(),
+				id: account.accountId,
 				account: account,
 				role: savedRole,
 			});

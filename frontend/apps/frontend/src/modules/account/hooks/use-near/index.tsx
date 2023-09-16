@@ -1,4 +1,4 @@
-import type { Account, ConnectConfig, Near } from "near-api-js";
+import type { ConnectConfig, Near } from "near-api-js";
 import { connect, keyStores, WalletConnection } from "near-api-js";
 import { KeyPair, utils } from "near-api-js";
 import type { ReactNode } from "react";
@@ -33,7 +33,7 @@ import { verifySignature } from "@near-wallet-selector/core";
 import { providers } from "near-api-js";
 import type { Provider } from "near-api-js/lib/providers";
 import { textInputRule } from "@tiptap/react";
-import type {Wallet, AccountState, WalletSelector} from "@near-wallet-selector/core";
+import type {Wallet, Account, AccountState, WalletSelector} from "@near-wallet-selector/core";
 import { useWalletSelector } from "./WalletSelectorContext";
 const NEAR_CONFIG: ConnectConfig = {
 	networkId: "testnet",
@@ -48,6 +48,7 @@ type State = {
 	near?: Near;
 	walletConnection?: WalletConnection;
 	wallet?: Wallet;
+	balance?: BN;
 	selector?: WalletSelector;
 	provider?: Provider;
 	account?: Account;
@@ -77,6 +78,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 	const router = useRouter();
 	const [near, setNear] = useState<State["near"]>(initialState.near);
 	const [wallet, setWallet] = useState<State["wallet"]>(initialState.wallet);
+	const [balance, setBalance] = useState<State["balance"]>(initialState.balance);
 	//const [selector, setSelector] = useState<State["selector"]>(initialState.selector);
 	const [walletConnection, setWalletConnection] = useState<State["walletConnection"]>(initialState.walletConnection);
 	const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_SERIES_ADDRESS as string; // TODO: from .env
@@ -148,12 +150,18 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		//console.log("near initialized")
 	}, []);
 
-	const checkIsLoggedIn = useCallback(() => 
+	const checkIsLoggedIn = useCallback(async() => 
 		{
-			if(selector.isSignedIn() || account) {
+			const isSignedIn = selector.isSignedIn();
+			if(isSignedIn) {
+				console.log('signed in')
+				const wal = await selector.wallet();
+				setWallet(wal);
+				console.log(wal);
+				setAccount( selector.store.getState().accounts[0]);
+				console.log(selector.store.getState().accounts[0]);
 				return true;
-			}
-			else{
+			}else{
 				return false;
 			}
 
@@ -203,7 +211,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			//const accounts = await wallett.signIn({contractId: contractAddress});
 			//setWallet(wallett);
 			//setAccounts(accounts);
-
+			
 			handleSignIn();
 			
 		}
@@ -248,17 +256,15 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		provider,
 		accountId,
 	  }: GetAccountBalanceProps) => {
-		try {
+		
 		  const { amount } = await provider.query<AccountView>({
 			request_type: "view_account",
 			finality: "final",
 			account_id: accountId,
 		  });
 		  const bn = new BN(amount);
-		  return { hasBalance: !bn.isZero() };
-		} catch {
-		  return { hasBalance: false };
-		}
+		  return { bn };
+		
 	  };
 
 	const getAccount = useCallback(async (): Promise<Account | null> => {
@@ -269,12 +275,14 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		const { network } = selector.options;
 		const provider = new providers.JsonRpcProvider({ url: network.nodeUrl });
 	
-		const { hasBalance } = await getAccountBalance({
+		const { bn } = await getAccountBalance({
 		  provider,
 		  accountId,
 		});
+
+		setBalance(bn);
 	
-		if (!hasBalance) {
+		if (!bn) {
 		  window.alert(
 			`Account ID: ${accountId} has not been founded. Please send some NEAR into this account.`
 		  );
@@ -370,12 +378,12 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 
 	const value: State = useMemo(
 		() => ({
-			wallet, walletConnection, provider, accounts, selector, account, accountId, 
+			wallet, walletConnection, provider, accounts, selector, account, accountId, balance, 
 			checkIsLoggedIn,
 			requestSignInNear,
 			requestSignOut,
 		}),
-		[ wallet, provider, accounts, accountId, account, walletConnection, selector, near, checkIsLoggedIn, requestSignInNear, requestSignOut],
+		[ wallet, provider, accounts, accountId, account, balance, walletConnection, selector, near, checkIsLoggedIn, requestSignInNear, requestSignOut],
 	);
 
 	return <NearContext.Provider value={value}>{children}</NearContext.Provider>;
