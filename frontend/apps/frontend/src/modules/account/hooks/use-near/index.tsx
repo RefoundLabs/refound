@@ -83,7 +83,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 	const [walletConnection, setWalletConnection] = useState<State["walletConnection"]>(initialState.walletConnection);
 	const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_SERIES_ADDRESS as string; // TODO: from .env
 	
-	const [account, setAccount] = useState<Account | null>(null);
+	const [account, setAccount] = useState<State["account"]>(initialState.account);
 	const [messages, setMessages] = useState<Array<any>>([]);
   	const [provider, setProvider] = useState<any>();
   	const [nearModal, setNearModal] = useState<any>();
@@ -153,12 +153,16 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 	const checkIsLoggedIn = useCallback(async() => 
 		{
 			const isSignedIn = selector.isSignedIn();
+			
 			if(isSignedIn) {
 				console.log('signed in')
+
 				const wal = await selector.wallet();
 				setWallet(wal);
 				console.log(wal);
-				setAccount( selector.store.getState().accounts[0]);
+				
+				setAccount(selector.store.getState().accounts[0]);
+				
 				console.log(selector.store.getState().accounts[0]);
 				return true;
 			}else{
@@ -304,12 +308,12 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 	
 	  useEffect(() => {
 		if (!accountId) {
-		  return setAccount(null);
+		  return setAccount(undefined);
 		}
 	
 		setLoading(true);
 		console.log('get account')
-		getAccount().then((nextAccount) => {
+		getAccount().then((nextAccount:any) => {
 		  setAccount(nextAccount);
 		  setLoading(false);
 		});

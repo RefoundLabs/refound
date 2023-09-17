@@ -69,7 +69,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		const savedRole = (sessionStorage.getItem("role") as AccountRole) || "user";
 		console.log('session storage')
 		console.log(savedRole);
-		if (!checkIsLoggedIn() || !walletConnection) {
+		if (!checkIsLoggedIn()) {
 			reset();
 			return;
 		}
