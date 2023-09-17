@@ -1,6 +1,7 @@
 import { useAccount } from "@modules/account/hooks/use-account";
 import type { Post } from "@modules/post/domain/post.entity";
 import { usePostContracts } from "@modules/post/hooks/use-post-contracts";
+import { useWritePostContracts } from "@modules/post/hooks/use-post-write-contracts";
 import { DownArrowIcon, ThumbsUpIcon, UpArrowIcon } from "@modules/ui/icons/menu-icons";
 import { toast } from "@services/toast/toast";
 import { cloin } from "@utils/styling/cloin";
@@ -8,7 +9,8 @@ import { useState } from "react";
 import NextLink from "next/link";
 
 export const PostInteractions = ({ post }: { post: Post }) => {
-	const { adapter } = usePostContracts();
+	//const { adapter } = usePostContracts();
+	const {writeAdapter} =  useWritePostContracts();
 	const { role } = useAccount();
 
 	const [votingState, setVotingState] = useState<"IDLE" | "SUBMITTING" | "SUCCESS" | "FAIL">(
@@ -33,7 +35,7 @@ export const PostInteractions = ({ post }: { post: Post }) => {
 						!post.userHasVoted && votingState === "FAIL" && "btn-error",
 					)}
 					onClick={() => {
-						if (!adapter) {
+						if (!writeAdapter) {
 							toast.warning("Sign in to vote for post", "post-vote");
 							return;
 						}
@@ -41,7 +43,7 @@ export const PostInteractions = ({ post }: { post: Post }) => {
 						if (votingState !== "IDLE") return;
 						setVotingState("SUBMITTING");
 
-						adapter.vote({ id: post.id }).then((result) =>
+						writeAdapter?.vote({ id: post.id }).then((result) =>
 							result.match({
 								ok: () => {
 									setVotingState("SUCCESS");
@@ -70,7 +72,7 @@ export const PostInteractions = ({ post }: { post: Post }) => {
 						verificationState === "FAIL" && "btn-error",
 					)}
 					onClick={() => {
-						if (!adapter) {
+						if (!writeAdapter) {
 							toast.warning("Sign in to verify this post", "post-verify");
 							return;
 						}
@@ -85,11 +87,11 @@ export const PostInteractions = ({ post }: { post: Post }) => {
 						if (verificationState !== "IDLE") return;
 						setVerificationState("SUBMITTING");
 
-						adapter.verifyPost({ id: post.id }).then((result) =>
+						writeAdapter?.verifyPost({ id: post.id }).then((result) =>
 							result.match({
 								ok: () => {
 									setVerificationState("SUCCESS");
-									toast.success("Vote received!");
+									toast.success("Verified!");
 								},
 								fail: () => {
 									setVerificationState("FAIL");

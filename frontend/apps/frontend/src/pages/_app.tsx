@@ -14,6 +14,7 @@ import "../styles/base/colors.css";
 import { NearContextProvider } from "@modules/account/hooks/use-near";
 import { AccountContextProvider } from "@modules/account/hooks/use-account";
 import { PostContractsContextProvider } from "@modules/post/hooks/use-post-contracts";
+import { PostWriteContractsContextProvider } from "@modules/post/hooks/use-post-write-contracts";
 import { IpfsContextProvider } from "@modules/post/hooks/use-ipfs";
 import { WalletSelectorContextProvider } from "../modules/account/hooks/use-near/WalletSelectorContext";
 // import { WalletSelectorContextProvider } from "@modules/auth/hooks/use-auth";
@@ -27,14 +28,16 @@ function MyApp({ Component, pageProps : {session, ...pageProps} }: AppProps) {
 			<NearContextProvider>
 					<AccountContextProvider>
 						<IpfsContextProvider>
-							<PostContractsContextProvider>
+						<PostWriteContractsContextProvider>
+								<PostContractsContextProvider>
 									<UIProvider>
 										<Layout>
 											<Component {...pageProps} />
 										</Layout>
 										<Toaster position="bottom-center" />
 									</UIProvider>
-							</PostContractsContextProvider>
+								</PostContractsContextProvider>
+							</PostWriteContractsContextProvider>
 						</IpfsContextProvider>
 					</AccountContextProvider>
 			</NearContextProvider>

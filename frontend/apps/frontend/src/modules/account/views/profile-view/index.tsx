@@ -214,20 +214,20 @@ export const ProfileView = () => {
         getUser();
         
         if(account){
-            console.log(account);
+            //console.log(account);
             const accountID = account.accountId;
-            console.log(accountID)
+            //console.log(accountID)
         }
         
         updateRole(sessionStorage.getItem("role") as AccountRole || "user");
-        console.log(role);
-        console.log('role')
+        //console.log(role);
+        //console.log('role')
         
     }, []);
  
     useEffect(() => {
         if(email){
-            console.log(email);
+            //console.log(email);
         }
 
         // if(avatarFile){
@@ -279,8 +279,8 @@ export const ProfileView = () => {
             const newPosts = posts.filter((item:any) => item.owner.includes(account?.accountId));
             setFilteredPosts(newPosts);
         }
-        console.log(posts);
-        console.log(avatar);
+        //console.log(posts);
+        //console.log(avatar);
     }, [adapter, posts, filteredPosts]); 
 
 	return (

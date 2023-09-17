@@ -57,7 +57,7 @@ export const WalletSelectorContextProvider: React.FC<{
         setupRamperWallet(),
         setupMyNearWallet(),
         setupLedger(),
-        setupNearWallet(),
+        //setupNearWallet(),
         setupSender(),
         setupMathWallet(),
         setupNightly(),

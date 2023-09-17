@@ -32,7 +32,7 @@ export const useIpfs = () => useContext(IpfsContext);
 export const IpfsContextProvider = ({ children }: { children: ReactNode }) => {
 	const [client, setClient] = useState<Nullable<Web3Storage>>();
 	const [ipfsReady, setIpfsReady] = useState<State["ipfsReady"]>(initialState.ipfsReady);
-	const { id } = useAccount();
+	const { accountId } = useAccount();
 
 	useEffect(() => {
 		const ipfsClient = new Web3Storage({ token: config.web3storage.token });
@@ -58,11 +58,11 @@ export const IpfsContextProvider = ({ children }: { children: ReactNode }) => {
 					throw new Error("Unable to connect to IPFS");
 				}
 
-				if (!id) {
+				if (!accountId) {
 					throw new Error("Must be signed in to upload files.");
 				}
 
-				const tagName = `${id}-${title}`;
+				const tagName = `${accountId}-${title}`;
 
 				const { cid, path } = (
 					await ipfsCommands.uploadFile(
@@ -90,7 +90,7 @@ export const IpfsContextProvider = ({ children }: { children: ReactNode }) => {
 				return result.fail(new Error(errorMessage));
 			}
 		},
-		[client, id],
+		[client, accountId],
 	);
 
 	const value = {

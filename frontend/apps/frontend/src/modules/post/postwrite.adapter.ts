@@ -108,27 +108,33 @@ interface SeriesCommands {
 //type SeriesContract = NearContract & SeriesCommands & SeriesQueries;
 
 
-export class PostContractAdapter {
+export class PostWriteContractAdapter {
 	private static contractAddress = process.env.NEXT_PUBLIC_CONTRACT_SERIES_ADDRESS as string; // TODO: from .env
 	
-	private account?: Account;
+	private account: Account;
+	private wallet: Wallet;
 	//private contract: SeriesContract;
 	
 	private constructor({
 		account,
+		wallet
 		//contract,
 	}: {
-		account?: Account;
+		account: Account;
+		wallet: Wallet;
 		//contract: SeriesContract;
 	}) {
 		this.account = account;
+		this.wallet = wallet;
 		//this.contract = contract;
 	}
 
 	static async init({
 		account,
+		wallet
 	}: {
 		account: Account;
+		wallet: Wallet;
 	}){
 		try {
 			// const account = walletConnection.account();
@@ -144,7 +150,7 @@ export class PostContractAdapter {
 
 			
 			console.log('init post contract adapter');
-			return result.ok(new PostContractAdapter({account}));
+			return result.ok(new PostWriteContractAdapter({account, wallet}));
 
 		} catch (error) {
 			console.error(error);
@@ -176,7 +182,7 @@ export class PostContractAdapter {
 			  }).then((votesByAccount:any) =>
 			  Object.keys(votesByAccount).reduce((previous, current) => {
 				  // TODO: very heavy way to handle checking if user has already voted.
-				  if (this.account && current === this.account.accountId) {
+				  if (current === this.account.accountId) {
 					console.log('user has voted');
 					  userHasVoted = true;
 				  }
@@ -201,8 +207,8 @@ export class PostContractAdapter {
 			userHasVoted,
 		};
 
-		//console.log('post');
-		//console.log(post);
+		console.log('post');
+		console.log(post);
 
 		return post;
 	}
@@ -213,34 +219,6 @@ export class PostContractAdapter {
 	//----------------------------------------
 	//----------------------------------------
 
-	async getPost(query: { id: number }): Promise<Result<Post>> {
-		try {
-			//const seriesDetails = await this.contract.get_series_details({ id: query.id });
-
-			let key = '{"id": ' + query.id + '}';
-			//console.log(key)
-			//return result.fail(new Error("Could not get post."));
-			const rawResult = await provider.query({
-				request_type: "call_function",
-				account_id: "dev-1669390838754-18143842088820",
-				method_name: "get_series_details",
-				args_base64: Buffer.from(key).toString('base64'),
-				finality: "optimistic",
-			  });
-			
-			const res = JSON.parse(Buffer.from(rawResult.result).toString());
-			//console.log(res);
-			
-			let post = await this.postDtoToEntity(res);
-			//console.log('get post hook')
-			//console.log(post);
-				
-			return result.ok(post);
-		} catch (error) {
-			console.error(error);
-			return result.fail(new Error("Could not get post."));
-		}
-	}
 
 	async getPosts(query: { from_index?: number; limit?: number }): Promise<Result<Post[]>> {
 		let foundPosts = false;
@@ -250,7 +228,7 @@ export class PostContractAdapter {
 			console.log('get posts');
 			let res = await provider.query({
 				request_type: 'call_function',
-				account_id: PostContractAdapter.contractAddress,
+				account_id: PostWriteContractAdapter.contractAddress,
 				method_name: "get_series",
 				args_base64: "e30=",
 				finality: 'optimistic',
@@ -286,49 +264,215 @@ export class PostContractAdapter {
 		return result.ok(posts);
 	}
 
+	//----------------------------------------
+	//----------------------------------------
+	// COMMANDS
+	//----------------------------------------
+	//----------------------------------------
 
-	/**
-	 * Returns table of who has verified the post to how many times they have verified
-	 */
-	/* async getPostVerifiers(query: { id: number }): Promise<Result<Record<AccountId, number>>> {
+	async callMethod(method:string, args = {}) {
+		// Sign a transaction with the "FunctionCall" action
+		const yoctoDeposit = "10000000000000000000000";
+		const THIRTY_TGAS = '30000000000000';
+		console.log('call method');
+
+		const parsedArgs = Buffer.from(JSON.stringify(args)).toString('base64');
+
+		const outcome = await this.wallet.signAndSendTransaction({
+		  signerId: this.account.accountId,
+		  receiverId: PostWriteContractAdapter.contractAddress,
+		  actions: [
+			{
+			  type: 'FunctionCall',
+			  params: {
+				methodName: method,
+				args: {parsedArgs},
+				gas: THIRTY_TGAS,
+				deposit: yoctoDeposit,
+			  },
+			},
+		  ],
+		});
+	
+		return providers.getTransactionLastResult(outcome)
+	  }
+
+	  async callMethodNoDeposit(method:string, args = {}) {
+		// Sign a transaction with the "FunctionCall" action
+		const yoctoDeposit = "10000000000000000000000";
+		const THIRTY_TGAS = '30000000000000';
+		console.log('call method');
+
+		const parsedArgs = Buffer.from(JSON.stringify(args)).toString('base64');
+
+		const outcome = await this.wallet.signAndSendTransaction({
+		  signerId: this.account.accountId,
+		  receiverId: PostWriteContractAdapter.contractAddress,
+		  actions: [
+			{
+			  type: 'FunctionCall',
+			  params: {
+				methodName: method,
+				args: {parsedArgs},
+				gas: THIRTY_TGAS,
+				deposit: "",
+			  },
+			},
+		  ],
+		});
+	
+		return providers.getTransactionLastResult(outcome)
+	  }
+
+	async createPost({
+		title,
+		description,
+		ipfsLink,
+		locationTaken,
+		dateTaken,
+		datePosted,
+		dateGoLive,
+		dateEnd,
+		price,
+		copies,
+		tags,
+	}: {
+		title: string;
+		description: string;
+		ipfsLink: string;
+		locationTaken:string;
+		dateTaken: string;
+		datePosted: string;
+		dateGoLive: number//milliseconds;
+		dateEnd: string;
+		price: string;
+		copies: number;
+		tags: string;
+	}): Promise<Result<true>> {
 		try {
-			const votes = await this.contract.get_votes({ id: `${query.id}` });
+			// TODO: currently enormous query just to find next id
+			const posts = await this.getPosts({}).then((result) =>
+				result?.match({
+					ok: (posts) => {return posts},
+					fail: (error) => {
+						toast.error(error.message, "no-posts");
+					},
+				}),
+			);
+			if(posts?.length){
+				const nextId = posts.length > 0 ? posts[posts.length - 1].series_id + 1 : 0;
 
-			return result.ok(votes);
+				// TODO: Should be calculated based on bytes to be stored.
+				const yoctoDeposit = "10000000000000000000000";
+
+			
+				const extra = {
+					locationTaken : locationTaken,
+					dateTaken : dateTaken,
+					tags : tags,
+					//articleText: articleText
+					
+					//add splits here
+				}
+				console.log('create post');
+
+				// TODO: is there some kind of confirmation we can get out of contract calls?
+				// await this.contract.create_series(
+				// 	,
+				// 	undefined,
+				// 	yoctoDeposit,
+				// );
+
+				const args = {
+					id:nextId, // TODO: what is this?
+					metadata: {
+						title: title,
+						description: description,
+						media: ipfsLink,
+						copies: copies.toString(),
+						starts_at: dateGoLive,
+						issued_at: new Date().getMilliseconds(),
+						extra: JSON.stringify(extra)
+					},
+					price: price
+				};
+
+				await this.callMethod("create_series", args);
+
+				return result.ok(true);
+			}
+			return result.fail(new Error("Failed to get index"));
 		} catch (error) {
 			console.error(error);
 
-			return result.fail(new Error("Could not get votes"));
+			return result.fail(new Error("Failed to create post"));
 		}
-	} */
+	}
 
-	/**
-	 * Returns total number of verifications a post has received
-	 */
-	/* 	async getPostVerifications(query: { id: number }): Promise<Result<number>> {
+	async verifyPost(payload: { id: number }): Promise<Result<true>> {
 		try {
-			const totalVotes = await this.contract.get_total_votes(query);
+			//await this.contract.change_series_verification({ ...payload, verified: true });
 
-			return result.ok(totalVotes);
+			const args = { ...payload, verified: true }
+			await this.callMethodNoDeposit("change_series_verification", args)
+
+			return result.ok(true);
 		} catch (error) {
 			console.error(error);
 
-			return result.fail(new Error("Could not get total votes"));
+			return result.fail(new Error("Could not verify series."));
 		}
-	} */
+	}
 
-	/* async checkPostIsVerified(query: { id: number }): Promise<Result<boolean>> {
+	async purchaseLicense(payload: { id: number; licenseType: keyof typeof LicenseType }) {
 		try {
-			const totalVotes = await this.contract.get_total_votes(query);
+			const yoctoDeposit = "10000000000000000000000";
 
-			return result.ok(totalVotes > 0);
+			// await this.contract.nft_mint(
+			// 	{
+			// 		id: `${payload.id}`,
+			// 		receiver_id: this.contract.account.accountId,
+			// 	},
+			// 	undefined,
+			// 	yoctoDeposit,
+			// );
+
+			const args = {
+				id: `${payload.id}`,
+				receiver_id: this.account.accountId,
+			};
+			console.log('purchase license');
+			await this.callMethod("nft_mint", args)
+
+			return result.ok(true);
 		} catch (error) {
 			console.error(error);
 
-			return result.fail(new Error("Could not check if post is verified"));
+			return result.fail(new Error("Failed to purchase license."));
 		}
-	} */
+	}
 
+	async vote(payload: { id: number }) {
+		try {
+			//await this.contract.vote({ id: `${payload.id}` });
+
+			const args = {
+				id: `${payload.id}`
+			};
+
+			await this.callMethodNoDeposit("vote", args)
+
+			return result.ok(true);
+		} catch (error) {
+			console.error(error);
+
+			return result.fail(new Error("Failed to vote for post."));
+		}
+	}
+
+	async keypom() {
+		// TODO: implement
+	}
 }
 
 /* 

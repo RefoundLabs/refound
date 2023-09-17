@@ -5,9 +5,12 @@ import { toast } from "@services/toast/toast";
 import { useState } from "react";
 import { cloin } from "@utils/styling/cloin";
 import { useAccount } from "@modules/account/hooks/use-account";
+import { useWritePostContracts } from "@modules/post/hooks/use-post-write-contracts";
 
 export const LicensePost = ({ post }: { post: Post }) => {
-	const { adapter } = usePostContracts();
+	//const { adapter } = usePostContracts();
+	const {writeAdapter} = useWritePostContracts();
+	
 	const { role } = useAccount();
 	const [selectedLicense, setSelectedLicense] = useState<LicenseType>(LicenseType.SingleUse);
 	const [submitState, setSubmitState] = useState<"IDLE" | "SUBMITTING" | "SUCCESS" | "FAIL">(
@@ -39,7 +42,7 @@ export const LicensePost = ({ post }: { post: Post }) => {
 					onClick={(e) => {
 						e.preventDefault();
 
-						if (!adapter) {
+						if (!writeAdapter) {
 							toast.error("Please log in before purchasing a license.");
 							setSubmitState("IDLE");
 							return;
@@ -47,15 +50,14 @@ export const LicensePost = ({ post }: { post: Post }) => {
 
 						setSubmitState("SUBMITTING");
 
-						adapter
-							.purchaseLicense({ id: post.id, licenseType: selectedLicense })
-							.then((confirmation) =>
+						writeAdapter?.purchaseLicense({ id: post.id, licenseType: selectedLicense })
+							.then((confirmation:any) =>
 								confirmation.match({
 									ok: () => {
 										setSubmitState("SUCCESS");
-										toast.error("Purchased!");
+										toast.success("Purchased!");
 									},
-									fail: (err) => {
+									fail: (err:any) => {
 										console.error(err);
 										setSubmitState("FAIL");
 										toast.error("Failed to purchase license");

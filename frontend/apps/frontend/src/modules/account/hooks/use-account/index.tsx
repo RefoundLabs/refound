@@ -21,14 +21,14 @@ type AccountState =
 			isSignedIn: true;
 			account: Account;
 			balance: string;
-			id: string;
+			accountId: string;
 			role: AccountRole;
 	  }
 	| {
 			isSignedIn: false;
 			account?: Account;
 			balance?: string;
-			id?: string;
+			accountId?: string;
 			role?: AccountRole;
 	  }
 	  ;
@@ -39,7 +39,7 @@ const initialState: State = {
 	isSignedIn: false,
 	//account: undefined,
 	balance: undefined,
-	id: undefined,
+	accountId: undefined,
 	role: "user" as AccountRole,
 	signIn: async () => {
 		console.warn("SignIn not initialized");
@@ -53,7 +53,7 @@ const AccountContext = createContext<State>(initialState);
 export const useAccount = () => useContext(AccountContext);
 
 export const AccountContextProvider = ({ children }: { children: ReactNode }) => {
-	const { account, accountId, balance, provider,walletConnection, checkIsLoggedIn, requestSignInNear, requestSignOut } = useNear();
+	const { account, accountId, balance, provider,wallet, checkIsLoggedIn, requestSignInNear, requestSignOut } = useNear();
 	const [accountState, setAccountState] = useState<AccountState>(initialState);
 
 	const reset = useCallback(() => {
@@ -74,7 +74,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 			return;
 		}
 	
-		if(account){
+		if(account && balance){
 			console.log(account);
 			console.log('set acccount state');
 			console.log(balance);
@@ -82,7 +82,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 			setAccountState({
 				isSignedIn: true,
 				balance: balance?.toString(),
-				id: account.accountId,
+				accountId: account.accountId,
 				account: account,
 				role: savedRole,
 			});
@@ -92,11 +92,11 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		}
 	
 		
-	}, [walletConnection]);
+	}, [wallet, account, balance]);
 
 
 	const updateRole = useCallback((role:string) => {
-		if(accountState.balance && accountState.id && accountState.account){
+		if(accountState.balance && accountState.accountId && accountState.account){
 			setAccountState((prevState) => ({
 				...prevState,
 				role: role as AccountRole,

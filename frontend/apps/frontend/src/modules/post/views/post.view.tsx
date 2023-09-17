@@ -15,10 +15,13 @@ import NextLink from "next/link";
 import { LicensePost } from "../components/license-post";
 import { PostInteractions } from "../components/post-interactions";
 import { KeypomModal } from "../components/keypom-modal";
+import { useNear } from "@modules/account/hooks/use-near";
 
 export const PostView = () => {
 	const router = useRouter();
+	const { wallet, account, checkIsLoggedIn } = useNear();
 	const { adapter } = usePostContracts();
+	
 	const [post, setPost] = useState<Nullable<Post>>(undefined);
 	const [notFound, setNotFound] = useState(false);
 	const { id: postIdQuery } = router.query;
@@ -116,7 +119,7 @@ export const PostView = () => {
 						<KeypomModal />
 					</div>
 
-					<LicensePost post={post} />
+					<LicensePost post={post}  />
 				</div>
 
 				{/* <div className="flex flex-row flex-wrap gap-8">

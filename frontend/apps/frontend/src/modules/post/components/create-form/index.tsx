@@ -14,7 +14,7 @@ import { CaptureModal } from "./capture-modal";
 import { usePostContracts } from "@modules/post/hooks/use-post-contracts";
 import { cloin } from "@utils/styling/cloin";
 import { isString } from "@utils/validation";
-import type { PostContractAdapter } from "@modules/post/post.adapter";
+import type { PostWriteContractAdapter } from "@modules/post/postwrite.adapter";
 import { useIpfs } from "@modules/post/hooks/use-ipfs";
 import { FileDropInput } from "./file-drop-input";
 import { AudioFileDropInput } from "./audio-file-drop-input";
@@ -50,6 +50,7 @@ import { AudioRecorder } from 'react-audio-voice-recorder';
 import exifr from 'exifr' // => exifr/dist/full.umd.cjs
 import Geocode from "react-geocode";
 import BubbleMenu from '@tiptap/extension-bubble-menu'
+import { useWritePostContracts } from "@modules/post/hooks/use-post-write-contracts";
 
 type FormData = {
 	title?: string;
@@ -136,7 +137,7 @@ type ReducerActions =
 	| { type: "SUBMIT_FAIL" }
 	| { type: "RESET" };
 
-type PostCreationProps = Parameters<PostContractAdapter["createPost"]>[0];
+type PostCreationProps = Parameters<PostWriteContractAdapter["createPost"]>[0];
 
 const reducer = (state: ReducerState, action: ReducerActions): ReducerState => {
 	switch (action.type) {
@@ -258,7 +259,7 @@ export const CreateForm = () => {
 	
 	const router = useRouter();
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
-	const { adapter } = usePostContracts();
+	const { writeAdapter } = useWritePostContracts();
 	const [userInWaitlist, setUserInWailist] = useState(false);
 	const [captureModalOpen, setCaptureModalOpen] = useState(false);
 	const [editorState, setEditorState] = useState("");
@@ -505,8 +506,8 @@ export const CreateForm = () => {
 					datePosted: datePosted,
 					dateGoLive: dateGoLive,
 					dateEnd:dateEnd,
-					price:price,
-					copies: copies,
+					price:price.toString(),
+					copies: copies.toString(),
 					tags:tags,
 					articleText: articleText, 
 				},
@@ -525,7 +526,7 @@ export const CreateForm = () => {
 
 	const createPost = async (): Promise<Result<true>> => {
 		try {
-			if (!adapter) {
+			if (!writeAdapter) {
 				toast.error("Please sign in to create a post", "not-signed-create");
 				return result.fail(new Error("Please sign in before creating post."));
 			}
@@ -561,7 +562,7 @@ export const CreateForm = () => {
 			console.log('creation props')
 
 			const success = (
-				await adapter.createPost({
+				await writeAdapter.createPost({
 					title: creationProps.metadata.title,
 					description: creationProps.metadata.description,
 					ipfsLink: ipfsMediaLink,

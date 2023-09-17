@@ -13,7 +13,7 @@ export const SiteHeader = () => {
 	//const account = useAccount();
 	const [enableMobileMenu, setEnableMenu] = useState(false);
 
-	const { isSignedIn, signOut, id, role } = useAccount();
+	const { isSignedIn, signOut, accountId, role } = useAccount();
 	console.log(isSignedIn + " isSignedin")
 
 	return (
@@ -52,12 +52,12 @@ export const SiteHeader = () => {
 					<NextLink href="/waitlist"><a>Waitlist</a></NextLink>
 				</nav>
 
-				{isSignedIn ? (
+				{accountId ? (
 					<div style={{cursor:"pointer"}} className="flex flex-row items-center justify-center gap-2">
 						<div className="flex flex-row justify-center gap-4 rounded-full badge">
 							<NextLink href="/profile" >
 								<div>
-									<span className="text-background">{trimText(id, 20)}</span>
+									<span className="text-background">{trimText(accountId.toString(), 20)}</span>
 									{/* <span className="text-background"> as {role}</span> */}
 								</div>
 							</NextLink>
