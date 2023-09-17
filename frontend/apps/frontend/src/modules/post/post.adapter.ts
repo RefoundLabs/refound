@@ -1,17 +1,21 @@
 import type { Result } from "@utils/monads";
 import { result } from "@utils/monads";
-import { WalletConnection } from "near-api-js";
-import {Wallet} from "@near-wallet-selector/core";
-import { Contract as NearContract } from "near-api-js";
+//import { WalletConnection } from "near-api-js";
+import type {Wallet, Account} from "@near-wallet-selector/core";
+//import { Contract as NearContract } from "near-api-js";
 import { config } from "@config/config";
 import type { LicenseType, Post } from "./domain/post.entity";
-import type { Account, ConnectConfig, Near } from "near-api-js";
-const { providers } = require("near-api-js");
+//import type { Account, ConnectConfig, Near } from "near-api-js";
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
+import { useNear } from "../account/hooks/use-near";
+import { useState } from "react";
+import { toast } from "@services/toast/toast";
 //network config (replace testnet with mainnet or betanet)
+const { providers } = require("near-api-js");
 const provider = new providers.JsonRpcProvider(
   "https://rpc.testnet.near.org"
 );
-import {decode as base64_decode, encode as base64_encode} from 'base-64';
+
 
 type SeriesId = number;
 type Base64VecU8 = string;
@@ -101,43 +105,53 @@ interface SeriesCommands {
 	) => Promise<void>;
 }
 
-type SeriesContract = NearContract & SeriesCommands & SeriesQueries;
+//type SeriesContract = NearContract & SeriesCommands & SeriesQueries;
+
 
 export class PostContractAdapter {
 	private static contractAddress = process.env.NEXT_PUBLIC_CONTRACT_SERIES_ADDRESS as string; // TODO: from .env
-
-	// private wallet: WalletConnection;
-	private contract: SeriesContract;
-
+	
+	private account: Account;
+	private wallet: Wallet;
+	//private contract: SeriesContract;
+	
 	private constructor({
-		// walletConnection,
-		contract,
+		account,
+		wallet
+		//contract,
 	}: {
-		// walletConnection: WalletConnection;
-		contract: SeriesContract;
+		account: Account;
+		wallet: Wallet;
+		//contract: SeriesContract;
 	}) {
-		// this.wallet = walletConnection;
-		this.contract = contract;
+		this.account = account;
+		this.wallet = wallet;
+		//this.contract = contract;
 	}
 
 	static async init({
-		walletConnection,
+		account,
+		wallet
 	}: {
-		walletConnection: WalletConnection
-	}): Promise<Result<PostContractAdapter>> {
+		account: Account;
+		wallet: Wallet;
+	}){
 		try {
-			const account = walletConnection.account();
-			const contract = (await new NearContract(
-				account,
-				this.contractAddress,
-				{
-					viewMethods: queries,
-					changeMethods: commands,
-				},
-			)) as SeriesContract;
-			console.log(contract);
+			// const account = walletConnection.account();
+			// const contract = (await new NearContract(
+			// 	account,
+			// 	this.contractAddress,
+			// 	{
+			// 		viewMethods: queries,
+			// 		changeMethods: commands,
+			// 	},
+			// )) as SeriesContract;
+			// console.log(contract);
 
-			return result.ok(new PostContractAdapter({ /*  walletConnection, */ contract }));
+			
+			console.log('init post contract adapter');
+			return result.ok(new PostContractAdapter({account, wallet}));
+
 		} catch (error) {
 			console.error(error);
 
@@ -152,25 +166,30 @@ export class PostContractAdapter {
 	//----------------------------------------
 
 	public async postDtoToEntity(series: JsonSeries): Promise<Post> {
-		//console.log({ postDtoToEntity1: this.contract });
-		let userHasVoted = false;
 		
-		//console.log('output post')
-		//console.log({ postDtoToEntity2: this.contract });
-		//console.log(series);
+		let userHasVoted = false;
 
-		const voteCount = await this.contract
-			.get_votes({ id: `${series.series_id}` })
-			.then((votesByAccount) =>
-				Object.keys(votesByAccount).reduce((previous, current) => {
-					// TODO: very heavy way to handle checking if user has already voted.
-					if (current === this.contract.account.accountId) {
-						userHasVoted = true;
-					}
+		const args = {
+			id: series.series_id.toString()
+		}
 
-					return votesByAccount[current] > 0 ? previous + 1 : previous;
-				}, 0),
-			);
+			const voteCount = await provider.query({
+				request_type: "call_function",
+				account_id: "dev-1669390838754-18143842088820",
+				method_name: "get_votes",
+				args_base64: Buffer.from(JSON.stringify(args)).toString('base64'),
+				finality: "optimistic",
+			  }).then((votesByAccount:any) =>
+			  Object.keys(votesByAccount).reduce((previous, current) => {
+				  // TODO: very heavy way to handle checking if user has already voted.
+				  if (current === this.account.accountId) {
+					console.log('user has voted');
+					  userHasVoted = true;
+				  }
+
+				  return votesByAccount[current] > 0 ? previous + 1 : previous;
+			  }, 0),
+		);
 
 		const post: Post = {
 			id: series.series_id,
@@ -188,6 +207,9 @@ export class PostContractAdapter {
 			userHasVoted,
 		};
 
+		console.log('post');
+		console.log(post);
+
 		return post;
 	}
 
@@ -199,15 +221,8 @@ export class PostContractAdapter {
 
 	async getPost(query: { id: number }): Promise<Result<Post>> {
 		try {
-			const seriesDetails = await this.contract.get_series_details({ id: query.id });
+			//const seriesDetails = await this.contract.get_series_details({ id: query.id });
 
-			let post = await this.postDtoToEntity(seriesDetails);
-			console.log('get post hook')
-			console.log(post);
-				
-			return result.ok(post);
-		} catch (error) {
-			console.error(error);
 			let key = '{"id": ' + query.id + '}';
 			//console.log(key)
 			//return result.fail(new Error("Could not get post."));
@@ -219,84 +234,61 @@ export class PostContractAdapter {
 				finality: "optimistic",
 			  });
 			
-			  const res = JSON.parse(Buffer.from(rawResult.result).toString());
-			  console.log(res);
-			  return result.ok(this.flattenObject(res));
+			const res = JSON.parse(Buffer.from(rawResult.result).toString());
+			console.log(res);
+			
+			let post = await this.postDtoToEntity(res);
+			console.log('get post hook')
+			console.log(post);
+				
+			return result.ok(post);
+		} catch (error) {
+			console.error(error);
+			return result.fail(new Error("Could not get post."));
 		}
 	}
-
-	public flattenObject = (obj:any) => {
-		const flattened:any = {}
-	  
-		Object.keys(obj).forEach((key) => {
-		  const value = obj[key]
-	  
-		  if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-			Object.assign(flattened, this.flattenObject(value))
-			obj.key = "";
-		  } else {
-			flattened[key] = value
-		  }
-		})
-	  
-		return flattened
-	  }
 
 	async getPosts(query: { from_index?: number; limit?: number }): Promise<Result<Post[]>> {
 		let foundPosts = false;
 		let posts : any = [];
 		try {
-			//console.log(this.contract);
-			const series = await (
-				await this.contract.get_series(query)
-			).filter(
-				(seriesItem) =>
+			
+			console.log('get posts');
+			let res = await provider.query({
+				request_type: 'call_function',
+				account_id: PostContractAdapter.contractAddress,
+				method_name: "get_series",
+				args_base64: "e30=",
+				finality: 'optimistic',
+			  });
+
+			if(res){
+			  	const parsedRes = JSON.parse(Buffer.from(res.result).toString()).filter(
+					(seriesItem:JsonSeries) =>
 					// @ts-expect-error: strict typing of config causes error with general number type from series_id
 					!config.content.moderationList.posts.includes(seriesItem.series_id),
-			);
+				);
 
-			//console.log('series');
-			//console.log(series);
+				//console.log('parsed posts result');
+				//console.log(parsedRes);
 
-			posts = await Promise.all(
-				series.map(async (item) => this.postDtoToEntity(item)),
-			);
-			foundPosts = true;
-			//return result.ok(posts);
+				posts = await Promise.all(
+					parsedRes.map(async (item:JsonSeries) => this.postDtoToEntity(item)),
+				);
+				
+				foundPosts = true;
+				//console.log(posts);
+			}
+
+				return result.ok(posts);
+
+			  //return JSON.parse(Buffer.from(res.result).toString());
+
 		} catch (error) {
 			console.error(error);
 			 
 		}
 		
-		// if(!foundPosts){
-		// 	try{
-		// 		const rawResult = await provider.query({
-		// 			request_type: "call_function",
-		// 			account_id: "dev-1669390838754-18143842088820",
-		// 			method_name: "get_series",
-		// 			args_base64: "e30=",
-		// 			finality: "optimistic",
-		// 		  });
-				
-		// 		  // format result
-		// 		  const res = JSON.parse(Buffer.from(rawResult.result).toString());
-		// 		  const rawposts = res.filter(
-		// 		  (item:any) =>
-		// 			  !config.content.moderationList.posts.includes(item.series_id),
-		// 		  );
-				  
-		// 		  console.log('get series')
-		// 		  console.log(rawposts);
-		// 		  posts = await Promise.all(
-		// 			  rawposts.map(async (item:any) => this.postDtoToEntity(item)),
-		// 		  );
-		// 		  foundPosts = true;
-		// 		  console.log(posts);
-		// 		  //return result.ok(posts);
-		// 	 }catch{
-		// 		//return result.fail(new Error("Could not get posts."));
-		// 	 }
-		// }
 		return result.ok(posts);
 	}
 
@@ -349,6 +341,30 @@ export class PostContractAdapter {
 	//----------------------------------------
 	//----------------------------------------
 
+	async callMethod(method:string, args = {}) {
+		// Sign a transaction with the "FunctionCall" action
+		const yoctoDeposit = "10000000000000000000000";
+		const THIRTY_TGAS = '30000000000000';
+
+		const outcome = await this.wallet.signAndSendTransaction({
+		  signerId: this.account.accountId,
+		  receiverId: PostContractAdapter.contractAddress,
+		  actions: [
+			{
+			  type: 'FunctionCall',
+			  params: {
+				methodName: method,
+				args,
+				gas: THIRTY_TGAS,
+				deposit: yoctoDeposit,
+			  },
+			},
+		  ],
+		});
+	
+		return providers.getTransactionLastResult(outcome)
+	  }
+
 	async createPost({
 		title,
 		description,
@@ -376,32 +392,39 @@ export class PostContractAdapter {
 	}): Promise<Result<true>> {
 		try {
 			// TODO: currently enormous query just to find next id
-			const nextId = await this.contract
-				.get_series({})
-				.then((series) =>
-					series.length > 0 ? series[series.length - 1].series_id + 1 : 0,
-				);
+			const posts = await this.getPosts({}).then((result) =>
+				result?.match({
+					ok: (posts) => {return posts},
+					fail: (error) => {
+						toast.error(error.message, "no-posts");
+					},
+				}),
+			);
+			if(posts?.length){
+				const nextId = posts.length > 0 ? posts[posts.length - 1].series_id + 1 : 0;
 
-			// TODO: Should be calculated based on bytes to be stored.
-			const yoctoDeposit = "10000000000000000000000";
+				// TODO: Should be calculated based on bytes to be stored.
+				const yoctoDeposit = "10000000000000000000000";
 
 			
-			const extra = {
-				locationTaken : locationTaken,
-				dateTaken : dateTaken,
-				tags : tags,
-				//articleText: articleText
-				
-				//add splits here
-			}
-			console.log('create post')
-			console.log(locationTaken);
-			console.log(tags);
-			console.log(nextId)
+				const extra = {
+					locationTaken : locationTaken,
+					dateTaken : dateTaken,
+					tags : tags,
+					//articleText: articleText
+					
+					//add splits here
+				}
+				console.log('create post');
 
-			// TODO: is there some kind of confirmation we can get out of contract calls?
-			await this.contract.create_series(
-				{
+				// TODO: is there some kind of confirmation we can get out of contract calls?
+				// await this.contract.create_series(
+				// 	,
+				// 	undefined,
+				// 	yoctoDeposit,
+				// );
+
+				const args = {
 					id: nextId, // TODO: what is this?
 					metadata: {
 						title: title,
@@ -413,13 +436,13 @@ export class PostContractAdapter {
 						extra: JSON.stringify(extra)
 					},
 					price: price
-				},
-				undefined,
-				yoctoDeposit,
-			);
+				};
 
+				await this.callMethod("create_series", args);
 
-			return result.ok(true);
+				return result.ok(true);
+			}
+			return result.fail(new Error("Failed to get index"));
 		} catch (error) {
 			console.error(error);
 
@@ -429,7 +452,10 @@ export class PostContractAdapter {
 
 	async verifyPost(payload: { id: number }): Promise<Result<true>> {
 		try {
-			await this.contract.change_series_verification({ ...payload, verified: true });
+			//await this.contract.change_series_verification({ ...payload, verified: true });
+
+			const args = { ...payload, verified: true }
+			await this.callMethod("change_series_verification", args)
 
 			return result.ok(true);
 		} catch (error) {
@@ -444,14 +470,21 @@ export class PostContractAdapter {
 		try {
 			const yoctoDeposit = "10000000000000000000000";
 
-			await this.contract.nft_mint(
-				{
-					id: `${payload.id}`,
-					receiver_id: this.contract.account.accountId,
-				},
-				undefined,
-				yoctoDeposit,
-			);
+			// await this.contract.nft_mint(
+			// 	{
+			// 		id: `${payload.id}`,
+			// 		receiver_id: this.contract.account.accountId,
+			// 	},
+			// 	undefined,
+			// 	yoctoDeposit,
+			// );
+
+			const args = {
+				id: `${payload.id}`,
+				receiver_id: this.account.accountId,
+			};
+
+			await this.callMethod("nft_mint", args)
 
 			return result.ok(true);
 		} catch (error) {
@@ -463,7 +496,13 @@ export class PostContractAdapter {
 
 	async vote(payload: { id: number }) {
 		try {
-			await this.contract.vote({ id: `${payload.id}` });
+			//await this.contract.vote({ id: `${payload.id}` });
+
+			const args = {
+				id: `${payload.id}`
+			};
+
+			await this.callMethod("vote", args)
 
 			return result.ok(true);
 		} catch (error) {

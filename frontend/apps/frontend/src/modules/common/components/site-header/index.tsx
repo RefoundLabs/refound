@@ -14,7 +14,7 @@ export const SiteHeader = () => {
 	const [enableMobileMenu, setEnableMenu] = useState(false);
 
 	const { isSignedIn, signOut, id, role } = useAccount();
-	console.log(isSignedIn + "isSignedin")
+	console.log(isSignedIn + " isSignedin")
 
 	return (
 		<header className="px-sitepad fixed top-0 left-0 right-0 flex flex-row items-center justify-between border-b-2 border-solid h-headerTopHeight border-primary z-[5000] bg-white">

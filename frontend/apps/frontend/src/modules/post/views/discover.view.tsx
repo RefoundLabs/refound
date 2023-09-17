@@ -34,10 +34,10 @@ export const DiscoverView = () => {
 	
 	useEffect(()=>{
 		if(posts) {
-			//console.log('posts obj')
-			//console.log(posts);
+			console.log('posts obj')
+			console.log(posts);
 		}
-		if(!posts) getState();
+		//if(!posts) getState();
 
 
 	}, [posts])

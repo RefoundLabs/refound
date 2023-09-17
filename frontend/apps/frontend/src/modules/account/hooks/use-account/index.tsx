@@ -73,17 +73,15 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 			reset();
 			return;
 		}
-		
-		//const account = walletConnection.account();
-		//const id = account.accountId;
-		if(account && balance){
+	
+		if(account){
 			console.log(account);
 			console.log('set acccount state');
 			console.log(balance);
 
 			setAccountState({
 				isSignedIn: true,
-				balance: balance.toString(),
+				balance: balance?.toString(),
 				id: account.accountId,
 				account: account,
 				role: savedRole,
@@ -92,16 +90,6 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		}else{
 			console.log("no account")
 		}
-		//const val = getAccount(id);
-
-		// if(savedWallet == "web3auth"){
-		// 	totalBalance = await account.getAccountBalance().toString();
-		// 	console.log(totalBalance);
-		// }else if(savedWallet == "near"){
-		// 	totalBalance = await getAccountBalance(id);
-		// 	console.log("totalabalance" + totalBalance);
-		// }
-
 	
 		
 	}, [walletConnection]);
@@ -115,18 +103,6 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 			  }));
 		}
 	}, [accountState]);
-
-	const getAccount = useCallback((id:string): Promise<Account> | undefined => {
-		return provider?.query<AccountView>({
-			request_type: "view_account",
-			finality: "final",
-			account_id: id,
-		})
-		.then((data:any) => ({
-			...data,
-			account_id: id,
-		}));
-	}, [provider]);
 
 	const signIn = async (role: AccountRole) => {
 

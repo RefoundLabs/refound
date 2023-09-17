@@ -17,18 +17,18 @@ const PostContractsContext = createContext<State>(initialState);
 export const usePostContracts = () => useContext(PostContractsContext);
 
 export const PostContractsContextProvider = ({ children }: { children: ReactNode }) => {
-	const { walletConnection, near, account, checkIsLoggedIn, requestSignInNear } = useNear();
+	const { wallet, near, account, checkIsLoggedIn, requestSignInNear } = useNear();
 	const [adapter, setAdapter] = useState<State["adapter"]>(initialState.adapter);
 
 	useEffect(() => {
-		if (!checkIsLoggedIn() || !walletConnection) {
+		if (!checkIsLoggedIn() || !account || !wallet) {
 			setAdapter(undefined);
 			console.log('not logged in');
 			//requestSignInNear();
 			return;
 		}
 		
-		PostContractAdapter.init({ walletConnection: walletConnection }).then((result) => {
+		PostContractAdapter.init({wallet, account}).then((result) => {
 			result.match({
 				ok: (contractAdapter: PostContractAdapter) => setAdapter(contractAdapter),
 				fail: (error) => {

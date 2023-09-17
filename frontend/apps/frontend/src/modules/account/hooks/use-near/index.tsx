@@ -53,7 +53,7 @@ type State = {
 	provider?: Provider;
 	account?: Account;
 	accountId?: string;
-	checkIsLoggedIn: () => boolean;
+	checkIsLoggedIn: () => Promise<boolean>;
 	requestSignInNear: () => Promise<void>;
 	requestSignOut: () => Promise<void>;
 };
@@ -61,13 +61,13 @@ type State = {
 const initialState: State = {
 	checkIsLoggedIn: () => {
 		console.warn("checkIsLoggedIn is not initialized");
-		return false;
+		return Promise<false>;
 	},
 	requestSignInNear: async () => {
 		console.warn("sign in not initialized");
 	},
 	requestSignOut: async () => {
-		console.warn("sign out not initialized");
+		console.warn("sign out not initialized"); 
 	},
 };
 
@@ -98,56 +98,8 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			return;
 		}
 
-		// const nearConnection = await connect({
-		// 	...NEAR_CONFIG,
-		// 	keyStore:  typeof window === "undefined"
-		// 	? new keyStores.InMemoryKeyStore()
-		// 	: new keyStores.BrowserLocalStorageKeyStore()
-		// });
-		// //console.log(nearConnection)
-		// setNear(nearConnection);
-
-		// if (!near) {
-		// 	console.error("cannot connect to near");
-		// 	setNear(undefined);
-		// 	setWallet(undefined);
-		// 	return;
-		// }
-
-		// const walletConnection = new WalletConnection(nearConnection, null);
-		// setWalletConnection(walletConnection);
-
-		// if (!WalletConnection) {
-		// 	console.error("cannot connect to near wallet");
-
-		// 	return;
-		// }
-
-		// console.log('sign in with near');
-		// const selector = await setupWalletSelector({
-		// 	network: "testnet",
-		// 	modules: [
-		// 		setupRamperWallet(),
-		// 		setupMyNearWallet(),
-		// 		//setupNearWallet(),
-		// 		setupSender(),
-		// 		setupNightly(),
-		// 		setupWelldoneWallet(),
-		// 		setupNearFi(),
-		// 		setupMeteorWallet(),
-		// 		setupHereWallet(),
-		// 		setupLedger(),
-		// 	  ],
-		// });
-		//setSelector(selector);
 		
-		// const modal = setupModal(selector, {
-		// 	contractId: contractAddress,
-		// 	theme : "dark"
-		// })
-		// setNearModal(modal);
-
-		//console.log("near initialized")
+		console.log("near initialized")
 	}, []);
 
 	const checkIsLoggedIn = useCallback(async() => 
@@ -173,7 +125,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		    //		return walletConnection.isSignedIn();
 			//}
 		},
-	[accounts, selector, accounts]);
+	[accounts, selector, account, wallet]);
 
 	const requestSignInNear = useCallback(async () => {
 		if (!selector) {
@@ -351,28 +303,6 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 	
 		alert("Switched account to " + nextAccountId);
 	  };
-	
-	  const callWithContractConnection = async () => {
-		const wallet = await selector.wallet();
-		const result = await wallet.signAndSendTransaction({
-		  signerId: accountId!,
-		  receiverId: "superduper77.testnet",
-		  actions: [
-			{
-			  type: "FunctionCall",
-			  params: {
-				methodName: "call_js_func",
-				args: { function_name: "nft_metadata" },
-				gas: BOATLOAD_OF_GAS,
-				deposit: "0",
-			  },
-			},
-		  ],
-		});
-		console.log(JSON.stringify(result));
-	  };
-	
-	 
 
 
 	useEffect(() => {
@@ -382,12 +312,12 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 
 	const value: State = useMemo(
 		() => ({
-			wallet, walletConnection, provider, accounts, selector, account, accountId, balance, 
+			wallet, walletConnection, provider, accounts, selector, account, balance, 
 			checkIsLoggedIn,
 			requestSignInNear,
 			requestSignOut,
 		}),
-		[ wallet, provider, accounts, accountId, account, balance, walletConnection, selector, near, checkIsLoggedIn, requestSignInNear, requestSignOut],
+		[ wallet, provider, accounts, account, balance, walletConnection, selector, near, checkIsLoggedIn, requestSignInNear, requestSignOut],
 	);
 
 	return <NearContext.Provider value={value}>{children}</NearContext.Provider>;
