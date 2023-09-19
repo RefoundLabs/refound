@@ -276,7 +276,7 @@ export class PostWriteContractAdapter {
 		const THIRTY_TGAS = '30000000000000';
 		console.log('call method');
 
-		const parsedArgs = Buffer.from(JSON.stringify(args)).toString('base64');
+		//const parsedArgs = Buffer.from(JSON.stringify(args)).toString('base64');
 
 		const outcome = await this.wallet.signAndSendTransaction({
 		  signerId: this.account.accountId,
@@ -286,7 +286,7 @@ export class PostWriteContractAdapter {
 			  type: 'FunctionCall',
 			  params: {
 				methodName: method,
-				args: {parsedArgs},
+				args,
 				gas: THIRTY_TGAS,
 				deposit: yoctoDeposit,
 			  },
@@ -303,7 +303,7 @@ export class PostWriteContractAdapter {
 		const THIRTY_TGAS = '30000000000000';
 		console.log('call method');
 
-		const parsedArgs = Buffer.from(JSON.stringify(args)).toString('base64');
+		//const parsedArgs = Buffer.from(JSON.stringify(args)).toString('base64');
 
 		const outcome = await this.wallet.signAndSendTransaction({
 		  signerId: this.account.accountId,
@@ -313,7 +313,7 @@ export class PostWriteContractAdapter {
 			  type: 'FunctionCall',
 			  params: {
 				methodName: method,
-				args: {parsedArgs},
+				args,
 				gas: THIRTY_TGAS,
 				deposit: "",
 			  },
