@@ -5,6 +5,8 @@ import { Grid } from "@mantine/core";
 import NextLink from "next/link";
 import { TwitterLogoIcon } from "@radix-ui/react-icons";
 import { FiGlobe } from "react-icons/fi";
+import { IconBrandDiscord, IconBrandTwitter } from '@tabler/icons-react';
+
 export const Layout = ({ children }: { children: ReactNode }) => {
 	return (
 		<>
@@ -24,10 +26,10 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 					<Grid.Col sm={9}></Grid.Col>
 					<Grid.Col sm={1}>
 						<NextLink href="https://twitter.com/_refound" target="_blank">
-							<TwitterLogoIcon style={{fontSize:"5em", display:"inline", color:"00A0B0", marginRight:"10px"}}></TwitterLogoIcon>
+							<IconBrandTwitter style={{display:"inline", color:"00A0B0", marginRight:"10px"}}></IconBrandTwitter>
 						</NextLink>
 						<NextLink href="https://discord.gg/PE8jydDHGn" target="_blank">
-							<FiGlobe style={{fontSize:"1em", color:"00A0B0",display:"inline"}}></FiGlobe>
+							<IconBrandDiscord style={{display:"inline", color:"00A0B0"}}></IconBrandDiscord>
 						</NextLink>
 					</Grid.Col>
 				</Grid>

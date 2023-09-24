@@ -15,7 +15,7 @@ impl Contract {
     pub fn create_series(
         &mut self,
         id: u64,
-        metadata: TokenMetadata,
+        metadata: TokenMetadata, 
         royalty: Option<HashMap<AccountId, u32>>,
         price: Option<U128>,
     ) {
