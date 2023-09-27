@@ -40,7 +40,7 @@ export const ProfileView = () => {
 	const { account } = useAccount();
 
     const [editProfile, setEditProfile] = useState(false);
-
+    const [userInWaitlist, setUserInWailist] = useState(false);
     const [username, setUsername] = useState("");
     const [walletAddress, setWalletAddress] = useState("");
     const [email, setEmail] = useState("");
@@ -63,7 +63,7 @@ export const ProfileView = () => {
     const [filteredPosts, setFilteredPosts] = useState<Nullable<Post[]>>(undefined);
 
     type AccountRole = "user" | "verifier";
-    const {role, updateRole} = useAccount();
+    const {role} = useAccount();
 
     const handleEditPressed= () => {
         getUser();
@@ -123,7 +123,33 @@ export const ProfileView = () => {
         }
       }
 
-    
+      const getUserInWaitlist = async() => {
+		console.log('account');
+		console.log(account);
+		console.log(account?.accountId)
+		if(account?.accountId){
+			console.log(account?.accountId);
+			const res = await axios
+			.get(
+				"/api/getUser?walletAddress="+account?.accountId,
+				{
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				}
+				}
+			)
+			.then(async (response) => {
+				console.log(response);
+				setUserInWailist(true);
+			})
+			.catch((error) => {
+				console.log(error);
+				setUserInWailist(false);
+			});
+			//console.log(res);
+		}
+	  }
 
   const editUser = async () => {
         if(account?.accountId && email && username && bio && firstName && lastName && twitterHandle && link ){
@@ -165,15 +191,7 @@ export const ProfileView = () => {
             console.log('Error: ', error);
         };
     }
-    
-    const handleChangeRole = () => {
-        console.log('-----------change role triggered---------')
-        if(role == "user"){
-            sessionStorage.setItem("role", "verifier");
-            updateRole("verifier");
-        }
-        
-    }
+  
 
     const handleClickAvatarChange = () => {
         console.log('banner change triggered')
@@ -212,6 +230,7 @@ export const ProfileView = () => {
 
      useEffect(() => {
         getUser();
+        getUserInWaitlist();
         
         if(account){
             //console.log(account);
@@ -219,7 +238,6 @@ export const ProfileView = () => {
             //console.log(accountID)
         }
         
-        updateRole(sessionStorage.getItem("role") as AccountRole || "user");
         //console.log(role);
         //console.log('role')
         
@@ -256,6 +274,10 @@ export const ProfileView = () => {
             if(role == "verifier"){
                 setVerifier(true);
             }
+        }
+
+        if(!userInWaitlist){
+            Router.push("/discover");
         }
     }, [email, username, bio, link, twitterHandle, account, avatar, avatarFile, role])
 
@@ -346,7 +368,6 @@ export const ProfileView = () => {
                             {imageAlert && <Alert style={{backgroundColor:"red"}}>{imageAlert}</Alert>}
                             {imageMessage && <Alert style={{backgroundColor:"green"}}>{imageMessage}</Alert>}
                             <Button onClick={handleEditPressed} style={{margin:"0% 5%!important", marginRight:"5%", backgroundColor:"black"}} size="xs">Edit Profile <FiEdit2 style={{marginLeft:"5px"}}/></Button>
-                            {!verifier && <Button onClick={handleChangeRole} style={{margin:"0% 2%!important", backgroundColor:"grey"}} size="xs">Become A Verifier<FiAlertCircle style={{marginLeft:"5px"}}/></Button>}
                         </div>
                     </Grid.Col>
                     <Grid.Col sm={8} itemID="nfts">
