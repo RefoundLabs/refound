@@ -307,14 +307,14 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 				setLoading(false);
 				console.log('get account- next account: ')
 				console.log(nextAccount);
-				return account;
+				//return account;
 			}).catch((error:any) => {
 				//window.alert(error.toString());
 				console.log('error');
 				console.log(error);
 				window.alert('You must fund your NEAR wallet before performing any transactions.');
-				handleSignOut();
-				return null;
+				//handleSignOut();
+				//return null;
 			});
 		}
 
