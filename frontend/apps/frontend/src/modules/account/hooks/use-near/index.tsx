@@ -32,7 +32,6 @@ import { verifyFullKeyBelongsToUser } from "@near-wallet-selector/core";
 import { verifySignature } from "@near-wallet-selector/core";
 import { providers } from "near-api-js";
 import type { Provider } from "near-api-js/lib/providers";
-import { textInputRule } from "@tiptap/react";
 import type {Wallet, Account, AccountState, WalletSelector} from "@near-wallet-selector/core";
 import { useWalletSelector } from "./WalletSelectorContext";
 const NEAR_CONFIG: ConnectConfig = {
@@ -108,22 +107,20 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			
 			if(isSignedIn) {
 				console.log('signed in')
-
+				
 				const wal = await selector.wallet();
 				setWallet(wal);
 				console.log(wal);
 				
 				setAccount(selector.store.getState().accounts[0]);
-				
 				console.log(selector.store.getState().accounts[0]);
+				
+				//Get Account and Return True
 				return true;
+				
 			}else{
 				return false;
 			}
-
-			//else if(walletConnection){
-		    //		return walletConnection.isSignedIn();
-			//}
 		},
 	[accounts, selector, account, wallet]);
 
@@ -224,20 +221,23 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 	  };
 
 	const getAccount = useCallback(async (): Promise<Account | null> => {
+		console.log('get acc');
 		if (!accountId) {
-		  return null;
+			console.log('no account found');
+		  	return null;
 		}
 	
 		const { network } = selector.options;
 		const provider = new providers.JsonRpcProvider({ url: network.nodeUrl });
-	
-		const { bn } = await getAccountBalance({
-		  provider,
-		  accountId,
+
+		const {bn} = await getAccountBalance({
+			provider,
+			accountId,
 		});
 
 		setBalance(bn);
-	
+		console.log('balance: ' + bn.toString());	
+
 		if (!bn) {
 		  window.alert(
 			`Account ID: ${accountId} has not been founded. Please send some NEAR into this account.`
@@ -256,29 +256,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			...data,
 			account_id: accountId,
 		  }));
-	  }, [accountId, selector]);
-	
-	  useEffect(() => {
-		if (!accountId) {
-		  return setAccount(undefined);
-		}
-	
-		setLoading(true);
-		console.log('get account')
-		getAccount().then((nextAccount:any) => {
-		  setAccount(nextAccount);
-		  setLoading(false);
-		});
-
-		if(account){
-			console.log(account);
-		}
-	  }, [accountId, getAccount]);
-	
-	  const handleSignIn = () => {
-		console.log('sign in')
-		modal.show();
-	  };
+	  }, [accountId, account, wallet, selector]);
 	
 	  const handleSignOut = async () => {
 		const wallet = await selector.wallet();
@@ -304,6 +282,47 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		alert("Switched account to " + nextAccountId);
 	  };
 
+	  const handleSignIn = () => {
+		console.log('sign in')
+		try{
+			modal.show();
+		}catch(error:any){
+			//window.alert(error);
+		}
+
+	};
+
+	useEffect(() => {
+		if (!accountId) {
+		  return setAccount(undefined);
+		}
+	
+		setLoading(true);
+		console.log('get account')
+		console.log('call get account')
+		
+		if(!account){
+			getAccount().then((nextAccount:any) => {
+				setAccount(nextAccount);
+				setLoading(false);
+				console.log('get account- next account: ')
+				console.log(nextAccount);
+				return account;
+			}).catch((error:any) => {
+				//window.alert(error.toString());
+				console.log('error');
+				console.log(error);
+				window.alert('You must fund your NEAR wallet before performing any transactions.');
+				handleSignOut();
+				return null;
+			});
+		}
+
+		if(account){
+			console.log(account);
+		}
+	  }, [account, selector, accountId, getAccount, balance]);
+	
 
 	useEffect(() => {
 		initNear();

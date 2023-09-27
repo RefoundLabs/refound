@@ -53,7 +53,7 @@ const AccountContext = createContext<State>(initialState);
 export const useAccount = () => useContext(AccountContext);
 
 export const AccountContextProvider = ({ children }: { children: ReactNode }) => {
-	const { account, accountId, balance, provider,wallet, checkIsLoggedIn, requestSignInNear, requestSignOut } = useNear();
+	const { account, accountId, balance, provider, wallet, checkIsLoggedIn, requestSignInNear, requestSignOut } = useNear();
 	const [accountState, setAccountState] = useState<AccountState>(initialState);
 
 	const reset = useCallback(() => {
@@ -64,7 +64,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 		if (!window) {
 			console.warn("tried to init account outside of browser context");
 			return;
-		}
+		}	
 
 		const savedRole = (sessionStorage.getItem("role") as AccountRole) || "user";
 		console.log('session storage')
@@ -105,7 +105,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 	}, [accountState]);
 
 	const signIn = async (role: AccountRole) => {
-
+			
 		sessionStorage.setItem("role", role);
 		console.log('setting role type:'+role);
 		console.log(role);

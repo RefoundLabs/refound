@@ -46,7 +46,6 @@
 		"@supabase/supabase-js": "^1.35.7",
 		"@tabler/icons": "^2.35.0",
 		"@tabler/icons-react": "^2.35.0",
-		"@tiptap/extension-bubble-menu": "^2.1.6",
 		"@tiptap/pm": "^2.1.6",
 		"@tiptap/react": "^2.1.6",
 		"@tiptap/starter-kit": "^2.1.6",

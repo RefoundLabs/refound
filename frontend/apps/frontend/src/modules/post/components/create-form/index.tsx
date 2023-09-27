@@ -44,8 +44,6 @@ import {
   } from '@mantine/core';
 import { copyFileSync } from "fs";
 import { useRef } from "react";
-import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
 import { AudioRecorder } from 'react-audio-voice-recorder';
 import exifr from 'exifr' // => exifr/dist/full.umd.cjs
 import Geocode from "react-geocode";
