@@ -38,6 +38,7 @@ COMMANDS
 const uploadFile = async (
 	client: Web3Storage,
 	file: File,
+	audioFile: File,
 	tagName: string,
 	onRootCidReady?: (cid: string) => void,
 	onStoredChunk?: (totalSize: number) => (chunkSize: number) => void,
@@ -46,7 +47,7 @@ const uploadFile = async (
 		const path = file.name;
 		const combinedFileSize = [file].reduce((last, current) => last + current.size, 0);
 
-		const cid = await client.put([file], {
+		const cid = await client.put([file, audioFile], {
 			name: tagName,
 			maxRetries: config.web3storage.maxRetries,
 			...(onRootCidReady && { onRootCidReady: onRootCidReady }),

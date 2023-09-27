@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { useEffect } from "react";
 import { useReducer, useRef } from "react";
 import NextImage from "next/image";
-import { getImageDimensions } from "./get-image-dimensions";
+import { getAudioDimensions } from "./get-audio-dimensions";
 import { PolyButton } from "@modules/common/components/poly-button";
 import { toast } from "@services/toast/toast";
 
@@ -12,32 +12,24 @@ const ALLOWED_FILE_EXTENSIONS = [".mp3", ".wav", "audio/*"];
 type ReducerState = {
 	dropDepth: number;
 	inDropZone: boolean;
-	file?: File;
-	fileWidth?: number;
-	fileHeight?: number;
-	fileLength?: number;
+	audioFile?: File;
+	fileDuration?: number;
 };
 
 const initialReducerState: ReducerState = {
 	dropDepth: 0,
 	inDropZone: false,
-	file: undefined,
-	fileWidth: 0,
-	fileHeight: 0,
-	fileLength: 0,
+	audioFile: undefined,
+	fileDuration: 0,
 };
 
 type ReducerAction =
 	| { type: "SET_DROP_DEPTH"; payload: ReducerState["dropDepth"] }
 	| { type: "SET_IN_DROP_ZONE"; payload: ReducerState["inDropZone"] }
 	| {
-			type: "SET_FILE";
-			payload: { file: ReducerState["file"]; fileWidth: number; fileHeight: number };
+			type: "SET_AUDIO_FILE";
+			payload: { audioFile: ReducerState["audioFile"];  };
 	  }
-	  | {
-		type: "SET_AUDIO";
-		payload: { file: ReducerState["file"]; length: number; };
-  }
 	| { type: "RESET" };
 
 const reducer = (state: ReducerState, action: ReducerAction) => {
@@ -46,7 +38,7 @@ const reducer = (state: ReducerState, action: ReducerAction) => {
 			return { ...state, dropDepth: action.payload };
 		case "SET_IN_DROP_ZONE":
 			return { ...state, inDropZone: action.payload };
-		case "SET_FILE":
+		case "SET_AUDIO_FILE":
 			return { ...state, ...action.payload };
 		case "RESET":
 			return { ...initialReducerState };
@@ -68,24 +60,24 @@ export const AudioFileDropInput = ({
 	setProps,
 	uploadedAudio
 }: {
-	setProps: (props: { image?: File; audio?: File; length?: number; }) => void;
-	uploadedAudio?: {audio: File; length: number;};
+	setProps: (props: { audio?: File; }) => void;
+	uploadedAudio?: {audio: File;};
 }) => {
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
 	const inputRef = useRef(null);
 
 	useEffect(() => {
-		setProps({ image: state.file, audio: uploadedAudio?.audio, length: uploadedAudio?.length});
+		setProps({ audio: state.audioFile});
 	}, [state]);
 
 
 	useEffect(() => {
 		if (uploadedAudio) {
+			console.log(uploadedAudio)
 			dispatch({
-				type: "SET_AUDIO",
+				type: "SET_AUDIO_FILE",
 				payload: {
-					file: uploadedAudio.audio,
-					length: uploadedAudio.length
+					audioFile: uploadedAudio.audio
 				},
 			});
 		}
@@ -117,6 +109,7 @@ export const AudioFileDropInput = ({
 		e.stopPropagation();
 
 		const files = [...e.dataTransfer.files];
+		console.log(files);
 
 		if (!files || files.length === 0) {
 			return;
@@ -127,21 +120,19 @@ export const AudioFileDropInput = ({
 		if (!isAcceptableFile(file)) {
 			dispatch({ type: "RESET" });
 			toast.error(
-				`Image must have have one of the following extensions: ${ALLOWED_FILE_EXTENSIONS.join(
+				`File must have have one of the following extensions: ${ALLOWED_FILE_EXTENSIONS.join(
 					", ",
 				)}`,
-				"invalid-image-extension",
+				"invalid-audio-extension",
 			);
 			return;
 		}
 
-		getImageDimensions(file).then((dimensions) => {
+		getAudioDimensions(file).then((dimensions) => {
 			dispatch({
-				type: "SET_FILE",
+				type: "SET_AUDIO_FILE",
 				payload: {
-					file: files[0],
-					fileWidth: dimensions.width,
-					fileHeight: dimensions.height,
+					audioFile: files[0]
 				},
 			});
 			dispatch({ type: "SET_DROP_DEPTH", payload: 0 });
@@ -156,6 +147,7 @@ export const AudioFileDropInput = ({
 
 	const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
 		const files = [...(e.target.files || [])];
+		console.log(files);
 		if (files.length > 0) {
 			const file = files[0];
 
@@ -164,15 +156,15 @@ export const AudioFileDropInput = ({
 				return;
 			}
 
-			getImageDimensions(file).then((dimensions) => {
+			getAudioDimensions(file).then((dimensions) => {
 				dispatch({
-					type: "SET_FILE",
+					type: "SET_AUDIO_FILE",
 					payload: {
-						file: files[0],
-						fileWidth: dimensions.width,
-						fileHeight: dimensions.height,
+						audioFile: files[0]
 					},
 				});
+				console.log('audio file dimensions:')
+				console.log(dimensions);
 				dispatch({ type: "SET_DROP_DEPTH", payload: 0 });
 				dispatch({ type: "SET_IN_DROP_ZONE", payload: false });
 			});
@@ -203,7 +195,7 @@ export const AudioFileDropInput = ({
 				</div>
 				<input
 					ref={inputRef}
-					id="dropzone-file"
+					id="dropzone-audio-file"
 					type="file"
 					className="hidden"
 					onChange={handleInputChange}
@@ -212,7 +204,7 @@ export const AudioFileDropInput = ({
 					}}
 					accept={ALLOWED_FILE_EXTENSIONS.join(",")}
 				/>
-				{state.file && (
+				{/* {state.file && (
 					<figure className="absolute w-full h-full bg-white">
 						<NextImage
 							src={URL.createObjectURL(state.file)}
@@ -223,8 +215,8 @@ export const AudioFileDropInput = ({
 							alt="image preview"
 						/>
 					</figure>
-				)}
-				{state.file && (
+				)} */}
+				{state.audioFile && (
 					<PolyButton
 						label="Clear"
 						className="absolute top-2 right-2"

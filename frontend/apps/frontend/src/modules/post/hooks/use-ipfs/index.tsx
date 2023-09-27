@@ -48,9 +48,11 @@ export const IpfsContextProvider = ({ children }: { children: ReactNode }) => {
 	const uploadFile = useCallback(
 		async ({
 			postImage,
+			postAudio,
 			title,
 		}: {
 			postImage: File;
+			postAudio: File;
 			title: string;
 		}): Promise<Result<string>> => {
 			try {
@@ -68,6 +70,7 @@ export const IpfsContextProvider = ({ children }: { children: ReactNode }) => {
 					await ipfsCommands.uploadFile(
 						client,
 						postImage,
+						postAudio,
 						tagName,
 						(cid) => {
 							toast.message(`Uploading file with CID: ${cid}`, "upload-cid");

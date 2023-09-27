@@ -153,6 +153,13 @@ const reducer = (state: ReducerState, action: ReducerActions): ReducerState => {
 				validationStatus: "IDLE",
 				submissionStatus: "IDLE",
 			};
+		case "SET_AUDIO":
+				return {
+					...state,
+					...action.payload,
+					validationStatus: "IDLE",
+					submissionStatus: "IDLE",
+				};
 		case "SET_DESCRIPTION":
 			return {
 				...state,
@@ -245,13 +252,8 @@ const reducer = (state: ReducerState, action: ReducerActions): ReducerState => {
 	}
 };
 
-
-
 type CustomElement = { type: 'paragraph'; children: CustomText[] }
 type CustomText = { text: string }
-
-
-
 
 export const CreateForm = () => {
 	
@@ -277,20 +279,6 @@ export const CreateForm = () => {
 
 	// Enable or disable logs. Its optional.
 	Geocode.enableDebug();
-
-	//rich text editor
-	// if (typeof window !== "undefined") {
-	// const editor = useEditor({
-	// 	extensions: [
-	// 	  StarterKit,
-	// 	  BubbleMenu.configure({
-	// 		element: document.querySelector('.menu') as HTMLElement,
-	// 	  })
-	// 	],
-	// 	content: '<p>Write your article here! 🌎️</p>',
-	//   })
-	//   setEditor(editor);
-	// }
 
 
 	const modules = {
@@ -491,7 +479,8 @@ export const CreateForm = () => {
 			//if (!audio?.name || audio.size === 0) throw new Error("File is missing.");
 			
 			if (!description) throw new Error("Description is missing.");
-
+			console.log(image);
+			console.log(audio);
 			const creationProps = {
 				image,
 				audio,
@@ -544,41 +533,45 @@ export const CreateForm = () => {
 			const creationProps = (await validateForm()).unwrapOrElse((err) => {
 				throw err;
 			});
-			
+
+			console.log('creation props audio')
+			console.log(creationProps.audio);
+
 			const ipfsMediaLink = (
 				await uploadFile({
 					title: creationProps.metadata.title,
 					postImage: creationProps.image,
-					//postAudio: creationProps.audio,
+					postAudio: creationProps.audio,
 				})
 			).unwrapOrElse((error) => {
 				console.log('error ipfs upload')
 				throw error;
 			});
 
+			console.log(ipfsMediaLink);
 			console.log(creationProps);
-			console.log('creation props')
 
-			const success = (
-				await writeAdapter.createPost({
-					title: creationProps.metadata.title,
-					description: creationProps.metadata.description,
-					ipfsLink: ipfsMediaLink,
-					locationTaken: creationProps.metadata.locationTaken,
-					dateTaken: new Date(creationProps.metadata.dateTaken).toLocaleDateString(),
-					datePosted: new Date().toLocaleDateString(),
-					dateGoLive: creationProps.metadata.dateGoLive,
-					dateEnd: creationProps.metadata.dateEnd,
-					price: creationProps.metadata.price,
-					copies: creationProps.metadata.copies,
-					tags: creationProps.metadata.tags
-				})
-			).unwrapOrElse((error) => {
-				throw error;
-			});
+			// const success = (
+			// 	await writeAdapter.createPost({
+			// 		title: creationProps.metadata.title,
+			// 		description: creationProps.metadata.description,
+			// 		ipfsLink: ipfsMediaLink,
+			// 		locationTaken: creationProps.metadata.locationTaken,
+			// 		dateTaken: new Date(creationProps.metadata.dateTaken).toLocaleDateString(),
+			// 		datePosted: new Date().toLocaleDateString(),
+			// 		dateGoLive: creationProps.metadata.dateGoLive,
+			// 		dateEnd: creationProps.metadata.dateEnd,
+			// 		price: creationProps.metadata.price,
+			// 		copies: creationProps.metadata.copies,
+			// 		tags: creationProps.metadata.tags
+			// 	})
+			// ).unwrapOrElse((error) => {
+			// 	throw error;
+			// });
 
-			dispatch({ type: "SUBMIT_SUCCESS" });
-			return result.ok(true);
+			// dispatch({ type: "SUBMIT_SUCCESS" });
+			// return result.ok(true);
+			alert('check console');
 		} catch (err) {
 			console.error(err);
 			dispatch({ type: "SUBMIT_FAIL" });
@@ -681,8 +674,8 @@ const addAudioElement = (blob: Blob) => {
 						}}
 						
 						uploadedAudio={
-							state.audio && state.audio.type.length
-								? { audio: state.audio, length: state.audio.type.length }
+							state.audio 
+								? { audio: state.audio }
 								: undefined
 						}
 					/> 
