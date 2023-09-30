@@ -307,10 +307,11 @@ export const CreateForm = () => {
 	  };
 
 	useEffect(() => {
+
 		if(account){
 			getUserInWaitlist();
 		}
-		
+
 		if (navigator.geolocation) {
 			navigator.permissions
 			.query({ name: "geolocation" })

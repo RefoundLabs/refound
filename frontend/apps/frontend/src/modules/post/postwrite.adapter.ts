@@ -374,9 +374,9 @@ export class PostWriteContractAdapter {
 					//add splits here
 				}
 				console.log('create post');
-
+				const parsedNextId = Buffer.from((nextId).toString()).toString('base64');
 				const args = {
-					id:nextId,
+					id:parsedNextId,
 					metadata: {
 						title: title,
 						description: description,
