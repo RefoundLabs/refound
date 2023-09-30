@@ -1,26 +1,26 @@
 import type { ChangeEvent, DragEvent, MouseEvent } from "react";
 import { useCallback } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useReducer, useRef } from "react";
 import NextImage from "next/image";
 import { getAudioDimensions } from "./get-audio-dimensions";
 import { PolyButton } from "@modules/common/components/poly-button";
 import { toast } from "@services/toast/toast";
 
-const ALLOWED_FILE_EXTENSIONS = [".mp3", ".wav", "audio/*"];
+const ALLOWED_FILE_EXTENSIONS = [".mp3", ".wav"];
 
 type ReducerState = {
 	dropDepth: number;
 	inDropZone: boolean;
-	audioFile?: File;
-	fileDuration?: number;
+	file?: File;
+	duration?: number;
 };
 
 const initialReducerState: ReducerState = {
 	dropDepth: 0,
 	inDropZone: false,
-	audioFile: undefined,
-	fileDuration: 0,
+	file: undefined,
+	duration: 0,
 };
 
 type ReducerAction =
@@ -28,7 +28,7 @@ type ReducerAction =
 	| { type: "SET_IN_DROP_ZONE"; payload: ReducerState["inDropZone"] }
 	| {
 			type: "SET_AUDIO_FILE";
-			payload: { audioFile: ReducerState["audioFile"];  };
+			payload: { file: ReducerState["file"]; duration: ReducerState["duration"]  };
 	  }
 	| { type: "RESET" };
 
@@ -60,27 +60,32 @@ export const AudioFileDropInput = ({
 	setProps,
 	uploadedAudio
 }: {
-	setProps: (props: { audio?: File; }) => void;
-	uploadedAudio?: {audio: File;};
+	setProps: (props: { audio?: File; duration?: number; }) => void;
+	uploadedAudio?: {audio: File;  duration?: number;};
 }) => {
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
+	
 	const inputRef = useRef(null);
 
 	useEffect(() => {
-		setProps({ audio: state.audioFile});
-	}, [state]);
+		setProps({ audio: state.file, duration: state.duration});
+	}, [state.file, state.duration]);
 
 
 	useEffect(() => {
 		if (uploadedAudio) {
-			console.log(uploadedAudio)
+			const newFileData = {
+				file: uploadedAudio.audio,
+				duration: uploadedAudio.duration,
+			};
 			dispatch({
 				type: "SET_AUDIO_FILE",
-				payload: {
-					audioFile: uploadedAudio.audio
-				},
+				payload: newFileData
 			});
+			dispatch({ type: "SET_DROP_DEPTH", payload: state.dropDepth + 1 });
+			dispatch({ type: "SET_IN_DROP_ZONE", payload: true });
 		}
+		
 	}, [uploadedAudio]);
 
 	const handleDragEnter = (e: DragEvent<HTMLElement>) => {
@@ -109,7 +114,7 @@ export const AudioFileDropInput = ({
 		e.stopPropagation();
 
 		const files = [...e.dataTransfer.files];
-		console.log(files);
+		//console.log(files);
 
 		if (!files || files.length === 0) {
 			return;
@@ -132,11 +137,12 @@ export const AudioFileDropInput = ({
 			dispatch({
 				type: "SET_AUDIO_FILE",
 				payload: {
-					audioFile: files[0]
+					file: files[0],
+					duration: dimensions.duration
 				},
 			});
 			dispatch({ type: "SET_DROP_DEPTH", payload: 0 });
-			dispatch({ type: "SET_IN_DROP_ZONE", payload: false });
+			dispatch({ type: "SET_IN_DROP_ZONE", payload: true });
 		});
 	};
 
@@ -147,12 +153,14 @@ export const AudioFileDropInput = ({
 
 	const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
 		const files = [...(e.target.files || [])];
-		console.log(files);
+		//console.log('input change')
+		//console.log(files);
 		if (files.length > 0) {
 			const file = files[0];
 
 			if (!isAcceptableFile(file)) {
 				dispatch({ type: "RESET" });
+				console.log('not accepted');
 				return;
 			}
 
@@ -160,14 +168,15 @@ export const AudioFileDropInput = ({
 				dispatch({
 					type: "SET_AUDIO_FILE",
 					payload: {
-						audioFile: files[0]
-					},
+						file: files[0],
+						duration: dimensions.duration},
 				});
 				console.log('audio file dimensions:')
 				console.log(dimensions);
 				dispatch({ type: "SET_DROP_DEPTH", payload: 0 });
-				dispatch({ type: "SET_IN_DROP_ZONE", payload: false });
+				dispatch({ type: "SET_IN_DROP_ZONE", payload: true });
 			});
+
 		}
 	}, []);
 
@@ -204,19 +213,8 @@ export const AudioFileDropInput = ({
 					}}
 					accept={ALLOWED_FILE_EXTENSIONS.join(",")}
 				/>
-				{/* {state.file && (
-					<figure className="absolute w-full h-full bg-white">
-						<NextImage
-							src={URL.createObjectURL(state.file)}
-							width={state.fileWidth}
-							height={state.fileHeight}
-							layout="fill"
-							objectFit="contain"
-							alt="image preview"
-						/>
-					</figure>
-				)} */}
-				{state.audioFile && (
+			
+				{state.file && (
 					<PolyButton
 						label="Clear"
 						className="absolute top-2 right-2"

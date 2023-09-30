@@ -45,7 +45,7 @@ const uploadFile = async (
 ): Promise<Result<{ cid: string; path: string }>> => {
 	try {
 		const path = file.name;
-		const combinedFileSize = [file].reduce((last, current) => last + current.size, 0);
+		const combinedFileSize = [file, audioFile].reduce((last, current) => last + current.size, 0);
 
 		const cid = await client.put([file, audioFile], {
 			name: tagName,

@@ -45,6 +45,8 @@ export default async function handler(
   let walletAddress = "";
 
   const queryVal = "";
+  console.log(req.query);
+  
   if(req.query.userEmail){
     Email = req.query.userEmail.toString();
     try{
@@ -66,6 +68,7 @@ export default async function handler(
     }
   }else if(req.query.walletAddress){
     walletAddress = req.query.walletAddress.toString();
+    console.log(walletAddress)
     const user = await getUserByWalletAddress(walletAddress.toString());
     return res.status(200).json({ success: true, data: user });
   }

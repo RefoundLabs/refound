@@ -3,10 +3,13 @@ export const getAudioDimensions = (file: File): Promise<{ duration:number }> =>
 		const url = URL.createObjectURL(file);
 
 		const audio = new Audio();
-		console.log(audio.duration);
+		console.log(audio)
 		
-		audio.addEventListener("load", () => {
-			resolve({ duration: 0 });//todo
+		audio.addEventListener("loadedmetadata", () => {
+			 // Now you can reliably access the audio duration
+			 const duration = audio.duration;
+			 console.log(duration);
+			 resolve({ duration });
 		});
 
 		audio.addEventListener("error", (event) => {

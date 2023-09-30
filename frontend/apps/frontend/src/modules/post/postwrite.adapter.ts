@@ -273,7 +273,7 @@ export class PostWriteContractAdapter {
 	async callMethod(method:string, args = {}) {
 		// Sign a transaction with the "FunctionCall" action
 		const yoctoDeposit = "10000000000000000000000";
-		const THIRTY_TGAS = '30000000000000';
+		const THIRTY_TGAS = '3000000000000';
 		console.log('call method');
 
 		//const parsedArgs = Buffer.from(JSON.stringify(args)).toString('base64');
@@ -365,7 +365,6 @@ export class PostWriteContractAdapter {
 				// TODO: Should be calculated based on bytes to be stored.
 				const yoctoDeposit = "10000000000000000000000";
 
-			
 				const extra = {
 					locationTaken : locationTaken,
 					dateTaken : dateTaken,
@@ -376,20 +375,13 @@ export class PostWriteContractAdapter {
 				}
 				console.log('create post');
 
-				// TODO: is there some kind of confirmation we can get out of contract calls?
-				// await this.contract.create_series(
-				// 	,
-				// 	undefined,
-				// 	yoctoDeposit,
-				// );
-
 				const args = {
-					id:nextId, // TODO: what is this?
+					id:nextId,
 					metadata: {
 						title: title,
 						description: description,
 						media: ipfsLink,
-						copies: copies.toString(),
+						copies: copies,
 						starts_at: dateGoLive,
 						issued_at: new Date().getMilliseconds(),
 						extra: JSON.stringify(extra)

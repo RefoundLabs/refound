@@ -54,6 +54,7 @@ type FormData = {
 	title?: string;
 	image?: File;
 	audio?: File;
+	duration?: number;
 	width?: number;
 	height?: number;
 	description?: string;
@@ -115,6 +116,7 @@ type ReducerActions =
 		type: "SET_AUDIO";
 		payload: {
 			audio?: FormData["audio"];
+			duration?: FormData["duration"];
 		};
 	}
 	| { type: "SET_DESCRIPTION"; payload: FormData["description"] }
@@ -298,11 +300,6 @@ export const CreateForm = () => {
 		'link', 'image'
 	  ]
 
-	useEffect (() => {
-		getUser();
-		
-	}, [])
-
 	var options = {
 		enableHighAccuracy: true,
 		timeout: 5000,
@@ -310,6 +307,10 @@ export const CreateForm = () => {
 	  };
 
 	useEffect(() => {
+		if(account){
+			getUserInWaitlist();
+		}
+		
 		if (navigator.geolocation) {
 			navigator.permissions
 			.query({ name: "geolocation" })
@@ -348,17 +349,17 @@ export const CreateForm = () => {
 			console.log(userInWaitlist)
 		}
 		
-
 		if(state){
+			console.log('state');
 			console.log(state);
 		}
 
 	}, [ editor, editorState, account])
 
-	const getUser = async() => {
+	const getUserInWaitlist = async() => {
 		console.log('account');
+
 		console.log(account);
-		console.log(account?.accountId)
 		if(account?.accountId){
 			console.log(account?.accountId);
 			const res = await axios
@@ -373,11 +374,13 @@ export const CreateForm = () => {
 			)
 			.then(async (response) => {
 				console.log(response);
+				console.log('user in waitlist');
 				setUserInWailist(true);
 			})
 			.catch((error) => {
 				console.log(error);
 				setUserInWailist(false);
+				console.log('user not in waitlist')
 			});
 			//console.log(res);
 		}
@@ -551,27 +554,27 @@ export const CreateForm = () => {
 			console.log(ipfsMediaLink);
 			console.log(creationProps);
 
-			// const success = (
-			// 	await writeAdapter.createPost({
-			// 		title: creationProps.metadata.title,
-			// 		description: creationProps.metadata.description,
-			// 		ipfsLink: ipfsMediaLink,
-			// 		locationTaken: creationProps.metadata.locationTaken,
-			// 		dateTaken: new Date(creationProps.metadata.dateTaken).toLocaleDateString(),
-			// 		datePosted: new Date().toLocaleDateString(),
-			// 		dateGoLive: creationProps.metadata.dateGoLive,
-			// 		dateEnd: creationProps.metadata.dateEnd,
-			// 		price: creationProps.metadata.price,
-			// 		copies: creationProps.metadata.copies,
-			// 		tags: creationProps.metadata.tags
-			// 	})
-			// ).unwrapOrElse((error) => {
-			// 	throw error;
-			// });
+			const success = (
+				await writeAdapter.createPost({
+					title: creationProps.metadata.title,
+					description: creationProps.metadata.description,
+					ipfsLink: ipfsMediaLink,
+					locationTaken: creationProps.metadata.locationTaken,
+					dateTaken: new Date(creationProps.metadata.dateTaken).toLocaleDateString(),
+					datePosted: new Date().toLocaleDateString(),
+					dateGoLive: creationProps.metadata.dateGoLive,
+					dateEnd: creationProps.metadata.dateEnd,
+					price: creationProps.metadata.price,
+					copies: creationProps.metadata.copies,
+					tags: creationProps.metadata.tags
+				})
+			).unwrapOrElse((error) => {
+				throw error;
+			});
 
-			// dispatch({ type: "SUBMIT_SUCCESS" });
-			// return result.ok(true);
-			alert('check console');
+			dispatch({ type: "SUBMIT_SUCCESS" });
+			return result.ok(true);
+		
 		} catch (err) {
 			console.error(err);
 			dispatch({ type: "SUBMIT_FAIL" });
@@ -581,7 +584,9 @@ export const CreateForm = () => {
 
 	const onSubmit: MouseEventHandler<HTMLButtonElement> = (e) => {
 		e.preventDefault();
-		getUser();
+		console.log('state audioFile')
+		console.log(state.audio);
+		console.log(state.duration);
 		createPost().then((confirmation) =>
 			confirmation.match({
 				ok: () => {
@@ -596,19 +601,6 @@ export const CreateForm = () => {
 		);
 		
 	};
-
-// 	const handleSelect = (address:any) => {
-// 		geocodeByAddress(address)
-// 		  .then(results => getLatLng(results[0]))
-// 		  .then(latLng => console.log('Success', latLng))
-// 		  .catch(error => console.error('Error', error));
-// 	  };
-  
-  
-//   const handleChange = (value:any) => {
-//     setEditorState(value.toString());
-// 	//dispatch({ type: "SET_ARTICLETEXET", payload: value.toString(); });
-//   }
 
 const addAudioElement = (blob: Blob) => {
     const url = URL.createObjectURL(blob);
@@ -673,9 +665,10 @@ const addAudioElement = (blob: Blob) => {
 							dispatch({ type: "SET_AUDIO", payload: audio });
 						}}
 						
+						
 						uploadedAudio={
-							state.audio 
-								? { audio: state.audio }
+							(state.audio && state.duration)
+								? { audio: state.audio, duration: state.duration }
 								: undefined
 						}
 					/> 

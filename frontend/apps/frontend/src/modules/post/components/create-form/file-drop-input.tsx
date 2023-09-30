@@ -81,7 +81,7 @@ export const FileDropInput = ({
 
 	useEffect(() => {
 		setProps({ image: state.file, width: state.fileWidth, height: state.fileHeight, latitude: uploadedImage?.latitude, longitude: uploadedImage?.longitude, dateTimeOriginal: uploadedImage?.dateTimeOriginal});
-	}, [state]);
+	}, [state.file, state.fileWidth, state.fileHeight, state.latitude, state.longitude, state.dateTimeOriginal]);
 
 	useEffect(() => {
 		if (uploadedImage && !parsed){
