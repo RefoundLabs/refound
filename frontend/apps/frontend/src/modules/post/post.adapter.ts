@@ -114,22 +114,18 @@ export class PostContractAdapter {
 	private account?: Account;
 	//private contract: SeriesContract;
 	
-	private constructor({
-		account,
-		//contract,
-	}: {
-		account?: Account;
-		//contract: SeriesContract;
-	}) {
-		this.account = account;
-		//this.contract = contract;
-	}
+	// private constructor({
+	// 	account,
+	// 	//contract,
+	// }: {
+	// 	account?: Account;
+	// 	//contract: SeriesContract;
+	// }) {
+	// 	//this.account = account;
+	// 	//this.contract = contract;
+	// }
 
-	static async init({
-		account,
-	}: {
-		account: Account;
-	}){
+	static async init(){
 		try {
 			// const account = walletConnection.account();
 			// const contract = (await new NearContract(
@@ -144,7 +140,7 @@ export class PostContractAdapter {
 
 			
 			console.log('init post contract adapter');
-			return result.ok(new PostContractAdapter({account}));
+			return result.ok(new PostContractAdapter());
 
 		} catch (error) {
 			console.error(error);

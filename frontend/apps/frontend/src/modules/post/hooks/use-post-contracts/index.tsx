@@ -25,10 +25,10 @@ export const PostContractsContextProvider = ({ children }: { children: ReactNode
 			setAdapter(undefined);
 			console.log('not logged in');
 			//requestSignInNear();
-			return;
+			//return;
 		}
 		
-		PostContractAdapter.init({account}).then((result) => {
+		PostContractAdapter.init().then((result) => {
 			result.match({
 				ok: (contractAdapter: PostContractAdapter) => setAdapter(contractAdapter),
 				fail: (error) => {
