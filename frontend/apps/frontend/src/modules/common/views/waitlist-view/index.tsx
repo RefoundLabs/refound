@@ -192,6 +192,7 @@ export const WaitListView: NextPage = () => {
                     )}
                   </Field>
                   
+                  {!userInWaitlist &&
                     <div style={{ textAlign:"center"}}>
                       <Button
                         mt={12}  
@@ -199,10 +200,12 @@ export const WaitListView: NextPage = () => {
                       >Submit
                       </Button>
                     </div>
+                  }
                   </>
                   
+
                   {userInWaitlist &&
-                    <Button style={{backgroundColor:"black", width:"100%", marginTop:'10px'}}><NextLink href="/sign-in"><a>Sign-In and Setup your Profile!</a></NextLink></Button>
+                    <Button style={{backgroundColor:"black", width:"100%", marginTop:'10px'}}><NextLink href="/sign-up"><a>Setup your Profile!</a></NextLink></Button>
                   }
                 </Box>
               </Form>
