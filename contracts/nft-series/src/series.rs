@@ -14,7 +14,7 @@ impl Contract {
     #[payable]
     pub fn create_series(
         &mut self,
-        id: u64,
+        id: U64,
         metadata: TokenMetadata, 
         royalty: Option<HashMap<AccountId, u32>>,
         price: Option<U128>,
@@ -33,13 +33,13 @@ impl Contract {
         require!(
             self.series_by_id
                 .insert(
-                    &id,
+                    &id.0,
                     &Series {
                         metadata,
                         royalty,
                         tokens: UnorderedSet::new(StorageKey::SeriesByIdInner {
                             // We get a new unique prefix for the collection
-                            account_id_hash: hash_account_id(&format!("{}{}", id, caller)),
+                            account_id_hash: hash_account_id(&format!("{}{}", id.0.to_string(), caller)),
                         }),
                         owner_id: caller,
                         price: price.map(|p| p.into()),
