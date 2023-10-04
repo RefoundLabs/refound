@@ -13,7 +13,7 @@ echo ">> Deploying contract"
 export NEAR_ENV="testnet"
 MASTER_ACCOUNT_ADDRESS="refound.testnet"
 ADMIN_ADDRESS="refound_admin.testnet"
-CONTRACT_ADDRESS="v03.refound.testnet"
+CONTRACT_ADDRESS="v04.refound.testnet"
 
 YOCTO_UNITS="000000000000000000000000"
 TOTAL_PREPAID_GAS="300000000000000"

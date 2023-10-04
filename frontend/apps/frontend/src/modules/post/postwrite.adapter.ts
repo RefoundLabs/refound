@@ -109,7 +109,7 @@ interface SeriesCommands {
 
 
 export class PostWriteContractAdapter {
-	private static contractAddress = process.env.NEXT_PUBLIC_CONTRACT_SERIES_ADDRESS as string; // TODO: from .env
+	private static contractAddress = process.env.NEXT_PUBLIC_CONTRACT_SERIES_ADDRESS as string; 
 	
 	private account: Account;
 	private wallet: Wallet;
@@ -166,7 +166,6 @@ export class PostWriteContractAdapter {
 	//----------------------------------------
 
 	public async postDtoToEntity(series: JsonSeries): Promise<Post> {
-		
 		let userHasVoted = false;
 
 		const args = {
@@ -175,7 +174,7 @@ export class PostWriteContractAdapter {
 
 			const voteCount = await provider.query({
 				request_type: "call_function",
-				account_id: "dev-1669390838754-18143842088820",
+				account_id: PostWriteContractAdapter.contractAddress,
 				method_name: "get_votes",
 				args_base64: Buffer.from(JSON.stringify(args)).toString('base64'),
 				finality: "optimistic",
