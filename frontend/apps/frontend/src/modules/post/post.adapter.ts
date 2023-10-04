@@ -10,12 +10,14 @@ import {decode as base64_decode, encode as base64_encode} from 'base-64';
 import { useNear } from "../account/hooks/use-near";
 import { useState } from "react";
 import { toast } from "@services/toast/toast";
+import { useIpfs } from "./hooks/use-ipfs";
 //network config (replace testnet with mainnet or betanet)
 const { providers } = require("near-api-js");
 const provider = new providers.JsonRpcProvider(
   "https://rpc.testnet.near.org"
 );
 
+import getLinks from './hooks/use-ipfs/ipfs.repo';
 
 type SeriesId = number;
 type Base64VecU8 = string;
@@ -112,6 +114,7 @@ export class PostContractAdapter {
 	private static contractAddress = process.env.NEXT_PUBLIC_CONTRACT_SERIES_ADDRESS as string; // TODO: from .env
 	
 	private account?: Account;
+	
 	//private contract: SeriesContract;
 	
 	// private constructor({
@@ -165,7 +168,7 @@ export class PostContractAdapter {
 
 			const voteCount = await provider.query({
 				request_type: "call_function",
-				account_id: "dev-1669390838754-18143842088820",
+				account_id: PostContractAdapter.contractAddress,
 				method_name: "get_votes",
 				args_base64: Buffer.from(JSON.stringify(args)).toString('base64'),
 				finality: "optimistic",
@@ -180,7 +183,10 @@ export class PostContractAdapter {
 				  return votesByAccount[current] > 0 ? previous + 1 : previous;
 			  }, 0),
 		);
-
+			if(series.metadata.media){
+				getLinks(series.metadata.media);
+				
+			}
 		const post: Post = {
 			id: series.series_id,
 			series_id: series.series_id,
@@ -189,8 +195,7 @@ export class PostContractAdapter {
 			owner: series.owner_id,
 			title: series.metadata.title || "Untitled",
 			description: series.metadata.description || "",
-			imageLink: series.metadata.media || "/placeholder.jpeg",
-			media: "",
+			media: series.metadata.media || "/placeholder.jpeg",
 			extra: series.metadata.extra || "",
 			isVerified: series.verified,
 			voteCount,
@@ -218,7 +223,7 @@ export class PostContractAdapter {
 			//return result.fail(new Error("Could not get post."));
 			const rawResult = await provider.query({
 				request_type: "call_function",
-				account_id: "dev-1669390838754-18143842088820",
+				account_id: PostContractAdapter.contractAddress,
 				method_name: "get_series_details",
 				args_base64: Buffer.from(key).toString('base64'),
 				finality: "optimistic",
@@ -237,6 +242,8 @@ export class PostContractAdapter {
 			return result.fail(new Error("Could not get post."));
 		}
 	}
+
+	
 
 	async getPosts(query: { from_index?: number; limit?: number }): Promise<Result<Post[]>> {
 		let foundPosts = false;

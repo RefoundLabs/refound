@@ -198,8 +198,7 @@ export class PostWriteContractAdapter {
 			owner: series.owner_id,
 			title: series.metadata.title || "Untitled",
 			description: series.metadata.description || "",
-			imageLink: series.metadata.media || "/placeholder.jpeg",
-			media: "",
+			media: series.metadata.media || "/placeholder.jpeg",
 			extra: series.metadata.extra || "",
 			isVerified: series.verified,
 			voteCount,
@@ -370,42 +369,15 @@ export class PostWriteContractAdapter {
 					//add splits here
 				}
 				console.log('create post');
-				const parsedNextId = Buffer.from((nextId).toString()).toString('base64');
 				const args = {
-					id:parsedNextId,
+					series_id:nextId.toString(),
 					metadata: {
 						title: title,
 						description: description,
 						media: ipfsLink,
-						copies: copies,
-						starts_at: dateGoLive,
-						issued_at: new Date().getMilliseconds(),
-						extra: JSON.stringify(extra)
-					},
-					price: price
-				};
-
-				await this.callMethod("create_series", args);
-
-				return result.ok(true);
-			}else{
-				const extra = {
-					locationTaken : locationTaken,
-					dateTaken : dateTaken,
-					tags : tags,
-				}
-				console.log('create post');
-				const parsedNextId = Buffer.from((0).toString()).toString('base64');
-				const newId = "0";
-				const args = {
-					id:newId,
-					metadata: {
-						title: title,
-						description: description,
-						media: ipfsLink,
-						copies: copies,
-						starts_at: dateGoLive,
-						issued_at: new Date().getMilliseconds(),
+						copies: null,//copies,
+						starts_at: null,//dateGoLive,
+						issued_at: null, //new Date().getMilliseconds(),
 						extra: JSON.stringify(extra)
 					},
 					price: price
@@ -415,7 +387,7 @@ export class PostWriteContractAdapter {
 
 				return result.ok(true);
 			}
-			//return result.fail(new Error("Failed to get index"));
+			return result.fail(new Error("Failed to get index"));
 		} catch (error) {
 			console.error(error);
 

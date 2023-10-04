@@ -288,6 +288,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 			modal.show();
 		}catch(error:any){
 			//window.alert(error);
+			
 		}
 
 	};
@@ -312,7 +313,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 				//window.alert(error.toString());
 				console.log('error');
 				console.log(error);
-				window.alert('You must fund your NEAR wallet before performing any transactions.');
+				//window.alert('You must fund your NEAR wallet before performing any transactions.');
 				//handleSignOut();
 				//return null;
 			});
