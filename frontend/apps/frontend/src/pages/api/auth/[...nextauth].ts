@@ -6,7 +6,7 @@ import { connect, KeyPair, keyStores, utils } from "near-api-js";
 
 const myKeyStore = new keyStores.InMemoryKeyStore();
 
-const contractName = "dev-1616611682822-1712761";
+const contractName = "v04.refound.testnet";//"dev-1616611682822-1712761";
 
 const config = {
   myKeyStore,

@@ -362,9 +362,6 @@ export class PostWriteContractAdapter {
 			if(posts?.length){
 				const nextId = posts.length > 0 ? posts[posts.length - 1].series_id + 1 : 0;
 
-				// TODO: Should be calculated based on bytes to be stored.
-				const yoctoDeposit = "10000000000000000000000";
-
 				const extra = {
 					locationTaken : locationTaken,
 					dateTaken : dateTaken,
@@ -392,8 +389,34 @@ export class PostWriteContractAdapter {
 				await this.callMethod("create_series", args);
 
 				return result.ok(true);
+			}else{
+				const extra = {
+					locationTaken : locationTaken,
+					dateTaken : dateTaken,
+					tags : tags,
+				}
+				console.log('create post');
+				const parsedNextId = Buffer.from((0).toString()).toString('base64');
+				const newId = "0";
+				const args = {
+					id:newId,
+					metadata: {
+						title: title,
+						description: description,
+						media: ipfsLink,
+						copies: copies,
+						starts_at: dateGoLive,
+						issued_at: new Date().getMilliseconds(),
+						extra: JSON.stringify(extra)
+					},
+					price: price
+				};
+
+				await this.callMethod("create_series", args);
+
+				return result.ok(true);
 			}
-			return result.fail(new Error("Failed to get index"));
+			//return result.fail(new Error("Failed to get index"));
 		} catch (error) {
 			console.error(error);
 
