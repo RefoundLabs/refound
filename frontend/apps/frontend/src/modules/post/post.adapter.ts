@@ -183,9 +183,31 @@ export class PostContractAdapter {
 				  return votesByAccount[current] > 0 ? previous + 1 : previous;
 			  }, 0),
 		);
+
+			let imageLink = "";
+			let audioLink = "";
+			let links = [];
 			if(series.metadata.media){
-				getLinks(series.metadata.media);
+				console.log('get media links')
+				console.log(series.metadata.media)
+
+				links = (
+					await getLinks(series.metadata.media)
+					
+				).unwrapOrElse((error) => {
+					console.log('error ipfs get links')
+					throw error;
+				});
+
+				if(links[0].Name.includes(".jpg") || links[0].Name.includes(".jpeg") || links[0].Name.includes(".png")){
+					imageLink = "https://" + links[0].Hash + ".ipfs.w3s.link/"
+				}
+
+				if(links[0].Name.includes(".mp3") || links[0].Name.includes(".wav")){
+					audioLink = "https://" + links[0].Hash + ".ipfs.w3s.link/"
+				}
 				
+
 			}
 		const post: Post = {
 			id: series.series_id,
@@ -196,6 +218,8 @@ export class PostContractAdapter {
 			title: series.metadata.title || "Untitled",
 			description: series.metadata.description || "",
 			media: series.metadata.media || "/placeholder.jpeg",
+			imageLink: imageLink || "",
+			audioLink: audioLink || "",
 			extra: series.metadata.extra || "",
 			isVerified: series.verified,
 			voteCount,

@@ -46,8 +46,34 @@ export const PostView = () => {
 				},
 			}),
 		);
+		console.log(post);
 		//console.log(post);
 	}, [postIdQuery, adapter, post]);
+
+
+	useEffect(() => {
+		if (!postIdQuery || !adapter) return;
+
+		const queryId = Number.parseInt(postIdQuery as string);
+
+		if (!isNumber(queryId)) {
+			setNotFound(true);
+			toast.error("Invalid post id");
+			return;
+		}
+
+		adapter.getPost({ id: queryId }).then((result) =>
+			result.match({
+				ok: (post) => setPost(post),
+				fail: (error) => {
+					toast.error(error.message);
+					setNotFound(true);
+				},
+			}),
+		);
+		console.log(post);
+		//console.log(post);
+	}, []);
 
 	if (notFound) return <NotFoundPage />;
 
@@ -66,7 +92,7 @@ export const PostView = () => {
 
 				<meta property="og:title" content={post.title} />
 				<meta property="og:description" content={post.description} />
-				<meta property="og:image" content={post.imageLink || post.media} />
+				<meta property="og:image" content={post.imageLink} />
 			</NextHead>
 
 			<article className="flex flex-col w-full max-w-screen-lg gap-12 mx-auto my-12 sm:gap-16 sm:py-16 px-contentPadding">
@@ -99,7 +125,7 @@ export const PostView = () => {
 				</header>
 
 				<figure className="w-full overflow-hidden rounded-lg">
-					<img src={post.imageLink || post.media} alt={post.title} />
+					<img src={post.imageLink} alt={post.title} />
 
 					{post.description && (
 						<p className="text-base max-w-[50ch] mt-4">{post.description}</p>

@@ -18,7 +18,7 @@ const getLinks = async (
 	try {
 		//const url = createGatewayUrl(cid, filePath);
 		console.log('get image and audio');
-		const ipfsPath = cid.replace(".ipfs.w3s.link", "");
+		const ipfsPath = cid.replace(".ipfs.w3s.link/", "").replace("https://", "");
 		const url = 'https://dweb.link/api/v0';
 		const ipfs = create({ url });
 		
@@ -28,8 +28,8 @@ const getLinks = async (
 			.catch((err: Error) => {
 				throw err;
 			});
-			console.log(data);
-		return result.ok(data);
+			console.log(data.Objects[0].Links);
+		return result.ok(data.Objects[0].Links);
 		// const links = [];
 		// for await (const link of ipfs.ls(ipfsPath)) {
 		// 	links.push(link);

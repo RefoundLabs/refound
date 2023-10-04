@@ -7,7 +7,8 @@ export type Post = {
 	owner_id: AccountId;
 	title: string;
 	description: string;
-	//imageLink: string;
+	imageLink: string;
+	audioLink: string;
 	media:string;
 	extra:string;
 	tags:string;
