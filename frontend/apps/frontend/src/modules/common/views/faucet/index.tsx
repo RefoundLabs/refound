@@ -23,8 +23,12 @@ export const FaucetView : NextPage = (props) => {
 				<p className="w-full text-sm text-center pt-[0.5em] max-w-[50ch] mx-auto pb-4">
 					To be able to utilize a new NEAR account, you must fund the account. 
 				</p>
-				<h3 className="text-2xl font-bold text-center">Account ID</h3>
-				<p>{router.query.accountId || accountId}</p>
+				{(router.query.accountId || accountId) &&
+					<>
+						<h3 className="text-2xl font-bold text-center">Account ID</h3>
+						<p>{router.query.accountId || accountId}</p>
+					</>
+				}
 			</div>
 
 			<div className="w-full">
