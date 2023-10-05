@@ -16,6 +16,8 @@ import { LicensePost } from "../components/license-post";
 import { PostInteractions } from "../components/post-interactions";
 import { KeypomModal } from "../components/keypom-modal";
 import { useNear } from "@modules/account/hooks/use-near";
+import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
 
 export const PostView = () => {
 	const router = useRouter();
@@ -126,6 +128,13 @@ export const PostView = () => {
 
 				<figure className="w-full overflow-hidden rounded-lg">
 					<img src={post.imageLink} alt={post.title} />
+					{post.audioLink && 
+					<AudioPlayer
+						autoPlay
+						src={post.audioLink}
+						onPlay={e => console.log("onPlay")} style={{marginTop:'20px'}}
+						// other props here
+					/>}
 
 					{post.description && (
 						<p className="text-base max-w-[50ch] mt-4">{post.description}</p>

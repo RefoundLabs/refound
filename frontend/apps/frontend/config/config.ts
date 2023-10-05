@@ -26,7 +26,7 @@ export const config = {
 	},
 	content: {
 		moderationList: {
-			posts: [0, 2],
+			posts: [0, 1, 2],
 		},
 	},
 	keypom: {

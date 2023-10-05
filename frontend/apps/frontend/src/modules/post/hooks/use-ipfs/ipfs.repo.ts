@@ -49,19 +49,34 @@ const uploadFile = async (
 	onStoredChunk?: (totalSize: number) => (chunkSize: number) => void,
 ): Promise<Result<{ cid: string; path: string}>> => {
 	try {
+		
 		const path = file.name;
-		const combinedFileSize = [file, audioFile].reduce((last, current) => last + current.size, 0);
+		if(audioFile){
+			const combinedFileSize = [file, audioFile].reduce((last, current) => last + current.size, 0);
 
-		const cid = await client.put([file, audioFile], {
-			name: tagName,
-			maxRetries: config.web3storage.maxRetries,
-			...(onRootCidReady && { onRootCidReady: onRootCidReady }),
-			...(onStoredChunk && { onStoredChunk: onStoredChunk(combinedFileSize) }),
-		});
+			const cid = await client.put([file, audioFile], {
+				name: tagName,
+				maxRetries: config.web3storage.maxRetries,
+				...(onRootCidReady && { onRootCidReady: onRootCidReady }),
+				...(onStoredChunk && { onStoredChunk: onStoredChunk(combinedFileSize) }),
+			});
 
-		if (!cid) return result.fail(new Error("Upload did not produce a CID"));
+			if (!cid) return result.fail(new Error("Upload did not produce a CID"));
 
-		return result.ok({cid, path});
+			return result.ok({cid, path});
+		}else{
+			const fileSize = [file].reduce((last, current) => last + current.size, 0);
+
+			const cid = await client.put([file], {
+				name: tagName,
+				maxRetries: config.web3storage.maxRetries,
+				...(onRootCidReady && { onRootCidReady: onRootCidReady }),
+				...(onStoredChunk && { onStoredChunk: onStoredChunk(fileSize) }),
+			});
+
+			if (!cid) return result.fail(new Error("Upload did not produce a CID"));
+			return result.ok({cid, path});
+		}
 	} catch (err) {
 		return result.fail(err as Error);
 	}

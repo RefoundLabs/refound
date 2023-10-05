@@ -75,6 +75,7 @@
 		"react-draft-wysiwyg": "^1.15.0",
 		"react-dropzone": "^14.2.2",
 		"react-geocode": "^0.2.3",
+		"react-h5-audio-player": "^3.9.0",
 		"react-hot-toast": "^2.3.0",
 		"react-icons": "^4.7.1",
 		"react-places-autocomplete": "^7.3.0",
