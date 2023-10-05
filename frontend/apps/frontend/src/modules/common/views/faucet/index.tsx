@@ -12,17 +12,6 @@ export const FaucetView : NextPage = (props) => {
 	const router = useRouter();
 	const { signIn, isSignedIn, accountId } = useAccount();
 
-	
-	useEffect(() => {
-
-		if (isSignedIn) {
-			router.push("/discover");
-			console.log(isSignedIn);
-		}
-
-		
-	}, [isSignedIn]);
-
 	useEffect(() => {
         console.log(router.query.accountId);
     }, [router.query]);
@@ -35,7 +24,7 @@ export const FaucetView : NextPage = (props) => {
 					To be able to utilize a new NEAR account, you must fund the account. 
 				</p>
 				<h3 className="text-2xl font-bold text-center">Account ID</h3>
-				<p>{router.query.accountId}</p>
+				<p>{router.query.accountId || accountId}</p>
 			</div>
 
 			<div className="w-full">

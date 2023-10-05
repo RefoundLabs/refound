@@ -6,13 +6,14 @@ import { useAccount } from "@modules/account/hooks/use-account";
 import { trimText } from "@utils/trim-text";
 import { Header } from "@mantine/core";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 // import { useAccount } from "@modules/account/hooks/use-auth";
 
 export const SiteHeader = () => {
 	//const account = useAccount();
 	const [enableMobileMenu, setEnableMenu] = useState(false);
-
+const router = useRouter();
 	const { isSignedIn, signOut, accountId, role } = useAccount();
 	console.log(isSignedIn + " isSignedin")
 
