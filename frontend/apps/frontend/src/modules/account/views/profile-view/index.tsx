@@ -57,7 +57,7 @@ export const ProfileView = () => {
     const [imageAlert, setImageAlert] = useState("");
     const [imageMessage, setImageMessage] = useState("");
     const [verifier, setVerifier] = useState(false);
-
+    const [gotUser, setGotUser] = useState(false);
     const { adapter } = usePostContracts();
 	const [posts, setPosts] = useState<Nullable<Post[]>>(undefined);
     const [filteredPosts, setFilteredPosts] = useState<Nullable<Post[]>>(undefined);
@@ -122,6 +122,7 @@ export const ProfileView = () => {
                     setAvatar(response.data.data.avatar);
                     setWalletAddress(response.data.data.walletAddress)
                 }
+                setGotUser(true);
             })
             .catch((error) => {
                 console.log(error);
@@ -220,8 +221,6 @@ export const ProfileView = () => {
             //console.log(accountID)
         }
         
-        //console.log(role);
-        //console.log('role')
         
     }, []);
  
@@ -230,14 +229,14 @@ export const ProfileView = () => {
             //console.log(email);
         }
 
-        // if(avatarFile){
-        //     const base64file= getBase64(avatarFile, (result:string) => {
-        //         //console.log('base64image'+result);
-        //         setAvatar(result);
-        //     });
-        // }
+        if(avatarFile){
+            const base64file= getBase64(avatarFile, (result:string) => {
+                //console.log('base64image'+result);
+                setAvatar(result);
+            });
+        }
 
-        if(!username){
+        if(!gotUser){
             getUser();
         }
 
@@ -258,7 +257,7 @@ export const ProfileView = () => {
             }
         }
 
-        if(!userInWaitlist){
+        if(gotUser && !username){
             Router.push("/discover");
         }
     }, [email, username, bio, link, twitterHandle, account, avatar, avatarFile, role])
