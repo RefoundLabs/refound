@@ -4,9 +4,10 @@ import NextImage from "next/image";
 import NextLink from "next/link";
 import { InteractionsBadge } from "./interactions";
 import { useRouter } from "next/router";
+import { IconMicrophone } from "@tabler/icons-react";
 
 export const PostCard = ({
-	post: { imageLink, media, title, description, id, series_id, owner, owner_id, tags, isVerified, voteCount },
+	post: { imageLink, media, audioLink, title, description, id, series_id, owner, owner_id, tags, isVerified, voteCount },
 }: {
 	post: Post;
 }) => {
@@ -65,13 +66,14 @@ export const PostCard = ({
 				/>
 			</div>
 			<div className="flex flex-row items-baseline justify-between w-full pl-2">
-				<h1 className="text-sm font-bold">{trimText(title, 90)}</h1>
+				<h1 className="text-sm font-bold">{trimText(title, 45)} {audioLink && <IconMicrophone style={{display:"inline", color:"#00A0B0"}}></IconMicrophone>}</h1>
 				<div className="flex flex-col justify-end gap-1">
 					{isVerified && (
 						<span className="rounded-full badge badge-sm badge-success">
 							NGO Verified
 						</span>
 					)}
+					
 					{owner &&
 						<a href={"https://refound.app/user/" + owner }><span className="text-xs">{owner?.split(".")[0].substring(0,20)}</span></a>
 					}
