@@ -319,7 +319,7 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 					query: {accountId: accountId}
 				}, '/faucet');
 				
-				//handleSignOut();
+				handleSignOut();
 				//return null;
 			});
 		}
