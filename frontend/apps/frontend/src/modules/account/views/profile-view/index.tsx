@@ -268,16 +268,16 @@ export const ProfileView = () => {
     useEffect(() => {
 		if (!adapter) return;
 
-        // if(!posts){
-        //     adapter.getPosts({}).then((result:any) =>
-        //         result.match({
-        //             ok: (posts:any) => { setPosts(posts)},
-        //             fail: (error:any) => {
-        //                 toast.error(error.message, "no-posts");
-        //             },
-        //         }),
-        //     );
-        // }
+        if(!posts){
+            adapter.getPosts({}).then((result:any) =>
+                result.match({
+                    ok: (posts:any) => { setPosts(posts)},
+                    fail: (error:any) => {
+                        toast.error(error.message, "no-posts");
+                    },
+                }),
+            );
+        }
 
         if(posts && account?.accountId){
             const newPosts = posts.filter((item:any) => item.owner.includes(account?.accountId));

@@ -242,8 +242,8 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 		  window.alert(
 			`Account ID: ${accountId} has not been founded. Please send some NEAR into this account.`
 		  );
-		  const wallet = await selector.wallet();
-		  await wallet.signOut();
+		  //const wallet = await selector.wallet();
+		  //await wallet.signOut();
 		  return null;
 		}
 	
@@ -313,7 +313,12 @@ export const NearContextProvider = ({ children }: { children: ReactNode }) => {
 				//window.alert(error.toString());
 				console.log('error');
 				console.log(error);
-				//window.alert('You must fund your NEAR wallet before performing any transactions.');
+				//window.alert('You must fund your NEAR wallet before performing any transactions. AccountID: ' + accountId);
+				router.push({
+					pathname: "/faucet",
+					query: {accountId: accountId}
+				}, '/faucet');
+				
 				//handleSignOut();
 				//return null;
 			});

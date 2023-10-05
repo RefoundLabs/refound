@@ -8,9 +8,9 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export const SignInView: NextPage = () => {
+export const FaucetView : NextPage = (props) => {
 	const router = useRouter();
-	const { signIn, isSignedIn } = useAccount();
+	const { signIn, isSignedIn, accountId } = useAccount();
 
 	
 	useEffect(() => {
@@ -23,13 +23,19 @@ export const SignInView: NextPage = () => {
 		
 	}, [isSignedIn]);
 
+	useEffect(() => {
+        console.log(router.query.accountId);
+    }, [router.query]);
+
 	return (
 		<ContentSection width="xs" className="flex flex-col items-center gap-12">
-			<div className="w-full pt-16 pb-4">
-				<h1 className="text-4xl font-bold text-center">Sign In</h1>
-				<p className="w-full text-sm text-center pt-[0.5em] max-w-[50ch] mx-auto">
-					To use this demo, select select the role and wallet which you want to use. Ramper Wallet is a non custodial wallet that allows you to create a wallet and login with gmail, or other social accounts. You can also sign in with a Near wallet of your choice.
+			<div className="w-full pt-16">
+				<h1 className="text-4xl font-bold text-center">Fund Your Account</h1>
+				<p className="w-full text-sm text-center pt-[0.5em] max-w-[50ch] mx-auto pb-4">
+					To be able to utilize a new NEAR account, you must fund the account. 
 				</p>
+				<h3 className="text-2xl font-bold text-center">Account ID</h3>
+				<p>{router.query.accountId}</p>
 			</div>
 
 			<div className="w-full">
@@ -40,14 +46,13 @@ export const SignInView: NextPage = () => {
 							/* status === "no_wallet" && "btn-disabled", */
 						)}
 						onClick={() => {
-							signIn("user");
+							router.push("/free-trial")
 						}}
 					>
-							User Role
+							Free Trial Airdrop
 					</button>
-					<p className="w-full text-sm text-center pt-[0.5em] max-w-[30ch] mx-auto">
-						Sign in from the perspective of a journalist or user who will create and
-						purchase NFTs.
+					<p className="w-full text-sm text-center pt-[0.5em] max-w-[50ch] mx-auto">
+						If you're using My Near Wallet, you can request an airdrop of 5 NEAR through our Free Trial page.
 					</p>
 				</div>
 
@@ -57,15 +62,11 @@ export const SignInView: NextPage = () => {
 							"btn btn-lg w-full rounded-md",
 							/* status === "no_wallet" && "btn-disabled", */
 						)}
-						onClick={() => {
-							signIn("verifier");
-						}}
-					>
-						NGO Role
+				>
+						<a href="https://near-faucet.io/" target="_blank">Go To Faucet</a>
 					</button>
-					<p className="w-full text-sm text-center pt-[0.5em] max-w-[30ch] mx-auto">
-						Sign in from the perspective of a Non-Government Organization (NGO) which
-						verifies the credibility of NFTs.
+					<p className="w-full text-sm text-center pt-[0.5em] max-w-[50ch] mx-auto">
+						Ramper and other wallets, you have to copy and paste your wallet address into this faucet to receive an airdrop of NEAR.
 					</p>
 				</div>
 

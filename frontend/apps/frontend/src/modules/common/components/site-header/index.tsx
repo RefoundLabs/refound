@@ -48,7 +48,7 @@ export const SiteHeader = () => {
 				<nav className="flex flex-row gap-4 font-bold">
 					<NextLink href="/create"><a>Create</a></NextLink>
 					<NextLink href="/discover"><a>Discover</a></NextLink>
-					<NextLink href="/trial"><a>Free Trial</a></NextLink>
+					<NextLink href="/faucet"><a>Faucet</a></NextLink>
 					<NextLink href="/waitlist"><a>Waitlist</a></NextLink>
 				</nav>
 
