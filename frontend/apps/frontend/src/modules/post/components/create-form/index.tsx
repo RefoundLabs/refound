@@ -538,8 +538,8 @@ export const CreateForm = () => {
 				throw err;
 			});
 
-			console.log('creation props audio')
-			console.log(creationProps.audio);
+			//console.log('creation props audio')
+			//console.log(creationProps.audio);
 
 			const ipfsMediaLink = (
 				await uploadFile({
@@ -552,8 +552,8 @@ export const CreateForm = () => {
 				throw error;
 			});
 
-			console.log(ipfsMediaLink);
-			console.log(creationProps);
+			//console.log('ipfs link');
+			//console.log(ipfsMediaLink);
 
 			const success = (
 				await writeAdapter.createPost({

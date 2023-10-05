@@ -18,9 +18,9 @@ const getLinks = async (
 	try {
 		//const url = createGatewayUrl(cid, filePath);
 		console.log('get image and audio');
-		const ipfsPath = cid.replace(".ipfs.w3s.link/", "").replace("https://", "");
-		const url = 'https://dweb.link/api/v0';
-		const ipfs = create({ url });
+		console.log(cid);
+		const ipfsPath = cid.replace(".ipfs.w3s.link", "").replace("https://", "").split("/")[0];
+		console.log(ipfsPath);
 		
 		const data = await axios
 			.get("https://dweb.link/api/v0/ls?arg=" + ipfsPath)
@@ -28,15 +28,8 @@ const getLinks = async (
 			.catch((err: Error) => {
 				throw err;
 			});
-			console.log(data.Objects[0].Links);
+			//console.log(data.Objects[0].Links);
 		return result.ok(data.Objects[0].Links);
-		// const links = [];
-		// for await (const link of ipfs.ls(ipfsPath)) {
-		// 	links.push(link);
-		// 	console.log(link);
-		// }
-		// console.log(links);
-		// return result.ok(links);
 	} catch (err) {
 		return result.fail(err as Error);
 	}
@@ -54,7 +47,7 @@ const uploadFile = async (
 	tagName: string,
 	onRootCidReady?: (cid: string) => void,
 	onStoredChunk?: (totalSize: number) => (chunkSize: number) => void,
-): Promise<Result<{ cid: string; path: string }>> => {
+): Promise<Result<{ cid: string; path: string}>> => {
 	try {
 		const path = file.name;
 		const combinedFileSize = [file, audioFile].reduce((last, current) => last + current.size, 0);
@@ -68,7 +61,7 @@ const uploadFile = async (
 
 		if (!cid) return result.fail(new Error("Upload did not produce a CID"));
 
-		return result.ok({ cid, path });
+		return result.ok({cid, path});
 	} catch (err) {
 		return result.fail(err as Error);
 	}

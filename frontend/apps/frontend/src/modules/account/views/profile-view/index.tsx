@@ -40,7 +40,7 @@ export const ProfileView = () => {
 	const { account } = useAccount();
 
     const [editProfile, setEditProfile] = useState(false);
-    const [userInWaitlist, setUserInWailist] = useState(false);
+    const [userInWaitlist, setUserInWailist] = useState(true);
     const [username, setUsername] = useState("");
     const [walletAddress, setWalletAddress] = useState("");
     const [email, setEmail] = useState("");
@@ -92,6 +92,7 @@ export const ProfileView = () => {
 
       const getUser = async() => {
         if(account?.accountId){
+            console.log('get user')
             console.log(account.accountId);
             const res = await axios
             .get(
@@ -104,16 +105,23 @@ export const ProfileView = () => {
                 }
             )
             .then(async (response) => {
-                //console.log(response.data.data);
-                setUsername(response.data.data.username);
-                setFirstName(response.data.data.firstname);
-                setLastName(response.data.data.lastname);
-				setEmail(response.data.data.email);
-                setBio(response.data.data.bio);
-                setTwitterHandle(response.data.data.twitterHandle);
-                setLink(response.data.data.link);
-                setAvatar(response.data.data.avatar);
-                setWalletAddress(response.data.data.walletAddress)
+                console.log('user data')
+                console.log(response.data.data);
+                if(response.data.data == null){
+                    //setUserInWailist(false);
+                    Router.push("/discover");
+                }else{
+                    console.log('set user data');
+                    setUsername(response.data.data.username);
+                    setFirstName(response.data.data.firstname);
+                    setLastName(response.data.data.lastname);
+                    setEmail(response.data.data.email);
+                    setBio(response.data.data.bio);
+                    setTwitterHandle(response.data.data.twitterHandle);
+                    setLink(response.data.data.link);
+                    setAvatar(response.data.data.avatar);
+                    setWalletAddress(response.data.data.walletAddress)
+                }
             })
             .catch((error) => {
                 console.log(error);
@@ -123,33 +131,7 @@ export const ProfileView = () => {
         }
       }
 
-      const getUserInWaitlist = async() => {
-		console.log('account');
-		console.log(account);
-		console.log(account?.accountId)
-		if(account?.accountId){
-			console.log(account?.accountId);
-			const res = await axios
-			.get(
-				"/api/getUser?walletAddress="+account?.accountId,
-				{
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				}
-				}
-			)
-			.then(async (response) => {
-				console.log(response);
-				setUserInWailist(true);
-			})
-			.catch((error) => {
-				console.log(error);
-				setUserInWailist(false);
-			});
-			//console.log(res);
-		}
-	  }
+     
 
   const editUser = async () => {
         if(account?.accountId && email && username && bio && firstName && lastName && twitterHandle && link ){
@@ -230,7 +212,7 @@ export const ProfileView = () => {
 
      useEffect(() => {
         getUser();
-        getUserInWaitlist();
+       
         
         if(account){
             //console.log(account);
@@ -286,16 +268,16 @@ export const ProfileView = () => {
     useEffect(() => {
 		if (!adapter) return;
 
-        if(!posts){
-            adapter.getPosts({}).then((result:any) =>
-                result.match({
-                    ok: (posts:any) => { setPosts(posts)},
-                    fail: (error:any) => {
-                        toast.error(error.message, "no-posts");
-                    },
-                }),
-            );
-        }
+        // if(!posts){
+        //     adapter.getPosts({}).then((result:any) =>
+        //         result.match({
+        //             ok: (posts:any) => { setPosts(posts)},
+        //             fail: (error:any) => {
+        //                 toast.error(error.message, "no-posts");
+        //             },
+        //         }),
+        //     );
+        // }
 
         if(posts && account?.accountId){
             const newPosts = posts.filter((item:any) => item.owner.includes(account?.accountId));
@@ -378,7 +360,7 @@ export const ProfileView = () => {
                                     {filteredPosts ? (
                                         filteredPosts.map((post) => <PostCard key={post.id} post={post} />)
                                     ) : (
-                                        <LoadingPage />
+                                        <>No posts yet...</>
                                     )}
                                 </div>
                             </section>

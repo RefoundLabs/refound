@@ -85,6 +85,7 @@ export const AccountContextProvider = ({ children }: { children: ReactNode }) =>
 				accountId: account.accountId,
 				account: account,
 				role: savedRole,
+				isWaitlisted: false
 			});
 			
 		}else{

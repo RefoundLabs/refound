@@ -57,7 +57,7 @@ export const IpfsContextProvider = ({ children }: { children: ReactNode }) => {
 		}): Promise<Result<string>> => {
 			try {
 
-				console.log(postImage, postAudio);
+				//console.log(postImage, postAudio);
 				
 				if (!client) {
 					throw new Error("Unable to connect to IPFS");
@@ -88,8 +88,9 @@ export const IpfsContextProvider = ({ children }: { children: ReactNode }) => {
 					throw error;
 				});
 
-				const ipfsLink = `https://${cid}.ipfs.w3s.link/`;
+				const ipfsLink = `https://${cid}.ipfs.w3s.link/${path}`;
 
+				console.log(ipfsLink);
 				return result.ok(ipfsLink);
 			} catch (error) {
 				const errorMessage = (error as Error).message;

@@ -18,7 +18,7 @@ export type Post = {
 };
 
 export enum LicenseType {
-	Outright = "Outright",
+	Outright = "Outright Buy",
 	Web3License="Web3License",
 	WebLicense = "WebLicense",
 	PrintLicense = "PrintLicense",

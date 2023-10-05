@@ -188,8 +188,8 @@ export class PostContractAdapter {
 			let audioLink = "";
 			let links = [];
 			if(series.metadata.media){
-				console.log('get media links')
-				console.log(series.metadata.media)
+				//console.log('get media links')
+				//console.log(series.metadata.media)
 
 				links = (
 					await getLinks(series.metadata.media)
@@ -198,13 +198,18 @@ export class PostContractAdapter {
 					console.log('error ipfs get links')
 					throw error;
 				});
+				//console.log(links)
 
 				if(links[0].Name.includes(".jpg") || links[0].Name.includes(".jpeg") || links[0].Name.includes(".png")){
-					imageLink = "https://" + links[0].Hash + ".ipfs.w3s.link/"
+					imageLink = "https://" + links[0].Hash + ".ipfs.w3s.link/";
+					//console.log('imageLink')
+					//console.log(imageLink);
 				}
 
 				if(links[0].Name.includes(".mp3") || links[0].Name.includes(".wav")){
-					audioLink = "https://" + links[0].Hash + ".ipfs.w3s.link/"
+					audioLink = "https://" + links[0].Hash + ".ipfs.w3s.link/";
+					//console.log('audiolink')
+					//console.log(audioLink);
 				}
 				
 

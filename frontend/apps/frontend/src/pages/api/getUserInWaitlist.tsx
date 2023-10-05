@@ -19,6 +19,14 @@ const getUserInWaitlist = async (email: string, username: string) =>{
     return Users;
 }
 
+const getUserInWaitlistByUsername = async (username: string) =>{
+  await dbConnect();
+  
+  const Users = await waitlist.findOne({username: username});
+
+  return Users;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
@@ -41,6 +49,17 @@ export default async function handler(
     Email = req.query.userEmail.toString();
     try{
         const user = await getUserInWaitlist(Email.toString(), username.toString());
+        console.log('user in waitlist: ' + user);
+
+        return res.status(200).json({ success: true, data: user });
+    }catch(err: any){
+      return res.status(400).json({ error: "Error on '/api/getUser', user not found: " + err })
+    }
+  }else if(req.query.username){
+    username = req.query.username.toString();
+   
+    try{
+        const user = await getUserInWaitlistByUsername(username.toString());
         console.log('user in waitlist: ' + user);
 
         return res.status(200).json({ success: true, data: user });

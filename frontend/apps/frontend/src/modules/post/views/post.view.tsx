@@ -31,21 +31,21 @@ export const PostView = () => {
 
 		const queryId = Number.parseInt(postIdQuery as string);
 
-		if (!isNumber(queryId)) {
-			setNotFound(true);
-			toast.error("Invalid post id");
-			return;
-		}
+		// if (!isNumber(queryId)) {
+		// 	setNotFound(true);
+		// 	toast.error("Invalid post id");
+		// 	return;
+		// }
 
-		adapter.getPost({ id: queryId }).then((result) =>
-			result.match({
-				ok: (post) => setPost(post),
-				fail: (error) => {
-					toast.error(error.message);
-					setNotFound(true);
-				},
-			}),
-		);
+		// adapter.getPost({ id: queryId }).then((result) =>
+		// 	result.match({
+		// 		ok: (post) => setPost(post),
+		// 		fail: (error) => {
+		// 			toast.error(error.message);
+		// 			setNotFound(true);
+		// 		},
+		// 	}),
+		// );
 		console.log(post);
 		//console.log(post);
 	}, [postIdQuery, adapter, post]);

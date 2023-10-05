@@ -182,7 +182,7 @@ export class PostWriteContractAdapter {
 			  Object.keys(votesByAccount).reduce((previous, current) => {
 				  // TODO: very heavy way to handle checking if user has already voted.
 				  if (current === this.account.accountId) {
-					console.log('user has voted');
+					//console.log('user has voted');
 					  userHasVoted = true;
 				  }
 
@@ -205,8 +205,8 @@ export class PostWriteContractAdapter {
 			userHasVoted,
 		};
 
-		console.log('post');
-		console.log(post);
+		//console.log('post');
+		//console.log(post);
 
 		return post;
 	}
@@ -223,7 +223,7 @@ export class PostWriteContractAdapter {
 		let posts : any = [];
 		try {
 			
-			console.log('get posts');
+			//console.log('get posts');
 			let res = await provider.query({
 				request_type: 'call_function',
 				account_id: PostWriteContractAdapter.contractAddress,
@@ -262,6 +262,46 @@ export class PostWriteContractAdapter {
 		return result.ok(posts);
 	}
 
+	async getAllPosts(query: { from_index?: number; limit?: number }): Promise<Result<Post[]>> {
+		let foundPosts = false;
+		let posts : any = [];
+		try {
+			
+			//console.log('get posts');
+			let res = await provider.query({
+				request_type: 'call_function',
+				account_id: PostWriteContractAdapter.contractAddress,
+				method_name: "get_series",
+				args_base64: "e30=",
+				finality: 'optimistic',
+			  });
+
+			if(res){
+			  	const parsedRes = JSON.parse(Buffer.from(res.result).toString());
+				//console.log('parsed posts result');
+				//console.log(parsedRes);
+
+				posts = await Promise.all(
+					parsedRes.map(async (item:JsonSeries) => this.postDtoToEntity(item)),
+				);
+				
+				foundPosts = true;
+				//console.log(posts);
+			}
+
+				return result.ok(posts);
+
+			  //return JSON.parse(Buffer.from(res.result).toString());
+
+		} catch (error) {
+			console.error(error);
+			 
+		}
+		
+		return result.ok(posts);
+	}
+
+
 	//----------------------------------------
 	//----------------------------------------
 	// COMMANDS
@@ -271,7 +311,7 @@ export class PostWriteContractAdapter {
 	async callMethod(method:string, args = {}) {
 		// Sign a transaction with the "FunctionCall" action
 		const yoctoDeposit = "10000000000000000000000";
-		const THIRTY_TGAS = '3000000000000';
+		const THIRTY_TGAS = '5000000000000';
 		console.log('call method');
 
 		//const parsedArgs = Buffer.from(JSON.stringify(args)).toString('base64');
@@ -349,7 +389,7 @@ export class PostWriteContractAdapter {
 	}): Promise<Result<true>> {
 		try {
 			// TODO: currently enormous query just to find next id
-			const posts = await this.getPosts({}).then((result) =>
+			const posts = await this.getAllPosts({}).then((result) =>
 				result?.match({
 					ok: (posts) => {return posts},
 					fail: (error) => {
@@ -359,6 +399,7 @@ export class PostWriteContractAdapter {
 			);
 			if(posts?.length){
 				const nextId = posts.length > 0 ? posts[posts.length - 1].series_id + 1 : 0;
+				console.log('nextid:' + nextId);
 
 				const extra = {
 					locationTaken : locationTaken,

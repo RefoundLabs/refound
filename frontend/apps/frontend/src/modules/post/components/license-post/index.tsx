@@ -81,11 +81,11 @@ export const LicensePost = ({ post }: { post: Post }) => {
 						<option value={LicenseType.Web3License}>Web3 License</option>
 						<option value={LicenseType.PrintLicense}>Print License</option>
 						<option value={LicenseType.WebLicense}>Web License</option>
-						<option value={LicenseType.Outright}>Outright</option>
+						<option value={LicenseType.Outright}>Outright Buy</option>
 					</select>
 					{selectedLicense === LicenseType.Outright && (
 						<span className="text-xs">
-							Outright license comes with a 2% royalty for the original creator on all
+							The Outright Buy license comes with a 2% royalty for the original creator on all
 							future sales.
 						</span>
 					)}
