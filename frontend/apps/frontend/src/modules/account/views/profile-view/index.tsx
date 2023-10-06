@@ -341,10 +341,10 @@ export const ProfileView = () => {
                                 <h5 style={{fontSize:"1.15em"}}>{bio}</h5>
                                 <Grid >
                                     {twitterHandle && 
-                                        <Grid.Col sm={1}><Link href={"https://twitter.com/"+ twitterHandle.toString()} key="twitter" target="_blank"><FiTwitter style={{fontSize:"1.15em", color:"#24C5EF"}}></FiTwitter></Link></Grid.Col>
+                                        <Grid.Col sm={1}><Link href={"https://twitter.com/"+ twitterHandle.toString()} key="twitter" target="_blank" style={{cursor:"pointer"}}><FiTwitter style={{fontSize:"1.15em", color:"#24C5EF"}}></FiTwitter></Link></Grid.Col>
                                     }
                                     {link && 
-                                        <Grid.Col sm={1}><Link href={link.toString()} key="link" target="_blank"><FiGlobe style={{fontSize:"1.15em", color:"#24C5EF"}}></FiGlobe></Link></Grid.Col>
+                                        <Grid.Col sm={1}><Link href={link.toString()} style={{cursor:"pointer"}} key="link" target="_blank"><FiGlobe style={{fontSize:"1.15em", color:"#24C5EF"}}></FiGlobe></Link></Grid.Col>
                                     }
                                 </Grid>
                                 <br></br>

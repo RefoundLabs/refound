@@ -66,11 +66,11 @@ export const PostCard = ({
 				/>
 			</div>
 			<div className="flex flex-row items-baseline justify-between w-full pl-2">
-				<h1 className="text-sm font-bold">{trimText(title, 45)} {audioLink && <IconMicrophone style={{display:"inline", color:"#00A0B0"}}></IconMicrophone>}</h1>
+				<h1 className="text-sm font-bold" style={{maxWidth:"70%"}}>{trimText(title, 45)} {audioLink && <IconMicrophone style={{display:"inline", color:"#00A0B0"}}></IconMicrophone>}</h1>
 				<div className="flex flex-col justify-end gap-1">
 					{isVerified && (
 						<span className="rounded-full badge badge-sm badge-success">
-							NGO Verified
+							<p style={{fontSize:"0.9em"}}>NGO Verified</p>
 						</span>
 					)}
 					

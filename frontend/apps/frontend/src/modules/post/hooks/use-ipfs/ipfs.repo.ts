@@ -17,10 +17,10 @@ const getLinks = async (
 ): Promise<Result<any>> => {
 	try {
 		//const url = createGatewayUrl(cid, filePath);
-		console.log('get image and audio');
-		console.log(cid);
+		//console.log('get image and audio');
+		//console.log(cid);
 		const ipfsPath = cid.replace(".ipfs.w3s.link", "").replace("https://", "").split("/")[0];
-		console.log(ipfsPath);
+		//console.log(ipfsPath);
 		
 		const data = await axios
 			.get("https://dweb.link/api/v0/ls?arg=" + ipfsPath)

@@ -210,10 +210,10 @@ export const SignUpView = () => {
                   {() => (
                   <>
                     <Text>Username:</Text>
-                    <Input size="xs"
-                    value={username}
+                    <Input size="xs" 
+                    value={username} maxLength={30}
                     onChange={(e:any) => setUsername(e.target.value)}
-                    placeholder={username || "username"} style={{marginBottom:'20px'}}
+                    placeholder={username || "username claimed in waitlist"} style={{marginBottom:'20px'}}
                     />
                   </>
                   )}

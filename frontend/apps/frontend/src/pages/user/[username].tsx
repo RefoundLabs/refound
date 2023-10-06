@@ -56,43 +56,40 @@ const User: NextPage = () => {
     const [filteredPosts, setFilteredPosts] = useState<Nullable<Post[]>>(undefined);
 
     const router = useRouter();
-    useEffect(()=>{
+//     useEffect(()=>{
 
-          if(!email){
-            //console.log('get user')
-            getUser();
-          }
+         
+//        getUser();
+          
       
-    }, []);
+//     }, []);
 
-  useEffect(() => {
+//   useEffect(() => {
 
-    if(!email){
-        //console.log('get user')
-        getUser();
-    }else{
-        //console.log('get posts');
-        // if(!posts || posts.length == 0){
-        //     console.log('get posts');
-        //     getUserPosts(); 
-        // }
-    }
+//     if(!email){
+//         //console.log('get user')
+//         getUser();
+//     }else{
+//         //console.log('get posts');
+//         // if(!posts || posts.length == 0){
+//         //     console.log('get posts');
+//         //     getUserPosts(); 
+//         // }
+//     }
 
     
-  }, [username, fullname, email, images, avatar, bio, link, twitter])
+//   }, [username, fullname, email, images, avatar, bio, link, twitter])
 
 
     useEffect(()=>{
         if(!router.isReady) return;
-        //console.log(router.query);
+        console.log('router query')
+        console.log(router.query);
         if(router.query.username){
-            if(router.query.username.length == 64){
-                //console.log('set wallet adress')
-                //console.log(router.query.username)
-                setWalletAddress(router.query.username.toString())
-            }else{
-                setUsername(router.query.username.toString());
-            }
+           
+            setWalletAddress(router.query.username.toString())
+            console.log(router.query.username);
+            getUser(router.query.username.toString());
         }
     }, [router.isReady]);
 
@@ -110,47 +107,20 @@ const User: NextPage = () => {
             );
         }
 
-        if(posts && walletAddress){
+        if(posts && walletAddress && !filteredPosts){
             const newPosts = posts.filter((item:any) => item.owner.includes(walletAddress));
             setFilteredPosts(newPosts);
-        }else if(posts && username && !walletAddress){
-            const newPosts = posts.filter((item:any) => item.owner.includes(username));
-            setFilteredPosts(newPosts);
         }
+        // }else if(posts && username && !walletAddress){
+        //     const newPosts = posts.filter((item:any) => item.owner.includes(username));
+        //     setFilteredPosts(newPosts);
+        // }
 	}, [adapter, posts, filteredPosts]); 
 
 
-  const getUser = async() => {
+  const getUser = async(walletAddress:string) => {
     console.log('get user')
-    if(username && username.length != 64){
-        const res = await axios
-        .get(
-            "/api/getUser?username="+username,
-            {
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            }
-            }
-        )
-        .then(async (response) => {
-            console.log(response.data.data);
-            setEmail(response.data.data.email);
-            setWalletAddress(response.data.data.walletAddress);
-            setFullname(response.data.data.firstname + " " + response.data.data.lastname);
-            setBio(response.data.data.bio);
-            setTwitter(response.data.data.twitterHandle);
-            setLink(response.data.data.link);
-            setAvatar(response.data.data.avatar);
-           console.log(response.data.data.bio)
-        })
-        .catch((error) => {
-            console.log(error);
-            //setAlert(error.toString());
-
-        });
-        //console.log(res);
-    }else if(walletAddress){
+        console.log('get user by walletaddress:' + walletAddress)
         const res = await axios
         .get(
             "/api/getUser?walletAddress="+walletAddress,
@@ -162,9 +132,14 @@ const User: NextPage = () => {
             }
         )
         .then(async (response) => {
+            console.log('get user')
             console.log(response.data.data);
             setEmail(response.data.data.email);
-            setFullname(response.data.data.firstname + " " + response.data.data.lastname);
+            if(response.data.data.lastname){
+                setFullname(response.data.data.firstname + " " + response.data.data.lastname);
+            }else{
+                setFullname(response.data.data.firstname);
+            }
             setUsername(response.data.data.username);
             setBio(response.data.data.bio);
             setTwitter(response.data.data.twitterHandle);
@@ -176,7 +151,6 @@ const User: NextPage = () => {
             console.log(error);
             //setAlert(error);
         });
-    }
   }
 
 
@@ -221,7 +195,7 @@ const User: NextPage = () => {
                                 <h1 style={{fontSize:"2em"}}>Images</h1>
                                 {filteredPosts && 
                                     <section className="flex flex-col w-full px-contentPadding max-w-screen-lg mx-auto min-h-[101vh]">
-                                        <div className="grid grid-cols-1 gap-4 py-24 md:grid-cols-3">
+                                        <div className="grid grid-cols-1 gap-4 py-24 md:grid-cols-3 sm:grid-cols-2">
                                             {filteredPosts ? (
                                                 filteredPosts.map((post) => <PostCard key={post.id} post={post} />)
                                             ) : (

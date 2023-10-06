@@ -123,10 +123,10 @@ export const WaitListView: NextPage = () => {
                     {() => (
                      <>
                         <Text>Username: <em style={{fontSize:"0.5em", color: "grey"}}>choose a handle like Rob.Refound or create your own username</em></Text>
-                        <Input
+                        <Input maxLength={30}
                           value={username} style={{marginBottom:"10px"}}
                           onChange={(e:any) => setUsername(e.target.value)}
-                          placeholder="Username"
+                          placeholder="Username (max 30 characters)"
                         />
                        </>
                     )}
