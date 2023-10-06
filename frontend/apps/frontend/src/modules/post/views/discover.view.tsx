@@ -85,7 +85,7 @@ export const DiscoverView = () => {
 
 	return (
 		<section className="flex flex-col w-full px-contentPadding max-w-screen-lg mx-auto min-h-[101vh]">
-			<div className="grid grid-cols-1 gap-4 py-24 md:grid-cols-3">
+			<div className="grid grid-cols-1 gap-4 py-24 sm:grid-cols-3">
 				{posts ? (
 					posts.map((post) => <PostCard key={post.id} post={post} />)
 				) : (

@@ -476,7 +476,7 @@ export const CreateForm = () => {
 			} = state;
 
 			if (!title?.trim() || !isString(title)) throw new Error("Title is missing.");
-			if( tags && !tags.includes(",")) throw new Error("Please separate the tags by commas.");
+			if( tags && tags.includes(" ") && !tags.includes(",")) throw new Error("Please separate the tags by commas.");
 			if (title.length < 10) throw new Error("Title is too short.");
 
 			if (!image?.name || image.size === 0) throw new Error("File is missing.");
@@ -585,9 +585,9 @@ export const CreateForm = () => {
 
 	const onSubmit: MouseEventHandler<HTMLButtonElement> = (e) => {
 		e.preventDefault();
-		console.log('state audioFile')
-		console.log(state.audio);
-		console.log(state.duration);
+		// console.log('state audioFile')
+		// console.log(state.audio);
+		// console.log(state.duration);
 		createPost().then((confirmation) =>
 			confirmation.match({
 				ok: () => {
@@ -770,18 +770,19 @@ const addAudioElement = (blob: Blob) => {
 
 				<br></br>
 				<span className={S.title}>Pricing Details</span>
+				{/* 
 				<label className={S.fieldLabel}>
 					<span className={S.fieldLabelText}>Go Live Date</span>
 					<input
 						className={S.fieldInput}
 						name="dateGoLive"
-						type="date"
+						type="date" 
 						placeholder="Go Live Date"
 						onChange={(e) => {
 							dispatch({ type: "SET_DATEGOLIVE", payload: new Date(e.target.value).getMilliseconds() });
 						}}
 					/>
-				</label>
+				</label> */}
 
 				{/* <label className={S.fieldLabel}>
 					<span className={S.fieldLabelText}>End Date</span>
@@ -802,7 +803,7 @@ const addAudioElement = (blob: Blob) => {
 						className={S.fieldInput}
 						name="price"
 						type="number"
-						placeholder="Price in NEAR"
+						placeholder="Price in NEAR" 
 						onChange={(e) => {
 							dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
 							console.log(parseInt(e.target.value));
@@ -810,7 +811,7 @@ const addAudioElement = (blob: Blob) => {
 					/>
 				</label>
 
-				<label className={S.fieldLabel}>
+				{/* <label className={S.fieldLabel}>
 					<span className={S.fieldLabelText}># of Editions</span>
 					<input
 						className={S.fieldInput}
@@ -821,7 +822,7 @@ const addAudioElement = (blob: Blob) => {
 							dispatch({ type: "SET_COPIES", payload: parseInt(e.target.value) });
 						}}
 					/>
-				</label>
+				</label> */}
 
 				
 			</Grid.Col>
