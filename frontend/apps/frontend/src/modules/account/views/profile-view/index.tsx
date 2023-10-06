@@ -360,7 +360,7 @@ export const ProfileView = () => {
                         <div style={{marginTop:"2%"}}>
                             <h1 style={{fontSize:"2em"}}>Images</h1>
                             <section className="flex flex-col w-full px-contentPadding max-w-screen-lg mx-auto min-h-[101vh]">
-                                <div className="grid grid-cols-1 gap-4 py-24 md:grid-cols-3">
+                                <div className="grid grid-cols-1 gap-4 py-24 md:grid-cols-3 sm:grid-cols-2">
                                     {filteredPosts ? (
                                         filteredPosts.map((post) => <PostCard key={post.id} post={post} />)
                                     ) : (
