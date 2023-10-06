@@ -54,8 +54,8 @@ export const HomeView: NextPage = () => {
 		<div>
 			<section className="relative w-full h-[110vh] pt-headerTopHeight">
 				<div className="relative w-full h-full max-w-screen-3xl p-contentPadding">
-					<div className="relative z-[12] text-stone-800 flex flex-col h-full justify-between pb-[10vh]">
-						<h1 className="text-[10vw] max-w-[80%] leading-[10vw] font-bold text-stone-800">
+					<div className="relative z-[12] text-stone-800 flex flex-col h-full sm:justify-between pb-[10vh]">
+						<h1 className="md:text-[8vw] sm:text-[12vw] max-w-[80%] leading-[10vw] font-bold text-stone-800">
 							<span className="text-[8vw] font-normal italic">the</span>{" "}
 							<span className="accentColor">Platform</span>
 							<br />
@@ -64,14 +64,14 @@ export const HomeView: NextPage = () => {
 							{/* Own the Stories You Share with the World */}
 						</h1>
 
-						<p className="relative text-xl">
-							Empowered and Protected on the Blockchain
-						</p>
+							<p className="relative text-xl sm:mt-64 md:mt-0">
+								Empowered and Protected on the Blockchain
+							</p>
 
-						<div className="flex flex-row gap-4">
-							<NextLink href="/sign-in"><a className="btn btn-lg" style={{ borderRadius: "15px" }}>Sign Up</a></NextLink>
-							<NextLink href="/learn-more"><a className="btn btn-lg btn-outline" style={{ borderRadius: "15px" }}>Learn More</a></NextLink>
-						</div>
+							<div className="flex flex-row gap-4">
+								<NextLink href="/sign-in"><a className="btn btn-lg" style={{ borderRadius: "15px" }}>Sign Up</a></NextLink>
+								<NextLink href="/learn-more"><a className="btn btn-lg btn-outline" style={{ borderRadius: "15px" }}>Learn More</a></NextLink>
+							</div>
 					</div>
 
 					<figure style={{width:"100%!important",height:"100%"}} className="absolute top-0 bottom-0 object-right w-[100%] z-0">
