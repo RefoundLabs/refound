@@ -311,7 +311,7 @@ export class PostWriteContractAdapter {
 	async callMethod(method:string, args = {}) {
 		// Sign a transaction with the "FunctionCall" action
 		const yoctoDeposit = "10000000000000000000000";
-		const THIRTY_TGAS = '5000000000000';
+		const THIRTY_TGAS = '10000000000000';
 		console.log('call method');
 
 		//const parsedArgs = Buffer.from(JSON.stringify(args)).toString('base64');

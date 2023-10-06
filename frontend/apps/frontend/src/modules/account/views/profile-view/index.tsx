@@ -229,6 +229,10 @@ export const ProfileView = () => {
             //console.log(email);
         }
 
+        if(!gotUser){
+            getUser();
+        }
+
         if(avatarFile){
             const base64file= getBase64(avatarFile, (result:string) => {
                 //console.log('base64image'+result);
@@ -258,6 +262,7 @@ export const ProfileView = () => {
         }
 
         if(gotUser && !username){
+            console.log('not in waitlist')
             Router.push("/discover");
         }
     }, [email, username, bio, link, twitterHandle, account, avatar, avatarFile, role])
@@ -343,7 +348,7 @@ export const ProfileView = () => {
                                     }
                                 </Grid>
                                 <br></br>
-                                {account?.accountId && <p style={{fontSize:"1em"}}>Near Wallet Address: {account.accountId.toString().substring(0,10)}...</p>}
+                                {account?.accountId && <p style={{fontSize:"1em"}}>Near Wallet Address: {account.accountId.toString()}</p>}
                             </div>
                             <br></br>
                             {imageAlert && <Alert style={{backgroundColor:"red"}}>{imageAlert}</Alert>}
