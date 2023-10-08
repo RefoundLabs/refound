@@ -17,7 +17,7 @@ impl Contract {
         series_id: U64,
         metadata: TokenMetadata, 
         royalty: Option<HashMap<AccountId, u32>>,
-        price: Option<U128>,
+        license_id: Option<LicenseIdJson>
     ) {
         // Measure the initial storage being used on the contract
         let initial_storage_usage = env::storage_usage();
@@ -42,7 +42,8 @@ impl Contract {
                             account_id_hash: hash_account_id(&format!("{}{}", series_id.0.to_string(), caller)),
                         }),
                         owner_id: caller,
-                        price: price.map(|p| p.into()),
+                        // price: price.map(|p| p.into()),
+                        license: None,
                         verified: false,
                         vote: VotingSeries {
                             votes: HashMap::new(),
@@ -75,8 +76,8 @@ impl Contract {
 
         // Check if the series has a price per token. If it does, ensure the caller has attached at least that amount
         let mut price_per_token = 0;
-        if let Some(price) = series.price {
-            price_per_token = price;
+        if let Some(license_id) = series.license_id {
+            price_per_token = ;
             require!(
                 env::attached_deposit() > price_per_token,
                 "Need to attach at least enough to cover price"
