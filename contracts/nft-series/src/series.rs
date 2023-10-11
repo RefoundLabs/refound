@@ -43,7 +43,7 @@ impl Contract {
                         }),
                         owner_id: caller,
                         // price: price.map(|p| p.into()),
-                        license: None,
+                        license_id: None,
                         verified: false,
                         vote: VotingSeries {
                             votes: HashMap::new(),
@@ -77,7 +77,8 @@ impl Contract {
         // Check if the series has a price per token. If it does, ensure the caller has attached at least that amount
         let mut price_per_token = 0;
         if let Some(license_id) = series.license_id {
-            price_per_token = ;
+            let license = self.licenses_by_id.get(&license_id).expect("No license found");
+            price_per_token = license.price;
             require!(
                 env::attached_deposit() > price_per_token,
                 "Need to attach at least enough to cover price"

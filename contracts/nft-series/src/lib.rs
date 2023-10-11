@@ -49,7 +49,7 @@ pub struct Series {
     // What is the price of each token in this series? If this is specified, when minting,
     // Users will need to attach enough $NEAR to cover the price.
     // price: Option<Balance>,
-    license: Option<License>,
+    license_id: Option<LicenseId>,
     // Owner of the collection
     owner_id: AccountId,
 
@@ -93,7 +93,9 @@ pub struct Contract {
     //keeps track of the metadata for the contract
     pub metadata: LazyOption<NFTContractMetadata>,
 
-    pub licenses_per_creator: UnorderedMap<AccountId, UnorderedMap<LicenseId, License>>,
+    pub licenses_by_id: UnorderedMap<LicenseId, License>,
+
+    pub licenses_per_creator: UnorderedMap<AccountId, UnorderedSet<LicenseId>>,
 }
 
 /// Helper structure for keys of the persistent collections.
@@ -108,7 +110,8 @@ pub enum StorageKey {
     TokensById,
     NFTContractMetadata,
     LicensesPerCreator,
-    LicensesPerCreatorInner { hash_id: CryptoHash}
+    LicensesPerCreatorInner { hash_id: CryptoHash},
+    LicensesById
 }
 
 #[near_bindgen]
@@ -161,6 +164,7 @@ impl Contract {
             tokens_per_owner: LookupMap::new(StorageKey::TokensPerOwner.try_to_vec().unwrap()),
             licenses_per_creator: UnorderedMap::new(StorageKey::LicensesPerCreator),
             tokens_by_id: UnorderedMap::new(StorageKey::TokensById.try_to_vec().unwrap()),
+            licenses_by_id: UnorderedMap::new(StorageKey::LicensesById)
             //set the &owner_id field equal to the passed in owner_id.
             owner_id,
             metadata: LazyOption::new(
