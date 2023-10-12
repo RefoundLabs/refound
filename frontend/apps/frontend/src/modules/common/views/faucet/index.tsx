@@ -39,7 +39,7 @@ export const FaucetView : NextPage = (props) => {
 							/* status === "no_wallet" && "btn-disabled", */
 						)}
 						onClick={() => {
-							router.push("/free-trial")
+							router.push("/trial")
 						}}
 					>
 							Free Trial Airdrop
