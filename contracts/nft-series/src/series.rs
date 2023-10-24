@@ -43,7 +43,7 @@ impl Contract {
                         }),
                         owner_id: caller,
                         // price: price.map(|p| p.into()),
-                        license_id: None,
+                        license_id: license_id,
                         verified: false,
                         vote: VotingSeries {
                             votes: HashMap::new(),
@@ -76,7 +76,7 @@ impl Contract {
 
         // Check if the series has a price per token. If it does, ensure the caller has attached at least that amount
         let mut price_per_token = 0;
-        if let Some(license_id) = series.license_id {
+        if let Some(license_id) = series.license_id.clone() {
             let license = self.licenses_by_id.get(&license_id).expect("No license found");
             price_per_token = license.price;
             require!(
@@ -207,8 +207,7 @@ impl Contract {
     /// Get the timestamp of when the voting finishes. `None` means the voting hasn't ended yet.
     pub fn get_vote_result(&self, id: U64) -> Option<WrappedTimestamp> {
         // Get the series and how many tokens currently exist (edition number = cur_len + 1)
-        let mut series = self.series_by_id.get(&id.0).expect("Not a series");
-
+        let series = self.series_by_id.get(&id.0).expect("Not a series");
         series.vote.result.clone()
     }
 
@@ -231,7 +230,7 @@ impl Contract {
     /// update the active stake.
     pub fn get_votes(&self, id: U64) -> HashMap<AccountId, u32> {
         // Get the series and how many tokens currently exist (edition number = cur_len + 1)
-        let mut series = self.series_by_id.get(&id.0).expect("Not a series");
+        let series = self.series_by_id.get(&id.0).expect("Not a series");
 
         series
             .vote
