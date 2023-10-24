@@ -164,7 +164,7 @@ impl Contract {
             tokens_per_owner: LookupMap::new(StorageKey::TokensPerOwner.try_to_vec().unwrap()),
             licenses_per_creator: UnorderedMap::new(StorageKey::LicensesPerCreator),
             tokens_by_id: UnorderedMap::new(StorageKey::TokensById.try_to_vec().unwrap()),
-            licenses_by_id: UnorderedMap::new(StorageKey::LicensesById)
+            licenses_by_id: UnorderedMap::new(StorageKey::LicensesById),
             //set the &owner_id field equal to the passed in owner_id.
             owner_id,
             metadata: LazyOption::new(

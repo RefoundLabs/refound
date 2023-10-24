@@ -17,7 +17,7 @@ impl Contract {
         series_id: U64,
         metadata: TokenMetadata, 
         royalty: Option<HashMap<AccountId, u32>>,
-        license_id: Option<LicenseIdJson>
+        license_id: Option<LicenseId>
     ) {
         // Measure the initial storage being used on the contract
         let initial_storage_usage = env::storage_usage();
@@ -217,7 +217,7 @@ impl Contract {
     /// update the active stake.
     pub fn get_total_votes(&self, id: U64) -> u32 {
         // Get the series and how many tokens currently exist (edition number = cur_len + 1)
-        let mut series = self.series_by_id.get(&id.0).expect("Not a series");
+        let series = self.series_by_id.get(&id.0).expect("Not a series");
 
         series
             .vote

@@ -1,11 +1,10 @@
 use crate::*;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Deserialize, Serialize};
-use near_sdk::json_types::{U64};
+use near_sdk::json_types::{U128};
 use near_sdk::{ near_bindgen, Balance, PanicOnDefault };
 
-pub type LicenseId = u64;
-pub type LicenseIdJson = U64;
+pub type LicenseId = String;
 
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct License {
@@ -18,17 +17,17 @@ pub struct License {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(crate = "near_sdk::serde")]
 pub struct LicenseJson {
-    pub id: LicenseIdJson,
+    pub id: LicenseId,
     pub name: String,
-    pub price: Balance,
+    pub price: U128,
     // cid of license file
     pub file: String
 }
 
 impl License {
-    pub(crate) fn new(id: LicenseIdJson, _name: String, _price: Balance, _file: String) -> Self {
+    pub(crate) fn new(id: LicenseId, _name: String, _price: Balance, _file: String) -> Self {
         License {
-            id: id.0,
+            id: id,
             name: _name,
             price: _price,
             file: _file
@@ -36,9 +35,9 @@ impl License {
     }
     pub(crate) fn to_json(&self) -> LicenseJson {
         LicenseJson {
-           id: U64::from(self.id.clone()),
+           id: self.id.clone(),
            name: self.name.clone(),
-           price: self.price,
+           price: U128::from(self.price),
            file: self.file.clone()
         }
     }
@@ -47,33 +46,57 @@ impl License {
 #[near_bindgen]
 impl Contract {
 
-    pub fn add_license(&mut self, license_id: LicenseIdJson, name: String, price: Balance, file: String) {
+    pub fn add_license(&mut self, license_id: &LicenseId, name: String, price: U128, file: String) {
         let account_id = &env::predecessor_account_id();
-         //make sure that the person calling the function is a valid creator
-        // self.assert_approved_creator(&account_id);
-        let license = License{ id: license_id.0, name, price, file };
+         let license = License{ id: license_id.clone(), name, price: price.0, file };
     
         let mut licenses = self.licenses_per_creator.get(&account_id).unwrap_or_else(|| {
             //if the series doesn't have any license, we create a new unordered map
-            UnorderedMap::new(
+            UnorderedSet::new(
                 StorageKey::LicensesPerCreatorInner {
                     //we get a new unique prefix for the collection
                     hash_id: hash_account_id(&account_id.to_string()),
                 }
             )
         });
-
-        licenses.insert(&license_id.0, &license);
+        
+        licenses.insert(license_id);
+         //insert the license ID and license struct and make sure that the license doesn't exist
+         require!(
+            self.licenses_by_id.insert(&license_id, &license).is_none(),
+            "License already exists"
+        );
         self.licenses_per_creator.insert(&account_id, &licenses);
     }
 
-    pub fn remove_license(&mut self, license_id: LicenseIdJson) {
+    pub fn remove_license(&mut self, license_id: &LicenseId) {
         let account_id =  &env::predecessor_account_id();
-         //make sure that the person calling the function is a valid creator
-        // self.assert_approved_creator(&account_id);
         let mut licenses = self.licenses_per_creator.get(&account_id).expect("No licenses found");
-        let license = licenses.get(&license_id.0).expect("License not found for creator");
-        licenses.remove(&license_id.0);
+        let license = self.licenses_by_id.get(license_id).expect("License not found");
+        licenses.remove(license_id);  
         self.licenses_per_creator.insert(&account_id, &licenses);
+        self.licenses_by_id.remove(license_id);
+    }
+
+    pub fn get_license_by_id(&self, license_id: LicenseId) -> Option<LicenseJson> {
+        match self.licenses_by_id.get(&license_id) {
+            Some(l) => Some(l.to_json()),
+            None => None,
+        }
+    }
+
+    pub fn get_licenses_per_creator(&self, account_id: AccountId) -> Option<Vec<LicenseJson>> {
+        let mut result = Vec::<LicenseJson>::new();
+         match self.licenses_per_creator.get(&account_id) {
+            Some(licenses) => {  
+                for license_id in licenses.iter() {
+                    self.get_license_by_id(license_id).map(|l| {
+                        result.push(l);
+                    });
+                }
+                Some(result)
+            },
+            _ =>  None
+        }
     }
 }
