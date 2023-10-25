@@ -17,6 +17,7 @@ pub use crate::nft_core::*;
 pub use crate::owner::*;
 pub use crate::royalty::*;
 pub use crate::series::*;
+pub use crate::license::*;
 
 mod approval;
 mod enumeration;
@@ -27,6 +28,7 @@ mod nft_core;
 mod owner;
 mod royalty;
 mod series;
+mod license;
 
 /// This spec can be treated like a version of the standard.
 pub const NFT_METADATA_SPEC: &str = "1.0.0";
@@ -46,7 +48,8 @@ pub struct Series {
     tokens: UnorderedSet<TokenId>,
     // What is the price of each token in this series? If this is specified, when minting,
     // Users will need to attach enough $NEAR to cover the price.
-    price: Option<Balance>,
+    // price: Option<Balance>,
+    license_id: Option<LicenseId>,
     // Owner of the collection
     owner_id: AccountId,
 
@@ -89,6 +92,10 @@ pub struct Contract {
 
     //keeps track of the metadata for the contract
     pub metadata: LazyOption<NFTContractMetadata>,
+
+    pub licenses_by_id: UnorderedMap<LicenseId, License>,
+
+    pub licenses_per_creator: UnorderedMap<AccountId, UnorderedSet<LicenseId>>,
 }
 
 /// Helper structure for keys of the persistent collections.
@@ -102,6 +109,9 @@ pub enum StorageKey {
     TokenPerOwnerInner { account_id_hash: CryptoHash },
     TokensById,
     NFTContractMetadata,
+    LicensesPerCreator,
+    LicensesPerCreatorInner { hash_id: CryptoHash},
+    LicensesById
 }
 
 #[near_bindgen]
@@ -152,7 +162,9 @@ impl Contract {
             series_by_id: UnorderedMap::new(StorageKey::SeriesById.try_to_vec().unwrap()),
             //Storage keys are simply the prefixes used for the collections. This helps avoid data collision
             tokens_per_owner: LookupMap::new(StorageKey::TokensPerOwner.try_to_vec().unwrap()),
+            licenses_per_creator: UnorderedMap::new(StorageKey::LicensesPerCreator),
             tokens_by_id: UnorderedMap::new(StorageKey::TokensById.try_to_vec().unwrap()),
+            licenses_by_id: UnorderedMap::new(StorageKey::LicensesById),
             //set the &owner_id field equal to the passed in owner_id.
             owner_id,
             metadata: LazyOption::new(

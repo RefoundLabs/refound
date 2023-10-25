@@ -267,4 +267,11 @@ impl Contract {
         //return the previous token object that was transferred.
         token
     }
+
+    pub(crate) fn assert_approved_creator(&self, account_id: AccountId) {
+        require!(
+            self.is_approved_creator(account_id) == true,
+            "Predecessor must be an approved creator."
+        );
+    }
 }

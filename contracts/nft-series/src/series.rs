@@ -17,7 +17,7 @@ impl Contract {
         series_id: U64,
         metadata: TokenMetadata, 
         royalty: Option<HashMap<AccountId, u32>>,
-        price: Option<U128>,
+        license_id: Option<LicenseId>
     ) {
         // Measure the initial storage being used on the contract
         let initial_storage_usage = env::storage_usage();
@@ -42,7 +42,8 @@ impl Contract {
                             account_id_hash: hash_account_id(&format!("{}{}", series_id.0.to_string(), caller)),
                         }),
                         owner_id: caller,
-                        price: price.map(|p| p.into()),
+                        // price: price.map(|p| p.into()),
+                        license_id: license_id,
                         verified: false,
                         vote: VotingSeries {
                             votes: HashMap::new(),
@@ -75,8 +76,9 @@ impl Contract {
 
         // Check if the series has a price per token. If it does, ensure the caller has attached at least that amount
         let mut price_per_token = 0;
-        if let Some(price) = series.price {
-            price_per_token = price;
+        if let Some(license_id) = series.license_id.clone() {
+            let license = self.licenses_by_id.get(&license_id).expect("No license found");
+            price_per_token = license.price;
             require!(
                 env::attached_deposit() > price_per_token,
                 "Need to attach at least enough to cover price"
@@ -205,8 +207,7 @@ impl Contract {
     /// Get the timestamp of when the voting finishes. `None` means the voting hasn't ended yet.
     pub fn get_vote_result(&self, id: U64) -> Option<WrappedTimestamp> {
         // Get the series and how many tokens currently exist (edition number = cur_len + 1)
-        let mut series = self.series_by_id.get(&id.0).expect("Not a series");
-
+        let series = self.series_by_id.get(&id.0).expect("Not a series");
         series.vote.result.clone()
     }
 
@@ -215,7 +216,7 @@ impl Contract {
     /// update the active stake.
     pub fn get_total_votes(&self, id: U64) -> u32 {
         // Get the series and how many tokens currently exist (edition number = cur_len + 1)
-        let mut series = self.series_by_id.get(&id.0).expect("Not a series");
+        let series = self.series_by_id.get(&id.0).expect("Not a series");
 
         series
             .vote
@@ -229,7 +230,7 @@ impl Contract {
     /// update the active stake.
     pub fn get_votes(&self, id: U64) -> HashMap<AccountId, u32> {
         // Get the series and how many tokens currently exist (edition number = cur_len + 1)
-        let mut series = self.series_by_id.get(&id.0).expect("Not a series");
+        let series = self.series_by_id.get(&id.0).expect("Not a series");
 
         series
             .vote
