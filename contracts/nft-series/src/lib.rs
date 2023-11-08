@@ -128,8 +128,8 @@ impl Contract {
             owner_id,
             NFTContractMetadata {
                 spec: "nft-1.0.0".to_string(),
-                name: "NFT Series Contract".to_string(),
-                symbol: "GOTEAM".to_string(),
+                name: "Refound".to_string(),
+                symbol: "REFOUND".to_string(),
                 icon: None,
                 base_uri: None,
                 reference: None,
