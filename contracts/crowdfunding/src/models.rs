@@ -3,7 +3,7 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 #[allow(unused_imports)]
 use near_sdk::{env, near_bindgen};
 use near_sdk::serde::{Deserialize, Serialize};
-
+use near_sdk::json_types::u64;
 
 use crate::utils::{
     AccountId,
@@ -15,19 +15,20 @@ use crate::utils::{
 
 pub struct Crowdfund{
     id: i32,
-  pub creator: AccountId,
+    pub creator: AccountId,
     created_at: Timestamp,
     title: String,
     donation_target: u128,
     pub total_donations: u128,
    pub total_votes: i64,
     description: String,
+    pub postId: u64,
    pub votes: Vec<String>
 }
 
 
 impl Crowdfund{
-    pub fn new(id:i32, title: String, donation_target:u128, description: String) -> Self {
+    pub fn new(id:i32, title: String, donation_target:u128, description: String, postId: U64) -> Self {
         
         Crowdfund{
             id,
@@ -38,6 +39,7 @@ impl Crowdfund{
             total_donations: 0,
             total_votes : 0,
             description,
+            postId,
             votes: vec![],
         }
     }

@@ -1,5 +1,6 @@
 mod models;
 mod utils;
+use near_sdk::json_types::{Base64VecU8, U128, U64};
 
 use crate::{
     utils::{
@@ -20,7 +21,6 @@ use near_sdk::{borsh::{self, BorshDeserialize, BorshSerialize}, Promise};
 use near_sdk::{env, PromiseIndex, near_bindgen};
 near_sdk::setup_alloc!();
 
-
 #[near_bindgen]
 #[derive(Clone, Default, BorshDeserialize, BorshSerialize)]
 
@@ -39,7 +39,6 @@ impl Contract{
         let crowdfunds: Vec<Crowdfund> = Vec::new();
         let donations: Vec<Donation> = Vec::new();
 
-
         Contract{
             owner,
             crowdfunds,
@@ -47,7 +46,7 @@ impl Contract{
         }
     }
 
-    pub fn add_crowdfund(&mut self, title: String, donate:u128,description: String) {
+    pub fn add_crowdfund(&mut self, title: String, donate:U128,description: String, postId: U64) {
         
         let id = self.crowdfunds.len() as i32;
         
@@ -55,7 +54,8 @@ impl Contract{
             id,
             title,
             donate,
-            description
+            description,
+            postId
         ));
 
         env::log("Added a new crowdfund project".as_bytes());
@@ -100,6 +100,31 @@ impl Contract{
     pub fn get_total_donations(&mut self, id:usize) -> u128 {
         let crowdfund: &mut Crowdfund = self.crowdfunds.get_mut(id).unwrap();
         return crowdfund.total_donations;
-
     }
+
+    //status
+    // fn status(&self) -> Status {
+    //     if self.blockchain().get_block_timestamp() <= self.deadline().get() {
+    //         Status::FundingPeriod
+    //     } else if self.get_total_donations() >= self.target().get() {
+    //         Status::Successful
+    //     } else {
+    //         Status::Failed
+    //     }
+    // }
+
+    //claim
+    #[endpoint]
+    fn claim(&self) {
+        match self.status() {
+            let caller = self.blockchain().get_caller();
+            require!(
+                caller == self.blockchain().get_owner_address(),
+                "only owner can claim successful funding"
+            );
+
+            let sc_balance = self.get_total_donations();
+            self.send().direct(&caller, &sc_balance);
+    }
+    
 }
