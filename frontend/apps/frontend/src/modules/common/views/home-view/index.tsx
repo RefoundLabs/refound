@@ -52,7 +52,7 @@ export const HomeView: NextPage = () => {
 
 	return (
 		<div>
-			<section className="relative w-full h-[110vh] pt-headerTopHeight">
+			<section className="relative w-full h-[100vh] pt-headerTopHeight">
 				<div className="relative w-full h-full max-w-screen-3xl p-contentPadding">
 					<div className="relative z-[12] text-stone-800 flex flex-col h-full justify-between pb-[10vh]">
 						<h1 className="text-[12vw] md:text-[8vw] max-w-[80%] leading-[10vw] font-bold text-stone-800">
