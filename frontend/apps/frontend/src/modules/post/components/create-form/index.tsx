@@ -312,7 +312,7 @@ export const CreateForm = () => {
 			getUserInWaitlist();
 		}
 
-		if (navigator.geolocation) {
+		if (navigator && navigator.geolocation && navigator.permissions ) {
 			navigator.permissions
 			.query({ name: "geolocation" })
 			.then(function (result) {
