@@ -770,46 +770,88 @@ const addAudioElement = (blob: Blob) => {
 
 				<br></br>
 				<span className={S.title}>Pricing Details</span>
-				{/* 
-				<label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>Go Live Date</span>
+				<br></br>
+				<div>
+					<label className={S.fieldLabel} style={{display:"inline", marginRight:"20px"}}>
+						<span className={S.fieldLabelText}>Outright Buy</span>
+					</label>
 					<input
-						className={S.fieldInput}
-						name="dateGoLive"
-						type="date" 
-						placeholder="Go Live Date"
-						onChange={(e) => {
-							dispatch({ type: "SET_DATEGOLIVE", payload: new Date(e.target.value).getMilliseconds() });
-						}}
-					/>
-				</label> */}
+							className={S.fieldInput}
+							name="price"
+							type="number"
+							placeholder="Price in NEAR" 
+							style={{width:"50%", margin:"10px 0"}}
+							onChange={(e) => {
+								dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
+								console.log(parseInt(e.target.value));
+							}}
+						/>
+						<br></br>
 
-				{/* <label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>End Date</span>
+					<label className={S.fieldLabel} style={{display:"inline", marginRight:"20px"}}>
+						<span className={S.fieldLabelText}>Web License</span>
+					</label>
 					<input
-						className={S.fieldInput}
-						name="dateEnd"
-						type="date"
-						placeholder="End Date"
-						onChange={(e) => {
-							dispatch({ type: "SET_DATEEND", payload: e.target.value });
-						}}
-					/>
-				</label> */}
+							className={S.fieldInput}
+							name="price"
+							type="number"
+							placeholder="Price in NEAR" 
+							style={{width:"50%", margin:"10px 0"}}
+							onChange={(e) => {
+								dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
+								console.log(parseInt(e.target.value));
+							}}
+						/>
+					<br></br>
 
-				<label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>Price</span>
+					<label className={S.fieldLabel} style={{display:"inline", marginRight:"20px"}}>
+						<span className={S.fieldLabelText}>Print License</span>
+					</label>
 					<input
-						className={S.fieldInput}
-						name="price"
-						type="number"
-						placeholder="Price in NEAR" 
-						onChange={(e) => {
-							dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
-							console.log(parseInt(e.target.value));
-						}}
-					/>
-				</label>
+							className={S.fieldInput}
+							name="price"
+							type="number"
+							placeholder="Price in NEAR" 
+							style={{width:"50%", margin:"10px 0"}}
+							onChange={(e) => {
+								dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
+								console.log(parseInt(e.target.value));
+							}}
+						/>
+
+					<br></br>
+					<label className={S.fieldLabel} style={{display:"inline", marginRight:"20px"}}>
+						<span className={S.fieldLabelText}>Web3 License</span>
+					</label>
+					<input
+							className={S.fieldInput}
+							name="price"
+							type="number"
+							placeholder="Price in NEAR" 
+							style={{width:"50%", margin:"10px 0"}}
+							onChange={(e) => {
+								dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
+								console.log(parseInt(e.target.value));
+							}}
+						/>			
+
+					<br></br>
+					<label className={S.fieldLabel} style={{display:"inline", marginRight:"20px"}}>
+						<span className={S.fieldLabelText}>Single Use</span>
+					</label>
+					<input
+							className={S.fieldInput}
+							name="price"
+							type="number"
+							placeholder="Price in NEAR" 
+							style={{width:"50%", margin:"10px 0"}}
+							onChange={(e) => {
+								dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
+								console.log(parseInt(e.target.value));
+							}}
+						/>
+
+				</div>
 
 				{/* <label className={S.fieldLabel}>
 					<span className={S.fieldLabelText}># of Editions</span>
