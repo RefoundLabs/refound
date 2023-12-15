@@ -13,8 +13,8 @@ import { CreateForm } from "../components/create-form";
 
 export const CreateView: NextPage = () => {
 	return (
-		<section className="flex flex-col w-full max-w-screen-md mx-auto min-h-[101vh]">
-			<div className="flex flex-row justify-between w-full max-w-screen-md z-[4000] px-contentPadding bg-background mx-auto tabs fixed left-0 right-0  text-center top-headerTopHeight bg-white[90] justify-items-stretch">
+		<section className="flex flex-col w-full max-w-screen-lg mx-auto min-h-[101vh]">
+			<div className="flex flex-row justify-between w-full max-w-screen-lg z-[4000] px-contentPadding bg-background mx-auto tabs fixed left-0 right-0  text-center top-headerTopHeight bg-white[90] justify-items-stretch">
 				{/* <button
 					type="button"
 					aria-label="use image post form"

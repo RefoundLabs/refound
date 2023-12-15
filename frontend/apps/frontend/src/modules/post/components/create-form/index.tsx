@@ -65,7 +65,11 @@ type FormData = {
 	locationTaken: string;
 	dateTaken: string;
 	datePosted: string;
-	price: number;
+	price_outright_buy: number;
+	price_web_license: number;
+	price_print_license: number;
+	price_web3_license: number;
+	price_single_use: number;
 	copies: number;
 	tags?: string;
 	dateGoLive?: number;
@@ -92,7 +96,11 @@ const initialReducerState: ReducerState = {
 	locationTaken: "",
 	dateTaken: "",
 	datePosted: "",
-	price: 0,
+	price_outright_buy: 0,
+	price_web_license: 0,
+	price_print_license: 0,
+	price_web3_license: 0,
+	price_single_use: 0,
 	copies: 0,
 	tags: "",
 	dateGoLive: 0,
@@ -124,7 +132,11 @@ type ReducerActions =
 	| { type: "SET_ARTICLETEXT"; payload: FormData["articleText"] }
 	| { type: "SET_DATETAKEN"; payload: FormData["dateTaken"] }
 	| { type: "SET_DATEPOSTED"; payload: FormData["datePosted"] }
-	| { type: "SET_PRICE"; payload: FormData["price"] }
+	| { type: "SET_PRICE_OUTRIGHT_BUY"; payload: FormData["price_outright_buy"] }
+	| { type: "SET_PRICE_WEB_LICENSE"; payload: FormData["price_web_license"] }
+	| { type: "SET_PRICE_PRINT_LICENSE"; payload: FormData["price_print_license"] }
+	| { type: "SET_PRICE_WEB3_LICENSE"; payload: FormData["price_web3_license"] }
+	| { type: "SET_PRICE_SINGLE_USE"; payload: FormData["price_single_use"] }
 	| { type: "SET_COPIES"; payload: FormData["copies"] }
 	| { type: "SET_TAGS"; payload: FormData["tags"] }
 	| { type: "SET_DATEGOLIVE"; payload: FormData["dateGoLive"] }
@@ -190,13 +202,41 @@ const reducer = (state: ReducerState, action: ReducerActions): ReducerState => {
 				validationStatus: "IDLE",
 				submissionStatus: "IDLE",
 			};
-		case "SET_PRICE":
+		case "SET_PRICE_OUTRIGHT_BUY":
 			return {
 				...state,
-				price: action.payload,
+				price_outright_buy: action.payload,
 				validationStatus: "IDLE",
 				submissionStatus: "IDLE",
 			};
+		case "SET_PRICE_WEB_LICENSE":
+				return {
+					...state,
+					price_web3_license: action.payload,
+					validationStatus: "IDLE",
+					submissionStatus: "IDLE",
+				};
+		case "SET_PRICE_PRINT_LICENSE":
+				return {
+					...state,
+					price_print_license: action.payload,
+					validationStatus: "IDLE",
+					submissionStatus: "IDLE",
+				};
+		case "SET_PRICE_WEB3_LICENSE":
+				return {
+					...state,
+					price_web3_license: action.payload,
+					validationStatus: "IDLE",
+					submissionStatus: "IDLE",
+				};
+		case "SET_PRICE_SINGLE_USE":
+				return {
+					...state,
+					price_single_use: action.payload,
+					validationStatus: "IDLE",
+					submissionStatus: "IDLE",
+				};
 		case "SET_DATETAKEN":
 			return {
 				...state,
@@ -468,7 +508,11 @@ export const CreateForm = () => {
 				locationTaken,
 				dateTaken,
 				datePosted,
-				price, 
+				price_outright_buy,
+				price_web_license,
+				price_print_license,
+				price_web3_license,
+				price_single_use, 
 				copies,
 				tags,
 				dateGoLive,
@@ -497,7 +541,11 @@ export const CreateForm = () => {
 					datePosted: datePosted,
 					dateGoLive: dateGoLive,
 					dateEnd:dateEnd,
-					price:price.toString(),
+					price_outright_buy: price_outright_buy.toString(),
+					price_web_license: price_web_license.toString(),
+					price_print_license: price_print_license.toString(),
+					price_web3_license: price_web3_license.toString(),
+					price_single_use: price_single_use.toString(),
 					copies: copies.toString(),
 					tags:tags,
 					articleText: articleText, 
@@ -565,7 +613,11 @@ export const CreateForm = () => {
 					datePosted: new Date().toLocaleDateString(),
 					dateGoLive: creationProps.metadata.dateGoLive,
 					dateEnd: creationProps.metadata.dateEnd,
-					price: creationProps.metadata.price,
+					price_outright_buy: creationProps.metadata.price_outright_buy,
+					price_web_license: creationProps.metadata.price_web_license,
+					price_print_license: creationProps.metadata.price_print_license,
+					price_web3_license:creationProps.metadata.price_web3_license,
+					price_single_use: creationProps.metadata.price_single_use,
 					copies: creationProps.metadata.copies,
 					tags: creationProps.metadata.tags
 				})
@@ -614,7 +666,7 @@ const addAudioElement = (blob: Blob) => {
 
 	return (
 		<>
-			<div className="w-full py-12 prose text-center">
+			<div className="w-full py-12 prose">
 				<h1>Create Post</h1>
 			</div>
 			<form className={S.formRoot}>
@@ -622,7 +674,7 @@ const addAudioElement = (blob: Blob) => {
 					<Grid.Col sm={6}>
 					<label className={`${S.fieldLabel} items-start`}>
 				
-					<span className={S.fieldLabelText}>Image*</span>
+					<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Image*</span>
 
 
 					<FileDropInput 
@@ -660,7 +712,7 @@ const addAudioElement = (blob: Blob) => {
 					formats={formats}
 					onChange={handleChange} style={{width:"100%"}} /> */}
     
-					<span className={S.fieldLabelText}>Audio* <span style={{fontSize:"0.7em"}}>(max. 30 seconds)</span></span>
+					<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Audio* <span style={{fontSize:"0.7em"}}>(max. 30 seconds)</span></span>
 					<AudioFileDropInput 
 						setProps={(audio) => {
 							dispatch({ type: "SET_AUDIO", payload: audio });
@@ -702,9 +754,9 @@ const addAudioElement = (blob: Blob) => {
 				</label>
 			</Grid.Col>
 			<Grid.Col sm={6}>
-					<span className={S.title}>Metadata Details</span>
-					<label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>Title*</span>
+				<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Metadata Details</span>
+				<label className={S.fieldLabel} style={{marginBottom:"10px"}}>
+					<span className={S.fieldLabel}>Title*</span>
 					<input
 						className={S.fieldInput}
 						name="title"
@@ -716,8 +768,8 @@ const addAudioElement = (blob: Blob) => {
 					/>
 				</label>
 
-				<label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>Description</span>
+				<label className={S.fieldLabel} style={{marginBottom:"10px"}}>
+					<span className={S.fieldLabel}>Description</span>
 					<input
 						className={S.fieldInput}
 						name="description"
@@ -729,8 +781,8 @@ const addAudioElement = (blob: Blob) => {
 					/>
 				</label>
 
-				<label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>Location</span>
+				<label className={S.fieldLabel} style={{marginBottom:"10px"}}>
+					<span className={S.fieldLabel}>Location</span>
 					<input
 						className={S.fieldInput}
 						name="locationTaken"
@@ -742,8 +794,8 @@ const addAudioElement = (blob: Blob) => {
 					/>
 				</label>
 
-				<label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>Date Taken</span>
+				<label className={S.fieldLabel} style={{marginBottom:"10px"}}>
+					<span className={S.fieldLabel}>Date Taken</span>
 					<input
 						className={S.fieldInput}
 						name="dateTaken"
@@ -756,7 +808,7 @@ const addAudioElement = (blob: Blob) => {
 				</label>
 
 				<label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}>Tags</span>
+					<span className={S.fieldLabel}>Tags</span>
 					<input
 						className={S.fieldInput}
 						name="tags"
@@ -769,89 +821,102 @@ const addAudioElement = (blob: Blob) => {
 				</label>
 
 				<br></br>
-				<span className={S.title}>Pricing Details</span>
+				<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Pricing Details</span>
 				<br></br>
-				<div>
-					<label className={S.fieldLabel} style={{display:"inline", marginRight:"20px"}}>
-						<span className={S.fieldLabelText}>Outright Buy</span>
-					</label>
-					<input
-							className={S.fieldInput}
-							name="price"
-							type="number"
-							placeholder="Price in NEAR" 
-							style={{width:"50%", margin:"10px 0"}}
-							onChange={(e) => {
-								dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
-								console.log(parseInt(e.target.value));
-							}}
-						/>
+					<Grid>
+						<Grid.Col sm={4}>
+							<label className={S.fieldLabel} style={{display:"inline"}}>Outright Buy</label>
+						</Grid.Col>
+						<Grid.Col sm={8}>
+							<input
+									className={S.fieldInput}
+									name="price_outright_buy"
+									type="number"
+									placeholder="Price in NEAR" 
+									style={{width:"100%"}}
+									onChange={(e) => {
+										dispatch({ type: "SET_PRICE_OUTRIGHT_BUY", payload: parseInt(e.target.value) });
+										console.log(parseInt(e.target.value));
+									}}
+								/>
+								<br></br>
+						</Grid.Col>
+					</Grid>
+					<Grid>
+						<Grid.Col sm={4}>
+							<label className={S.fieldLabel} style={{display:"inline"}}>Web License</label>
+						</Grid.Col>
+						<Grid.Col sm={8}>
+							<input
+									className={S.fieldInput}
+									name="price_web_license"
+									type="number"
+									placeholder="Price in NEAR" 
+									style={{width:"100%"}}
+									onChange={(e) => {
+										dispatch({ type: "SET_PRICE_WEB_LICENSE", payload: parseInt(e.target.value) });
+										console.log(parseInt(e.target.value));
+									}}
+								/>
+						</Grid.Col>
 						<br></br>
-
-					<label className={S.fieldLabel} style={{display:"inline", marginRight:"20px"}}>
-						<span className={S.fieldLabelText}>Web License</span>
-					</label>
-					<input
-							className={S.fieldInput}
-							name="price"
-							type="number"
-							placeholder="Price in NEAR" 
-							style={{width:"50%", margin:"10px 0"}}
-							onChange={(e) => {
-								dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
-								console.log(parseInt(e.target.value));
-							}}
-						/>
-					<br></br>
-
-					<label className={S.fieldLabel} style={{display:"inline", marginRight:"20px"}}>
-						<span className={S.fieldLabelText}>Print License</span>
-					</label>
-					<input
-							className={S.fieldInput}
-							name="price"
-							type="number"
-							placeholder="Price in NEAR" 
-							style={{width:"50%", margin:"10px 0"}}
-							onChange={(e) => {
-								dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
-								console.log(parseInt(e.target.value));
-							}}
-						/>
-
-					<br></br>
-					<label className={S.fieldLabel} style={{display:"inline", marginRight:"20px"}}>
-						<span className={S.fieldLabelText}>Web3 License</span>
-					</label>
-					<input
-							className={S.fieldInput}
-							name="price"
-							type="number"
-							placeholder="Price in NEAR" 
-							style={{width:"50%", margin:"10px 0"}}
-							onChange={(e) => {
-								dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
-								console.log(parseInt(e.target.value));
-							}}
-						/>			
-
-					<br></br>
-					<label className={S.fieldLabel} style={{display:"inline", marginRight:"20px"}}>
-						<span className={S.fieldLabelText}>Single Use</span>
-					</label>
-					<input
-							className={S.fieldInput}
-							name="price"
-							type="number"
-							placeholder="Price in NEAR" 
-							style={{width:"50%", margin:"10px 0"}}
-							onChange={(e) => {
-								dispatch({ type: "SET_PRICE", payload: parseInt(e.target.value) });
-								console.log(parseInt(e.target.value));
-							}}
-						/>
-
-				</div>
+					</Grid>
+					<Grid>
+						<Grid.Col sm={4}>
+							<label className={S.fieldLabel} style={{display:"inline"}}>Print License</label>
+						</Grid.Col>
+						<Grid.Col sm={8}>
+							<input
+									className={S.fieldInput}
+									name="price_print_license"
+									type="number"
+									placeholder="Price in NEAR" 
+									style={{width:"100%"}}
+									onChange={(e) => {
+										dispatch({ type: "SET_PRICE_PRINT_LICENSE", payload: parseInt(e.target.value) });
+										console.log(parseInt(e.target.value));
+									}}
+								/>
+						</Grid.Col>
+						<br></br>
+					</Grid>
+					<Grid>
+						<Grid.Col sm={4}>
+							<label className={S.fieldLabel} style={{display:"inline"}}>Web3 License</label>
+						</Grid.Col>
+						<Grid.Col sm={8}>
+						<input
+								className={S.fieldInput}
+								name="price_web3_license"
+								type="number"
+								placeholder="Price in NEAR" 
+								style={{width:"100%"}}
+								onChange={(e) => {
+									dispatch({ type: "SET_PRICE_WEB3_LICENSE", payload: parseInt(e.target.value) });
+									console.log(parseInt(e.target.value));
+								}}
+							/>			
+						</Grid.Col>
+						<br></br>
+					</Grid>
+					<Grid>
+						<Grid.Col sm={4}>
+							<label className={S.fieldLabel} style={{display:"inline"}}>Single Use</label>
+						</Grid.Col>
+						<Grid.Col sm={8}>
+						<input
+								className={S.fieldInput}
+								name="price_single_use"
+								type="number"
+								placeholder="Price in NEAR" 
+								style={{width:"100%"}}
+								onChange={(e) => {
+									dispatch({ type: "SET_PRICE_SINGLE_USE", payload: parseInt(e.target.value) });
+									console.log(parseInt(e.target.value));
+								}}
+							/>
+						</Grid.Col>
+					</Grid>
 
 				{/* <label className={S.fieldLabel}>
 					<span className={S.fieldLabelText}># of Editions</span>
@@ -866,6 +931,22 @@ const addAudioElement = (blob: Blob) => {
 					/>
 				</label> */}
 
+				<button
+				style={{marginTop:"20px", borderRadius:"15px"}}
+					className={cloin(
+						"btn w-full justify-center",
+						state.submissionStatus === "SUBMITTING" && "loading pointer-events-none",
+						state.submissionStatus === "SUCCESS" && "pointer-events-none btn-success",
+						state.submissionStatus === "FAIL" && "pointer-events-none btn-error",
+					)}
+					disabled={!isSignedIn || state.submissionStatus !== "IDLE"}
+					onClick={onSubmit}
+				>
+					{state.submissionStatus === "IDLE" && "Submit"}
+					{state.submissionStatus === "SUBMITTING" && "Uploading..."}
+					{state.submissionStatus === "FAIL" && "Error"}
+					{state.submissionStatus === "SUCCESS" && "Success!"}
+				</button>
 				
 			</Grid.Col>
 			{/* <div style={{width:'100%', marginTop:"5%"}}>
@@ -904,22 +985,6 @@ const addAudioElement = (blob: Blob) => {
 						to create a post.
 					</AlertBar>
 				)}
-
-				<button
-					className={cloin(
-						"btn w-full justify-start",
-						state.submissionStatus === "SUBMITTING" && "loading pointer-events-none",
-						state.submissionStatus === "SUCCESS" && "pointer-events-none btn-success",
-						state.submissionStatus === "FAIL" && "pointer-events-none btn-error",
-					)}
-					disabled={!isSignedIn || state.submissionStatus !== "IDLE"}
-					onClick={onSubmit}
-				>
-					{state.submissionStatus === "IDLE" && "Submit"}
-					{state.submissionStatus === "SUBMITTING" && "Uploading..."}
-					{state.submissionStatus === "FAIL" && "Error"}
-					{state.submissionStatus === "SUCCESS" && "Success!"}
-				</button>
 
 				{state.validationErrors.length > 0 && (
 					<div className="flex flex-col gap-2 text-sm text-red-900">

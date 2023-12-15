@@ -371,7 +371,11 @@ export class PostWriteContractAdapter {
 		datePosted,
 		dateGoLive,
 		dateEnd,
-		price,
+		price_outright_buy,
+		price_web_license,
+		price_print_license,
+		price_web3_license,
+		price_single_use,
 		copies,
 		tags,
 	}: {
@@ -383,7 +387,11 @@ export class PostWriteContractAdapter {
 		datePosted: string;
 		dateGoLive: number//milliseconds;
 		dateEnd: string;
-		price: string;
+		price_outright_buy: string;
+		price_web_license: string;
+		price_print_license: string;
+		price_web3_license: string;
+		price_single_use: string;
 		copies: number;
 		tags: string;
 	}): Promise<Result<true>> {
@@ -421,7 +429,11 @@ export class PostWriteContractAdapter {
 						issued_at: null, //new Date().getMilliseconds(),
 						extra: JSON.stringify(extra)
 					},
-					price: price
+					price_outright_buy: price_outright_buy,
+					price_web_license: price_web_license,
+					price_print_license: price_print_license,
+					price_web3_license: price_web3_license,
+					price_single_use: price_single_use
 				};
 
 				await this.callMethod("create_series", args);
