@@ -55,8 +55,8 @@ export const SiteHeader = () => {
 						<div>
 							<NextLink href="/" className="flex items-center py-4 px-2">
 								<a className="flex flex-row gap-2 items-center justify-center text-[1em]">
-									<img className="w-[1.2em] h-[1.2em] object-contain" src="/favicon-32x32.png" ></img>
-									<h1 className="font-normal leading-none text-[2em]">refound</h1>
+									<img className="w-[1.2em] h-[1.2em] mt-3 object-contain" src="/favicon-32x32.png" ></img>
+									<h1 className="font-normal leading-none mt-2 text-[2em]">refound</h1>
 								</a>
 							</NextLink>
 						</div>

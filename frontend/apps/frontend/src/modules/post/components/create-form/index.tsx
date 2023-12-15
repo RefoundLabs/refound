@@ -43,7 +43,7 @@ import {
     Button, Text, Box, Alert
   } from '@mantine/core';
 import { copyFileSync } from "fs";
-import { useRef } from "react";
+import { useRef, createRef } from "react";
 import { AudioRecorder } from 'react-audio-voice-recorder';
 import exifr from 'exifr' // => exifr/dist/full.umd.cjs
 import Geocode from "react-geocode";
@@ -298,7 +298,9 @@ type CustomElement = { type: 'paragraph'; children: CustomText[] }
 type CustomText = { text: string }
 
 export const CreateForm = () => {
-	
+	const licensingRef = useRef<HTMLInputElement>(null);
+	const titleRef = useRef<HTMLInputElement>(null);
+	const [licensing, setLicensing] = useState(false);
 	const router = useRouter();
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
 	const { writeAdapter } = useWritePostContracts();
@@ -821,7 +823,7 @@ const addAudioElement = (blob: Blob) => {
 				</label>
 
 				<br></br>
-				<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Pricing Details</span>
+				<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Price</span>
 				<br></br>
 					<Grid>
 						<Grid.Col sm={4}>
@@ -840,8 +842,32 @@ const addAudioElement = (blob: Blob) => {
 									}}
 								/>
 								<br></br>
+
+							<p ref={titleRef} className="hover:underline" style={{cursor: "pointer", textAlign:"end", color:"grey", marginTop:"10px"}}onClick={() => {
+								if(!licensing){
+									licensingRef.current?.classList.remove("hidden");
+									let title = titleRef.current as HTMLElement;
+									title.textContent = "Cancel";
+									setLicensing(true);
+								}else{
+									licensingRef.current?.classList.add("hidden");
+									let title = titleRef.current as HTMLElement;
+									title.textContent = "Set Licensing Price(s)";
+									setLicensing(false);
+									dispatch({ type: "SET_PRICE_WEB_LICENSE", payload: NaN });
+									dispatch({ type: "SET_PRICE_PRINT_LICENSE", payload: NaN });
+									dispatch({ type: "SET_PRICE_WEB3_LICENSE", payload: NaN });
+									dispatch({ type: "SET_PRICE_SINGLE_USE", payload: NaN });
+								}
+							}}>Set Licensing Price(s)</p>
 						</Grid.Col>
 					</Grid>
+
+
+
+				<div className="hidden" ref={licensingRef}>
+					<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Licensing</span>
+					<br></br>
 					<Grid>
 						<Grid.Col sm={4}>
 							<label className={S.fieldLabel} style={{display:"inline"}}>Web License</label>
@@ -917,7 +943,7 @@ const addAudioElement = (blob: Blob) => {
 							/>
 						</Grid.Col>
 					</Grid>
-
+				</div>
 				{/* <label className={S.fieldLabel}>
 					<span className={S.fieldLabelText}># of Editions</span>
 					<input
