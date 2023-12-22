@@ -23,6 +23,15 @@ import { useAccount } from "@modules/account/hooks/use-account";
 import NextLink from "next/link";
 import axios from "axios";
 import moment from 'moment';
+import '@mantine/tiptap/styles.css';
+import { useEditor } from '@tiptap/react';
+import Highlight from '@tiptap/extension-highlight';
+import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
+import TextAlign from '@tiptap/extension-text-align';
+import Superscript from '@tiptap/extension-superscript';
+import SubScript from '@tiptap/extension-subscript';
+import { RichTextEditor } from "./rich-text-editor";
 import AxiosResponse from "axios";
 import PlacesAutocomplete from 'react-places-autocomplete';
 import {
@@ -31,10 +40,8 @@ import {
 	getLatLng,
   } from 'react-places-autocomplete';
   import {
-    createStyles,
     Menu,
     Center,
-    Header,
     Container,
     Group,
     Burger,
@@ -47,7 +54,6 @@ import { useRef, createRef } from "react";
 import { AudioRecorder } from 'react-audio-voice-recorder';
 import exifr from 'exifr' // => exifr/dist/full.umd.cjs
 import Geocode from "react-geocode";
-import BubbleMenu from '@tiptap/extension-bubble-menu'
 import { useWritePostContracts } from "@modules/post/hooks/use-post-write-contracts";
 
 type FormData = {
@@ -127,6 +133,7 @@ type ReducerActions =
 			duration?: FormData["duration"];
 		};
 	}
+	| { type: "SET_ARTICLE"; payload: FormData["articleText"] }
 	| { type: "SET_DESCRIPTION"; payload: FormData["description"] }
 	| { type: "SET_LOCATIONTAKEN"; payload: FormData["locationTaken"] }
 	| { type: "SET_ARTICLETEXT"; payload: FormData["articleText"] }
@@ -298,15 +305,18 @@ type CustomElement = { type: 'paragraph'; children: CustomText[] }
 type CustomText = { text: string }
 
 export const CreateForm = () => {
+	
 	const licensingRef = useRef<HTMLInputElement>(null);
 	const titleRef = useRef<HTMLInputElement>(null);
+	const editorRef = useRef<HTMLInputElement>(null);
+	const editorTitleRef = useRef<HTMLInputElement>(null);
 	const [licensing, setLicensing] = useState(false);
 	const router = useRouter();
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
 	const { writeAdapter } = useWritePostContracts();
 	const [userInWaitlist, setUserInWailist] = useState(false);
 	const [captureModalOpen, setCaptureModalOpen] = useState(false);
-	const [editorState, setEditorState] = useState("");
+	const [articleBoolean, setArticleBoolean] = useState(false);
 	const { uploadFile, ipfsReady } = useIpfs();
 	const { account, isSignedIn } = useAccount();
 	const [editor, setEditor] = useState<any>();
@@ -397,7 +407,7 @@ export const CreateForm = () => {
 			console.log(state);
 		}
 
-	}, [ editor, editorState, account])
+	}, [ editor, articleBoolean, account])
 
 	const getUserInWaitlist = async() => {
 		console.log('account');
@@ -556,7 +566,9 @@ export const CreateForm = () => {
 			console.log('creation props');
 			console.log(creationProps)
 
-				//console.log(creationProps)
+			//todo: validate article
+
+			//console.log(creationProps)
 			dispatch({ type: "VALIDATION_PASS" });
 			return result.ok(creationProps);
 		} catch (err) {
@@ -622,6 +634,8 @@ export const CreateForm = () => {
 					price_single_use: creationProps.metadata.price_single_use,
 					copies: creationProps.metadata.copies,
 					tags: creationProps.metadata.tags
+					//todo: add article
+					//articleText: creationProps.metadata.articleText
 				})
 			).unwrapOrElse((error) => {
 				throw error;
@@ -673,89 +687,111 @@ const addAudioElement = (blob: Blob) => {
 			</div>
 			<form className={S.formRoot}>
 				<Grid>
-					<Grid.Col sm={6}>
+					<Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
 					<label className={`${S.fieldLabel} items-start`}>
-				
-					<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Image*</span>
-
-
-					<FileDropInput 
-						setProps={(imageData) => {
-							console.log('image data');
-							console.log(imageData);
-							dispatch({ type: "SET_IMAGE", payload: imageData });
-							if(imageData.image){
-								parseEXIF(imageData.image);
+						<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Image*</span>
+						<FileDropInput 
+							setProps={(imageData) => {
+								console.log('image data');
+								console.log(imageData);
+								dispatch({ type: "SET_IMAGE", payload: imageData });
+								if(imageData.image){
+									parseEXIF(imageData.image);
+								}
+							}}
+							
+							uploadedImage={
+								state.image && state.width && state.height 
+									? { image: state.image, width: state.width, height: state.height }
+									: undefined
 							}
-						}}
-						
-						uploadedImage={
-							state.image && state.width && state.height 
-								? { image: state.image, width: state.width, height: state.height }
-								: undefined
-						}
-					/>
-
-					<button
-						type="button"
-						style={{marginTop:"20px", marginBottom:"20px", borderRadius:"10px"}}
-						className="btn btn-block"
-						onClick={(e) => {
-							e.preventDefault();
-
-							setCaptureModalOpen(true);
-						}}
-					>
-						Take a Photo
-					</button>
-
-					{/* <ReactQuill value={editorState}
-					modules={modules}
-					formats={formats}
-					onChange={handleChange} style={{width:"100%"}} /> */}
-    
-					<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Audio* <span style={{fontSize:"0.7em"}}>(max. 30 seconds)</span></span>
-					<AudioFileDropInput 
-						setProps={(audio) => {
-							dispatch({ type: "SET_AUDIO", payload: audio });
-						}}
-						
-						
-						uploadedAudio={
-							(state.audio && state.duration)
-								? { audio: state.audio, duration: state.duration }
-								: undefined
-						}
-					/> 
-					<br></br>
-					<div>
-						<span>Record Live Audio</span>
-						<AudioRecorder
-							onRecordingComplete={addAudioElement}
-							audioTrackConstraints={{
-							noiseSuppression: true,
-							echoCancellation: true,
-							// autoGainControl,
-							// channelCount,
-							// deviceId,
-							// groupId,
-							// sampleRate,
-							// sampleSize,
-							}}
-							onNotAllowedOrFound={(err) => console.table(err)}
-							downloadOnSavePress={true}
-							downloadFileExtension="webm"
-							mediaRecorderOptions={{
-							audioBitsPerSecond: 128000,
-							}}
-							showVisualizer={true}
 						/>
-					<br />
-					</div>
 
-				</label>
+						<button
+							type="button"
+							style={{marginTop:"20px", marginBottom:"20px", borderRadius:"10px"}}
+							className="btn btn-block"
+							onClick={(e) => {
+								e.preventDefault();
+
+								setCaptureModalOpen(true);
+							}}
+						>
+							Take a Photo
+						</button>
+
+						{/* <ReactQuill value={editorState}
+						modules={modules}
+						formats={formats}
+						onChange={handleChange} style={{width:"100%"}} /> */}
+		
+						<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Audio* <span style={{fontSize:"0.7em"}}>(max. 30 seconds)</span></span>
+						<AudioFileDropInput 
+							setProps={(audio) => {
+								dispatch({ type: "SET_AUDIO", payload: audio });
+							}}
+							
+							
+							uploadedAudio={
+								(state.audio && state.duration)
+									? { audio: state.audio, duration: state.duration }
+									: undefined
+							}
+						/> 
+						<br></br>
+						{/* <div>
+							<span>Record Live Audio</span>
+							<AudioRecorder
+								onRecordingComplete={addAudioElement}
+								audioTrackConstraints={{
+								noiseSuppression: true,
+								echoCancellation: true,
+								// autoGainControl,
+								// channelCount,
+								// deviceId,
+								// groupId,
+								// sampleRate,
+								// sampleSize,
+								}}
+								onNotAllowedOrFound={(err) => console.table(err)}
+								downloadOnSavePress={true}
+								downloadFileExtension="webm"
+								mediaRecorderOptions={{
+								audioBitsPerSecond: 128000,
+								}}
+								showVisualizer={true}
+							/>
+						<br />
+						</div> */}
+						<p ref={editorTitleRef} className="hover:underline" style={{cursor: "pointer", textAlign:"end", color:"grey", fontSize:"1.3rem", margin:"10px 0"}}onClick={() => {
+								if(!articleBoolean){
+									editorRef.current?.classList.remove("hidden");
+									let title = editorTitleRef.current as HTMLElement;
+									title.textContent = "Cancel";
+									setArticleBoolean(true);
+								}else{
+									editorRef.current?.classList.add("hidden");
+									let title = editorTitleRef.current as HTMLElement;
+									title.textContent = "Write An Article";
+									//reset state 
+									setEditor("");
+									//reset title
+									setArticleBoolean(false);
+									dispatch({ type: "SET_ARTICLE", payload: null });
+								}
+							}}>Write An Article</p>
+
+						<div ref={editorRef} className="hidden" style={{width:'100%', marginTop:"5%"}}>
+							<span className={S.title}>Write An Article</span>
+							<RichTextEditor
+								onChange={(htmlString) => {
+									setEditor(htmlString);
+								}}
+							/>
+						</div>		
+					</label>
 			</Grid.Col>
-			<Grid.Col sm={6}>
+			<Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
 				<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Metadata Details</span>
 				<label className={S.fieldLabel} style={{marginBottom:"10px"}}>
 					<span className={S.fieldLabel}>Title*</span>
@@ -826,10 +862,10 @@ const addAudioElement = (blob: Blob) => {
 				<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Price</span>
 				<br></br>
 					<Grid>
-						<Grid.Col sm={4}>
+						<Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
 							<label className={S.fieldLabel} style={{display:"inline"}}>Outright Buy</label>
 						</Grid.Col>
-						<Grid.Col sm={8}>
+						<Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
 							<input
 									className={S.fieldInput}
 									name="price_outright_buy"
@@ -869,10 +905,10 @@ const addAudioElement = (blob: Blob) => {
 					<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Licensing</span>
 					<br></br>
 					<Grid>
-						<Grid.Col sm={4}>
+						<Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
 							<label className={S.fieldLabel} style={{display:"inline"}}>Web License</label>
 						</Grid.Col>
-						<Grid.Col sm={8}>
+						<Grid.Col span={{ base: 12, md: 8, lg: 8 }}>
 							<input
 									className={S.fieldInput}
 									name="price_web_license"
@@ -888,10 +924,10 @@ const addAudioElement = (blob: Blob) => {
 						<br></br>
 					</Grid>
 					<Grid>
-						<Grid.Col sm={4}>
+						<Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
 							<label className={S.fieldLabel} style={{display:"inline"}}>Print License</label>
 						</Grid.Col>
-						<Grid.Col sm={8}>
+						<Grid.Col span={{ base: 12, md: 8, lg: 8 }}>
 							<input
 									className={S.fieldInput}
 									name="price_print_license"
@@ -907,10 +943,10 @@ const addAudioElement = (blob: Blob) => {
 						<br></br>
 					</Grid>
 					<Grid>
-						<Grid.Col sm={4}>
+						<Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
 							<label className={S.fieldLabel} style={{display:"inline"}}>Web3 License</label>
 						</Grid.Col>
-						<Grid.Col sm={8}>
+						<Grid.Col span={{ base: 12, md: 8, lg: 8 }}>
 						<input
 								className={S.fieldInput}
 								name="price_web3_license"
@@ -926,10 +962,10 @@ const addAudioElement = (blob: Blob) => {
 						<br></br>
 					</Grid>
 					<Grid>
-						<Grid.Col sm={4}>
+						<Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
 							<label className={S.fieldLabel} style={{display:"inline"}}>Single Use</label>
 						</Grid.Col>
-						<Grid.Col sm={8}>
+						<Grid.Col span={{ base: 12, md: 8, lg: 8 }}>
 						<input
 								className={S.fieldInput}
 								name="price_single_use"
@@ -957,6 +993,8 @@ const addAudioElement = (blob: Blob) => {
 					/>
 				</label> */}
 
+			
+
 				<button
 				style={{marginTop:"20px", borderRadius:"15px"}}
 					className={cloin(
@@ -975,32 +1013,7 @@ const addAudioElement = (blob: Blob) => {
 				</button>
 				
 			</Grid.Col>
-			{/* <div style={{width:'100%', marginTop:"5%"}}>
-				<span className={S.title}>Write An Article</span>
-				<>
-					{editor && <BubbleMenu id='.menu' editor={editor} tippyOptions={{ duration: 100 }}>
-						<button
-						onClick={() => editor.chain().focus().toggleBold().run()}
-						className={editor.isActive('bold') ? 'is-active' : ''}
-						>
-						bold
-						</button>
-						<button
-						onClick={() => editor.chain().focus().toggleItalic().run()}
-						className={editor.isActive('italic') ? 'is-active' : ''}
-						>
-						italic
-						</button>
-						<button
-						onClick={() => editor.chain().focus().toggleStrike().run()}
-						className={editor.isActive('strike') ? 'is-active' : ''}
-						>
-						strike
-						</button>
-					</BubbleMenu>}
-					<EditorContent editor={editor} />
-					</>
-			</div>		 */}
+			
 
 				{!isSignedIn && (
 					<AlertBar kind="warning">

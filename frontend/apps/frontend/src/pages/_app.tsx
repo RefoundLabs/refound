@@ -17,6 +17,7 @@ import { PostContractsContextProvider } from "@modules/post/hooks/use-post-contr
 import { PostWriteContractsContextProvider } from "@modules/post/hooks/use-post-write-contracts";
 import { IpfsContextProvider } from "@modules/post/hooks/use-ipfs";
 import { WalletSelectorContextProvider } from "../modules/account/hooks/use-near/WalletSelectorContext";
+import { MantineProvider } from "@mantine/core";
 // import { WalletSelectorContextProvider } from "@modules/auth/hooks/use-auth";
 
 import type { Session } from "next-auth";
@@ -29,13 +30,15 @@ function MyApp({ Component, pageProps : {session, ...pageProps} }: AppProps) {
 					<AccountContextProvider>
 						<IpfsContextProvider>
 						<PostWriteContractsContextProvider>
-								<PostContractsContextProvider>
-									<UIProvider>
-										<Layout>
-											<Component {...pageProps} />
-										</Layout>
-										<Toaster position="bottom-center" />
-									</UIProvider>
+								<PostContractsContextProvider> 
+									<MantineProvider>
+										<UIProvider>
+											<Layout>
+												<Component {...pageProps} />
+											</Layout>
+											<Toaster position="bottom-center" />
+										</UIProvider>	
+									</MantineProvider>
 								</PostContractsContextProvider>
 							</PostWriteContractsContextProvider>
 						</IpfsContextProvider>

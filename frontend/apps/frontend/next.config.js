@@ -16,7 +16,7 @@ const nextConfig = {
         // !! WARN !!
         ignoreBuildErrors: true,
     },
-    reactStrictMode: true,
+    reactStrictMode: false,
     swcMinify: true,
     experimental: {
         images: {
