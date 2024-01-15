@@ -148,8 +148,8 @@ type ReducerActions =
 	| { type: "SET_PRICE_PRINT_LICENSE"; payload: FormData["price_print_license"] }
 	| { type: "SET_PRICE_WEB3_LICENSE"; payload: FormData["price_web3_license"] }
 	| { type: "SET_PRICE_SINGLE_USE"; payload: FormData["price_single_use"] }
-	| {type: "SET_SPLITS_SECONDARY_PERCENT"; payload: FormData["splits_secondary_percentage"]}
-	| {type: "SET_SPLITS_SECONDARY_WALLET"; payload: FormData["splits_secondary_wallet"]}
+	| { type: "SET_SPLITS_SECONDARY_PERCENT"; payload: FormData["splits_secondary_percentage"]}
+	| { type: "SET_SPLITS_SECONDARY_WALLET"; payload: FormData["splits_secondary_wallet"]}
 	| { type: "SET_COPIES"; payload: FormData["copies"] }
 	| { type: "SET_TAGS"; payload: FormData["tags"] }
 	| { type: "SET_DATEGOLIVE"; payload: FormData["dateGoLive"] }
@@ -538,6 +538,8 @@ export const CreateForm = () => {
 				price_print_license,
 				price_web3_license,
 				price_single_use, 
+				splits_secondary_wallet,
+				splits_secondary_percentage,
 				copies,
 				tags,
 				dateGoLive,
@@ -571,6 +573,8 @@ export const CreateForm = () => {
 					price_print_license: price_print_license.toString(),
 					price_web3_license: price_web3_license.toString(),
 					price_single_use: price_single_use.toString(),
+					splits_secondary_wallet: splits_secondary_wallet.toString(),
+					splits_secondary_percent: splits_secondary_percentage.toString(),
 					copies: copies.toString(),
 					tags:tags,
 					articleText: articleText, 
@@ -645,6 +649,8 @@ export const CreateForm = () => {
 					price_print_license: creationProps.metadata.price_print_license,
 					price_web3_license:creationProps.metadata.price_web3_license,
 					price_single_use: creationProps.metadata.price_single_use,
+					splits_secondary_wallet: creationProps.splits_secondary_wallet,
+					splits_secondary_percent: creationProps.splits_secondary_percentage,
 					copies: creationProps.metadata.copies,
 					tags: creationProps.metadata.tags
 					//todo: add article
@@ -698,9 +704,9 @@ const addAudioElement = (blob: Blob) => {
 			<div className="w-full py-12 prose">
 				<h1>Create Post</h1>
 			</div>
-			<form className={S.formRoot}>
-				<Grid>
-					<Grid.Col span={{ base: 6, md: 6, lg: 6 }}>
+			<form style={{width:"100%"}}>
+				<Grid >
+					<Grid.Col  span={{ base: 6, sm: 12, md: 6, lg: 6 }}>
 					<label className={`${S.fieldLabel} items-start`}>
 						<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Image*</span>
 						<FileDropInput 
@@ -733,11 +739,6 @@ const addAudioElement = (blob: Blob) => {
 							Take a Photo
 						</button>
 
-						{/* <ReactQuill value={editorState}
-						modules={modules}
-						formats={formats}
-						onChange={handleChange} style={{width:"100%"}} /> */}
-		
 						<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Audio* <span style={{fontSize:"0.7em"}}>(max. 30 seconds)</span></span>
 						<AudioFileDropInput 
 							setProps={(audio) => {
@@ -776,7 +777,7 @@ const addAudioElement = (blob: Blob) => {
 							/>
 						<br />
 						</div> */}
-						<p ref={editorTitleRef} className="hover:underline" style={{cursor: "pointer", textAlign:"end", color:"grey", fontSize:"1.3rem", margin:"10px 0"}}onClick={() => {
+						<p ref={editorTitleRef} className="hover:underline" style={{cursor: "pointer", textAlign:"end", color:"grey", margin:"10px 0"}}onClick={() => {
 								if(!articleBoolean){
 									editorRef.current?.classList.remove("hidden");
 									let title = editorTitleRef.current as HTMLElement;
@@ -790,7 +791,7 @@ const addAudioElement = (blob: Blob) => {
 									setEditor("");
 									//reset title
 									setArticleBoolean(false);
-									dispatch({ type: "SET_ARTICLE", payload: null });
+									dispatch({ type: "SET_ARTICLE", payload: "" });
 								}
 							}}>Write An Article</p>
 
@@ -804,7 +805,7 @@ const addAudioElement = (blob: Blob) => {
 						</div>		
 					</label>
 			</Grid.Col>
-			<Grid.Col span={{ base: 6, md: 6, lg: 6 }}>
+			<Grid.Col  span={{ base: 6, sm: 12, md: 6, lg: 6 }}>
 				<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Metadata Details</span>
 				<label className={S.fieldLabel} style={{marginBottom:"10px"}}>
 					<span className={S.fieldLabel}>Title*</span>
@@ -870,194 +871,183 @@ const addAudioElement = (blob: Blob) => {
 						}}
 					/>
 				</label>
-
+				<label className={S.fieldLabel}>
+					<span className={S.fieldLabel}># of Editions</span>
+					<input
+						className={S.fieldInput}
+						name="copies"
+						type="number"
+						placeholder="# of Editions"
+						onChange={(e) => {
+							dispatch({ type: "SET_COPIES", payload: parseInt(e.target.value) });
+						}}
+					/>
+				</label>
 				<br></br>
 				<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Price</span>
 				<br></br>
-					<Grid>
-						<Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-							<label className={S.fieldLabel} style={{display:"inline"}}>Outright Buy</label>
-						</Grid.Col>
-						<Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
-							<input 
-								ref={priceRef}
-								className={S.fieldInput}
-								name="price_outright_buy"
-								type="number"
-								placeholder="Price in NEAR" 
-								style={{width:"100%"}}
-								onChange={(e) => {
-									dispatch({ type: "SET_PRICE_OUTRIGHT_BUY", payload: parseInt(e.target.value) });
-									console.log(parseInt(e.target.value));
-								}}
-							/>
-							<input
-								style={{borderRadius:"10px", backgroundColor:"#CBD5E1"}}
-								type="checkbox"
-								name="price_free"
-								value="0"
-								onChange={(e) => {
-									let price = priceRef.current;
-									if (e.target.checked) {
-										if(price){
-											price.value = "0";
-											dispatch({ type: "SET_PRICE_OUTRIGHT_BUY", payload: 0 });
-										}
-									} else {
-										if(price){
-											price.value = "";
-											dispatch({ type: "SET_PRICE_OUTRIGHT_BUY", payload: NaN });
-										}
+					<div>
+						<label className={S.fieldLabel} style={{display:"inline"}}>Outright Buy</label>
+						<input 
+							ref={priceRef}
+							className={S.fieldInput}
+							name="price_outright_buy"
+							type="number"
+							placeholder="Price in NEAR" 
+							style={{width:"100%", marginBottom:"5px"}}
+							onChange={(e) => {
+								dispatch({ type: "SET_PRICE_OUTRIGHT_BUY", payload: parseInt(e.target.value) });
+								console.log(parseInt(e.target.value));
+							}}
+						/>
+						<input
+							style={{borderRadius:"10px", backgroundColor:"#CBD5E1"}}
+							type="checkbox"
+							name="price_free"
+							value="0"
+							onChange={(e) => {
+								let price = priceRef.current;
+								if (e.target.checked) {
+									if(price){
+										price.value = "0";
+										dispatch({ type: "SET_PRICE_OUTRIGHT_BUY", payload: 0 });
 									}
-								}}
-							/>
-							<label style={{marginLeft:"20px"}}>Make this image free</label>
-								<br></br>
-
-							<p ref={titleRef} className="hover:underline" style={{cursor: "pointer", textAlign:"end", color:"grey", marginTop:"10px"}}onClick={() => {
-								if(!licensing){
-									licensingRef.current?.classList.remove("hidden");
-									let title = titleRef.current as HTMLElement;
-									title.textContent = "Cancel";
-									setLicensing(true);
-								}else{
-									licensingRef.current?.classList.add("hidden");
-									let title = titleRef.current as HTMLElement;
-									title.textContent = "Set Licensing Price(s)";
-									setLicensing(false);
-									dispatch({ type: "SET_PRICE_WEB_LICENSE", payload: NaN });
-									dispatch({ type: "SET_PRICE_PRINT_LICENSE", payload: NaN });
-									dispatch({ type: "SET_PRICE_WEB3_LICENSE", payload: NaN });
-									dispatch({ type: "SET_PRICE_SINGLE_USE", payload: NaN });
+								} else {
+									if(price){
+										price.value = "";
+										dispatch({ type: "SET_PRICE_OUTRIGHT_BUY", payload: NaN });
+									}
 								}
-							}}>Set Licensing Price(s)</p>
-
-						</Grid.Col>
-					</Grid>
-
-
-
-				<div className="hidden" ref={licensingRef}>
-					<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Licensing</span>
-					<br></br>
-					<Grid>
-						<Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-							<label className={S.fieldLabel} style={{display:"inline"}}>Web License</label>
-						</Grid.Col>
-						<Grid.Col span={{ base: 12, md: 8, lg: 8 }}>
-							<input
-									className={S.fieldInput}
-									name="price_web_license"
-									type="number"
-									placeholder="Price in NEAR" 
-									style={{width:"100%"}}
-									onChange={(e) => {
-										dispatch({ type: "SET_PRICE_WEB_LICENSE", payload: parseInt(e.target.value) });
-										console.log(parseInt(e.target.value));
-									}}
-								/>
-						</Grid.Col>
+							}}
+						/>
+						<label style={{marginLeft:"20px"}}>Make this image free</label>
 						<br></br>
-					</Grid>
-					<Grid>
-						<Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-							<label className={S.fieldLabel} style={{display:"inline"}}>Print License</label>
-						</Grid.Col>
-						<Grid.Col span={{ base: 12, md: 8, lg: 8 }}>
-							<input
-									className={S.fieldInput}
-									name="price_print_license"
-									type="number"
-									placeholder="Price in NEAR" 
-									style={{width:"100%"}}
-									onChange={(e) => {
-										dispatch({ type: "SET_PRICE_PRINT_LICENSE", payload: parseInt(e.target.value) });
-										console.log(parseInt(e.target.value));
-									}}
-								/>
-						</Grid.Col>
+
+						<p ref={titleRef} className="hover:underline" style={{cursor: "pointer", textAlign:"end", color:"grey", marginTop:"10px"}}onClick={() => {
+							if(!licensing){
+								licensingRef.current?.classList.remove("hidden");
+								let title = titleRef.current as HTMLElement;
+								title.textContent = "Cancel";
+								setLicensing(true);
+							}else{
+								licensingRef.current?.classList.add("hidden");
+								let title = titleRef.current as HTMLElement;
+								title.textContent = "Set Licensing Price(s)";
+								setLicensing(false);
+								dispatch({ type: "SET_PRICE_WEB_LICENSE", payload: NaN });
+								dispatch({ type: "SET_PRICE_PRINT_LICENSE", payload: NaN });
+								dispatch({ type: "SET_PRICE_WEB3_LICENSE", payload: NaN });
+								dispatch({ type: "SET_PRICE_SINGLE_USE", payload: NaN });
+							}
+						}}>Set Licensing Price(s)</p>
+					</div>
+
+
+
+					<div className="hidden" ref={licensingRef}>
+						<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Licensing</span>
 						<br></br>
-					</Grid>
-					<Grid>
-						<Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-							<label className={S.fieldLabel} style={{display:"inline"}}>Web3 License</label>
-						</Grid.Col>
-						<Grid.Col span={{ base: 12, md: 8, lg: 8 }}>
+						<label className={S.fieldLabel} style={{display:"inline"}}>Web License</label>
+					
 						<input
 								className={S.fieldInput}
-								name="price_web3_license"
+								name="price_web_license"
 								type="number"
 								placeholder="Price in NEAR" 
 								style={{width:"100%"}}
 								onChange={(e) => {
-									dispatch({ type: "SET_PRICE_WEB3_LICENSE", payload: parseInt(e.target.value) });
-									console.log(parseInt(e.target.value));
-								}}
-							/>			
-						</Grid.Col>
-						<br></br>
-					</Grid>
-					<Grid>
-						<Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-							<label className={S.fieldLabel} style={{display:"inline"}}>Single Use</label>
-						</Grid.Col>
-						<Grid.Col span={{ base: 12, md: 8, lg: 8 }}>
-						<input
-								className={S.fieldInput}
-								name="price_single_use"
-								type="number"
-								placeholder="Price in NEAR" 
-								style={{width:"100%"}}
-								onChange={(e) => {
-									dispatch({ type: "SET_PRICE_SINGLE_USE", payload: parseInt(e.target.value) });
+									dispatch({ type: "SET_PRICE_WEB_LICENSE", payload: parseInt(e.target.value) });
 									console.log(parseInt(e.target.value));
 								}}
 							/>
-						</Grid.Col>
-					</Grid>
-				</div>
-
-				<div>
-					<p ref={splitsTitleRef} className="hover:underline" style={{cursor: "pointer", textAlign:"end", color:"grey", marginTop:"10px"}}onClick={() => {
-						if(!splits){
-							splitsRef.current?.classList.remove("hidden");
-							let splitsTitle = splitsTitleRef.current as HTMLElement;
-							splitsTitle.textContent = "Cancel";
-							setSplits(true);
-						}else{
-							splitsRef.current?.classList.add("hidden");
-							let splitsTitle = splitsTitleRef.current as HTMLElement;
-							splitsTitle.textContent = "Splits";
-							setSplits(false);
-							
-							//reset values to null
-							let splitsAddress = splitsWalletAddress.current as HTMLElement;
-							splitsAddress.textContent = "";
-
-							let splitsPercent = splitsPercentage.current as HTMLElement;
-							splitsPercent.textContent = "0";
-
-							dispatch({ type: "SET_SPLITS_SECONDARY_WALLET", payload: "" });
-							dispatch({ type: "SET_SPLITS_SECONDARY_PERCENT", payload: NaN });
-						}
-					}}>Split Revenue</p>
-				</div>
-
-
-				<div className="hidden" ref={splitsRef}>
-					<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Pay Out Funds To</span>
-					<br></br>
-					<Grid>
-						<Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-							<label className={S.fieldLabel} style={{display:"inline"}}>Secondary Wallet Address</label>
-						</Grid.Col>
-						<Grid.Col span={{ base: 12, md: 8, lg: 8 }}>
+					
+						<br></br>
+				
+						<label className={S.fieldLabel} style={{display:"inline"}}>Print License</label>
+					
 						<input
+								className={S.fieldInput}
+								name="price_print_license"
+								type="number"
+								placeholder="Price in NEAR" 
+								style={{width:"100%"}}
+								onChange={(e) => {
+									dispatch({ type: "SET_PRICE_PRINT_LICENSE", payload: parseInt(e.target.value) });
+									console.log(parseInt(e.target.value));
+								}}
+							/>
+						<br></br>
+				
+						<label className={S.fieldLabel} style={{display:"inline"}}>Web3 License</label>
+				
+						<input
+							className={S.fieldInput}
+							name="price_web3_license"
+							type="number"
+							placeholder="Price in NEAR" 
+							style={{width:"100%"}}
+							onChange={(e) => {
+								dispatch({ type: "SET_PRICE_WEB3_LICENSE", payload: parseInt(e.target.value) });
+								console.log(parseInt(e.target.value));
+							}}
+						/>			
+					
+						<br></br>
+			
+						<label className={S.fieldLabel} style={{display:"inline"}}>Single Use</label>
+					
+						<input
+							className={S.fieldInput}
+							name="price_single_use"
+							type="number"
+							placeholder="Price in NEAR" 
+							style={{width:"100%"}}
+							onChange={(e) => {
+								dispatch({ type: "SET_PRICE_SINGLE_USE", payload: parseInt(e.target.value) });
+								console.log(parseInt(e.target.value));
+							}}
+						/>
+					</div>
+
+					<div>
+						<p ref={splitsTitleRef} className="hover:underline" style={{cursor: "pointer", textAlign:"end", color:"grey", marginTop:"10px"}}onClick={() => {
+							if(!splits){
+								splitsRef.current?.classList.remove("hidden");
+								let splitsTitle = splitsTitleRef.current as HTMLElement;
+								splitsTitle.textContent = "Cancel";
+								setSplits(true);
+							}else{
+								splitsRef.current?.classList.add("hidden");
+								let splitsTitle = splitsTitleRef.current as HTMLElement;
+								splitsTitle.textContent = "Splits";
+								setSplits(false);
+								
+								//reset values to null
+								let splitsAddress = splitsWalletAddress.current as HTMLElement;
+								splitsAddress.textContent = "";
+
+								let splitsPercent = splitsPercentage.current as HTMLElement;
+								splitsPercent.textContent = "0";
+
+								dispatch({ type: "SET_SPLITS_SECONDARY_WALLET", payload: "" });
+								dispatch({ type: "SET_SPLITS_SECONDARY_PERCENT", payload: NaN });
+							}
+						}}>Split Revenue</p>
+					</div>
+
+
+					<div className="hidden" ref={splitsRef}>
+						<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Pay Out Funds To</span>
+						<br></br>
+						
+							<label className={S.fieldLabel} style={{display:"inline"}}>Secondary Wallet Address</label>
+						
+							<input
 								className={S.fieldInput}
 								name="userr_wallet_address"
 								type="string"
 								placeholder={account?.accountId + " (You)"} 
-								style={{width:"85%", marginRight:"20px"}}
+								style={{width:"88%", marginRight:"20px"}}
 								disabled
 							/>
 							<input
@@ -1088,7 +1078,7 @@ const addAudioElement = (blob: Blob) => {
 								name="splits_secondary_wallet"
 								type="string"
 								placeholder="Wallet Address" 
-								style={{width:"85%", marginRight:"20px"}}
+								style={{width:"88%", marginRight:"20px"}}
 								onChange={(e) => {
 									dispatch({ type: "SET_SPLITS_SECONDARY_WALLET", payload: (e.target.value) });
 									console.log(parseInt(e.target.value));
@@ -1112,43 +1102,29 @@ const addAudioElement = (blob: Blob) => {
 								}}
 							/>
 							<label>%</label>
-						</Grid.Col>
-						<br></br>
-					</Grid>
-				</div>				{/* <label className={S.fieldLabel}>
-					<span className={S.fieldLabelText}># of Editions</span>
-					<input
-						className={S.fieldInput}
-						name="copies"
-						type="number"
-						placeholder="# of Editions"
-						onChange={(e) => {
-							dispatch({ type: "SET_COPIES", payload: parseInt(e.target.value) });
-						}}
-					/>
-				</label> */}
+							<br></br>
+					</div>		
 
-			
-
-				<button
-				style={{marginTop:"20px", borderRadius:"15px"}}
-					className={cloin(
-						"btn w-full justify-center",
-						state.submissionStatus === "SUBMITTING" && "loading pointer-events-none",
-						state.submissionStatus === "SUCCESS" && "pointer-events-none btn-success",
-						state.submissionStatus === "FAIL" && "pointer-events-none btn-error",
-					)}
-					disabled={!isSignedIn || state.submissionStatus !== "IDLE"}
-					onClick={onSubmit}
-				>
-					{state.submissionStatus === "IDLE" && "Submit"}
-					{state.submissionStatus === "SUBMITTING" && "Uploading..."}
-					{state.submissionStatus === "FAIL" && "Error"}
-					{state.submissionStatus === "SUCCESS" && "Success!"}
-				</button>
-				
-			</Grid.Col>
-			
+					<button
+					style={{marginTop:"20px", borderRadius:"15px"}}
+						className={cloin(
+							"btn w-full justify-center",
+							state.submissionStatus === "SUBMITTING" && "loading pointer-events-none",
+							state.submissionStatus === "SUCCESS" && "pointer-events-none btn-success",
+							state.submissionStatus === "FAIL" && "pointer-events-none btn-error",
+						)}
+						disabled={!isSignedIn || state.submissionStatus !== "IDLE"}
+						onClick={onSubmit}
+					>
+						{state.submissionStatus === "IDLE" && "Submit"}
+						{state.submissionStatus === "SUBMITTING" && "Uploading..."}
+						{state.submissionStatus === "FAIL" && "Error"}
+						{state.submissionStatus === "SUCCESS" && "Success!"}
+					</button>
+					
+					</Grid.Col>
+				</Grid>
+			</form>
 
 				{!isSignedIn && (
 					<AlertBar kind="warning">
@@ -1176,8 +1152,7 @@ const addAudioElement = (blob: Blob) => {
 						</div>
 					</div>
 				)}
-				</Grid>
-			</form>
+				
 			{captureModalOpen && (
 				<CaptureModal
 					setIsOpen={setCaptureModalOpen}

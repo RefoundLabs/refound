@@ -376,6 +376,8 @@ export class PostWriteContractAdapter {
 		price_print_license,
 		price_web3_license,
 		price_single_use,
+		splits_secondary_wallet,
+		splits_secondary_percent,
 		copies,
 		tags,
 	}: {
@@ -392,6 +394,8 @@ export class PostWriteContractAdapter {
 		price_print_license: string;
 		price_web3_license: string;
 		price_single_use: string;
+		splits_secondary_wallet: string;
+		splits_secondary_percent: number;
 		copies: number;
 		tags: string;
 	}): Promise<Result<true>> {
@@ -429,11 +433,15 @@ export class PostWriteContractAdapter {
 						issued_at: null, //new Date().getMilliseconds(),
 						extra: JSON.stringify(extra)
 					},
-					price_outright_buy: price_outright_buy,
-					price_web_license: price_web_license,
-					price_print_license: price_print_license,
-					price_web3_license: price_web3_license,
-					price_single_use: price_single_use
+					//todo: pricing and splits
+					// price_outright_buy: price_outright_buy,
+					// price_web_license: price_web_license,
+					// price_print_license: price_print_license,
+					// price_web3_license: price_web3_license,
+					// price_single_use: price_single_use
+					// splits_secondary_wallet: splits_secondary_wallet
+					// splits_secondary_percent: splits_secondary_percent
+
 				};
 
 				await this.callMethod("create_series", args);

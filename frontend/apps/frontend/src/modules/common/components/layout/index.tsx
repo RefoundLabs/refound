@@ -15,23 +15,23 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 			<footer style={{height:"50px", backgroundColor:"lightgrey"}}>
 				
 				<Grid>
-					<Grid.Col sm={2}>
+					<Grid.Col span={2}>
 						<NextLink href="/">
-							<a className="flex flex-row gap-2 items-center justify-center text-[1em]">
+							<a className="flex flex-row gap-2 items-center justify-center text-[1em] pt-2">
 								<img className="w-[1.5em] h-[1.5em] object-contain" src="/favicon-32x32.png" />
 								<h1 className="font-normal leading-none text-[2em]">refound</h1>
 							</a>
 						</NextLink>
 					</Grid.Col>
-					<Grid.Col sm={9}></Grid.Col>
-					<Grid.Col sm={1}>
+					<Grid.Col span={8}></Grid.Col>
+					{/* <Grid.Col span={2}>
 						<NextLink href="https://twitter.com/_refound" target="_blank">
 							<IconBrandTwitter style={{display:"inline", color:"00A0B0", marginRight:"10px"}}></IconBrandTwitter>
 						</NextLink>
 						<NextLink href="https://discord.gg/PE8jydDHGn" target="_blank">
 							<IconBrandDiscord style={{display:"inline", color:"00A0B0"}}></IconBrandDiscord>
 						</NextLink>
-					</Grid.Col>
+					</Grid.Col> */}
 				</Grid>
 			</footer>
 		</>

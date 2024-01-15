@@ -31,14 +31,14 @@ export const PostCard = ({
 					<figcaption className="absolute top-0 bottom-0 left-0 right-0 flex flex-col justify-between transition-opacity duration-300 opacity-0 bg-gradient-to-b from-transparent to-primary/90 group-hover:opacity-100">
 						{tags &&
 							<div className="w-full p-4">
-								{tags.map((tag:any) => (
+								
 									<span
-										key={tag}
+										
 										className="text-white inline-block text-xs bg-black rounded-full px-[0.8em] py-[0.2em] leading-none mr-[0.5em]"
 									>
-										{tag}
+										{tags}
 									</span>
-								))}
+								
                    		 </div>
 						}
 						<span />
@@ -66,7 +66,7 @@ export const PostCard = ({
 				/>
 			</div>
 			<div className="flex flex-row items-baseline justify-between w-full pl-2">
-				<h1 className="text-sm font-bold" style={{maxWidth:"70%"}}>{trimText(title, 45)} {audioLink && <IconMicrophone style={{display:"inline", color:"#00A0B0"}}></IconMicrophone>}</h1>
+				 <h1 className="text-sm font-bold" style={{maxWidth:"70%"}}>{trimText(title, 45)}</h1> {(audioLink !== undefined) && <IconMicrophone style={{display:"inline", color:"#00A0B0"}}></IconMicrophone>}
 				<div className="flex flex-col justify-end gap-1">
 					{isVerified && (
 						<span className="rounded-full badge badge-sm badge-success">

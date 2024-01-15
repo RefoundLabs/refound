@@ -8,10 +8,13 @@ import { PostCard } from "../components/post-card";
 const { providers } = require("near-api-js");
 const provider = new providers.JsonRpcProvider("https://rpc.testnet.near.org");
 import { config } from "@config/config";
-
+import { Grid, Text } from "@mantine/core";
+import '@mantine/tiptap/styles.css';
 export const DiscoverView = () => {
 	const { adapter } = usePostContracts();
 	const [posts, setPosts] = useState<Nullable<Post[]>>(undefined);
+	const [filteredPosts, setFilteredPosts] = useState<Nullable<Post[]>>(undefined);
+	const [showVerifiedPosts, setShowVerifiedPosts] = useState<Boolean>();
 
 	useEffect(() => {
 		if (!adapter) return;
@@ -20,7 +23,7 @@ export const DiscoverView = () => {
 			console.log('adapter')
 			adapter.getPosts({}).then((result) =>
 				result?.match({
-					ok: (posts) => setPosts(posts),
+					ok: (posts) => {setPosts(posts), setFilteredPosts(posts)},
 					fail: (error) => {
 						toast.error(error.message, "no-posts");
 					},
@@ -84,10 +87,47 @@ export const DiscoverView = () => {
 	  }
 
 	return (
-		<section className="flex flex-col w-full px-contentPadding max-w-screen-lg mx-auto min-h-[101vh]">
-			<div className="grid grid-cols-1 gap-4 py-24 sm:grid-cols-3">
-				{posts ? (
-					posts.map((post) => <PostCard key={post.id} post={post} />)
+		
+		<section className="flex flex-col w-full px-contentPadding max-w-screen-lg mx-auto min-h-[101vh]" style={{marginTop:"8%",}}>
+		
+		
+			<div style={{border:"1px solid lightgrey", padding:"10px", borderRadius:"15px"}}>
+	
+				<p style={{color:'#656a70'}}>Filters</p>
+				<input
+					style={{borderRadius:"5px", backgroundColor:"#CBD5E1"}}
+					type="checkbox"
+					name="verifiedPosts"
+					onChange={(e) => {
+						if (e.target.checked) {
+							setShowVerifiedPosts(true);
+							const newFilteredPosts: void | any[] | ((prevState: Nullable<Post[]>) => Nullable<Post[]>) | null = [];
+							posts?.forEach((item:any) => {
+								if(item.isVerified){
+									newFilteredPosts?.push(item);
+								}
+							})
+							setFilteredPosts(newFilteredPosts);
+						} else {
+							setShowVerifiedPosts(false);
+							setFilteredPosts(posts);
+						}
+					}}
+				/>
+				<label style={{marginLeft:"10px", marginTop:"-15px", marginRight:"20px", color:"#656a70"}}>NGO Verified</label>
+				<input
+					style={{borderRadius:"5px", backgroundColor:"#CBD5E1"}}
+					type="checkbox"
+					name="verifiedPosts"
+					onChange={(e) => {
+						
+					}}
+				/>
+				<label style={{marginLeft:"10px", marginTop:"-15px", color:"#656a70"}}>NSFW</label>
+			</div>
+			<div className="grid grid-cols-1 gap-4 py-12 sm:grid-cols-3">
+				{filteredPosts ? (
+					filteredPosts.map((post) => <PostCard key={post.id} post={post} />)
 				) : (
 					<LoadingPage />
 				)}

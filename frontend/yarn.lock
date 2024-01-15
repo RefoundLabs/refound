@@ -8968,7 +8968,7 @@ ipfs-core-utils@^0.18.1:
 
 ipfs-http-client@^60.0.1:
   version "60.0.1"
-  resolved "https://registry.npmjs.org/ipfs-http-client/-/ipfs-http-client-60.0.1.tgz"
+  resolved "https://registry.yarnpkg.com/ipfs-http-client/-/ipfs-http-client-60.0.1.tgz#d2e9ab430aad43a92a6e44008e534afba4fd22b9"
   integrity sha512-amwM5TNuf077J+/q27jPHfatC05vJuIbX6ZnlYLjc2QsjOCKsORNBqV3brNw7l+fPrijV1yrwEDLG3JEnKsfMw==
   dependencies:
     "@ipld/dag-cbor" "^9.0.0"

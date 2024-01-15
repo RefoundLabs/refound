@@ -184,14 +184,15 @@ export class PostContractAdapter {
 			  }, 0),
 		);
 
-			let imageLink = "";
-			let audioLink = "";
+			let imageLink = undefined;
+			let audioLink = undefined;
 			let links = [];
 			if(series.metadata.media){
 				//console.log('get media links')
 				//console.log(series.metadata.media)
 				
 				imageLink = series.metadata.media;
+				//console.log(series.metadata.media)
 				
 				links = (
 					await getLinks(series.metadata.media)
@@ -202,14 +203,15 @@ export class PostContractAdapter {
 				});
 				const hash = series.metadata.media.replace(".ipfs.w3s.link", "").replace("https://", "").split("/")[0];
 				links.forEach((link:any) => {
-					//console.log('check audio links')
-					//console.log(link);
-					if(link.Name.includes(".mp3") || link.Name.includes(".wav")){
-						audioLink = "https://" + hash + ".ipfs.w3s.link/" + link.Name;
+					// console.log('check audio links')
+					// console.log(link);
+					if(link.toString().includes(".mp3") || link.toString().includes(".wav")){
+						audioLink = link;//"https://" + hash + ".ipfs.w3s.link/" + link.Name;
 						//console.log('audiolink')
 						//console.log(audioLink);
 					}
 				})
+				console.log(audioLink);
 				
 
 			}
@@ -223,15 +225,15 @@ export class PostContractAdapter {
 			description: series.metadata.description || "",
 			media: series.metadata.media || "/placeholder.jpeg",
 			imageLink: imageLink || "",
-			audioLink: audioLink || "",
+			audioLink: audioLink !== undefined ? audioLink : undefined,
 			extra: series.metadata.extra || "",
 			isVerified: series.verified,
 			voteCount,
 			userHasVoted,
 		};
 
-		//console.log('post');
-		//console.log(post);
+		console.log('post');
+		console.log(post);
 
 		return post;
 	}
@@ -258,7 +260,7 @@ export class PostContractAdapter {
 			  });
 			
 			const res = JSON.parse(Buffer.from(rawResult.result).toString());
-			//console.log(res);
+			console.log(res);
 			
 			let post = await this.postDtoToEntity(res);
 			//console.log('get post hook')
@@ -294,15 +296,15 @@ export class PostContractAdapter {
 					!config.content.moderationList.posts.includes(seriesItem.series_id),
 				);
 
-				//console.log('parsed posts result');
-				//console.log(parsedRes);
+				console.log('parsed posts result');
+				console.log(parsedRes);
 
 				posts = await Promise.all(
 					parsedRes.map(async (item:JsonSeries) => this.postDtoToEntity(item)),
 				);
 				
 				foundPosts = true;
-				//console.log(posts);
+				console.log(posts);
 			}
 
 				return result.ok(posts);
