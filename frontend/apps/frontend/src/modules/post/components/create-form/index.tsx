@@ -76,6 +76,8 @@ type FormData = {
 	price_print_license: number;
 	price_web3_license: number;
 	price_single_use: number;
+	splits_secondary_percentage: number;
+	splits_secondary_wallet: string;
 	copies: number;
 	tags?: string;
 	dateGoLive?: number;
@@ -107,6 +109,8 @@ const initialReducerState: ReducerState = {
 	price_print_license: 0,
 	price_web3_license: 0,
 	price_single_use: 0,
+	splits_secondary_percentage: 0,
+	splits_secondary_wallet: "",
 	copies: 0,
 	tags: "",
 	dateGoLive: 0,
@@ -144,6 +148,8 @@ type ReducerActions =
 	| { type: "SET_PRICE_PRINT_LICENSE"; payload: FormData["price_print_license"] }
 	| { type: "SET_PRICE_WEB3_LICENSE"; payload: FormData["price_web3_license"] }
 	| { type: "SET_PRICE_SINGLE_USE"; payload: FormData["price_single_use"] }
+	| {type: "SET_SPLITS_SECONDARY_PERCENT"; payload: FormData["splits_secondary_percentage"]}
+	| {type: "SET_SPLITS_SECONDARY_WALLET"; payload: FormData["splits_secondary_wallet"]}
 	| { type: "SET_COPIES"; payload: FormData["copies"] }
 	| { type: "SET_TAGS"; payload: FormData["tags"] }
 	| { type: "SET_DATEGOLIVE"; payload: FormData["dateGoLive"] }
@@ -308,9 +314,16 @@ export const CreateForm = () => {
 	
 	const licensingRef = useRef<HTMLInputElement>(null);
 	const titleRef = useRef<HTMLInputElement>(null);
+	const priceRef = useRef<HTMLInputElement>(null);
+	const splitsRef = useRef<HTMLInputElement>(null);
+	const splitsTitleRef = useRef<HTMLInputElement>(null);
 	const editorRef = useRef<HTMLInputElement>(null);
 	const editorTitleRef = useRef<HTMLInputElement>(null);
+	const userWalletSplitsPercent = useRef<HTMLInputElement>(null);
+	const splitsWalletAddress = useRef<HTMLInputElement>(null);
+	const splitsPercentage = useRef<HTMLInputElement>(null);
 	const [licensing, setLicensing] = useState(false);
+	const [splits, setSplits] = useState(false);
 	const router = useRouter();
 	const [state, dispatch] = useReducer(reducer, initialReducerState);
 	const { writeAdapter } = useWritePostContracts();
@@ -390,10 +403,10 @@ export const CreateForm = () => {
 
 	function success(pos:any) {
 		var crd = pos.coords;
-		console.log("Your current position is:");
-		console.log(`Latitude : ${crd.latitude}`);
-		console.log(`Longitude: ${crd.longitude}`);
-		console.log(`More or less ${crd.accuracy} meters.`);
+		// console.log("Your current position is:");
+		// console.log(`Latitude : ${crd.latitude}`);
+		// console.log(`Longitude: ${crd.longitude}`);
+		// console.log(`More or less ${crd.accuracy} meters.`);
 		parseAndSetLocation(crd.latitude, crd.longitude);
 	  }
 
@@ -687,7 +700,7 @@ const addAudioElement = (blob: Blob) => {
 			</div>
 			<form className={S.formRoot}>
 				<Grid>
-					<Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+					<Grid.Col span={{ base: 6, md: 6, lg: 6 }}>
 					<label className={`${S.fieldLabel} items-start`}>
 						<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Image*</span>
 						<FileDropInput 
@@ -791,7 +804,7 @@ const addAudioElement = (blob: Blob) => {
 						</div>		
 					</label>
 			</Grid.Col>
-			<Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+			<Grid.Col span={{ base: 6, md: 6, lg: 6 }}>
 				<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Metadata Details</span>
 				<label className={S.fieldLabel} style={{marginBottom:"10px"}}>
 					<span className={S.fieldLabel}>Title*</span>
@@ -866,17 +879,39 @@ const addAudioElement = (blob: Blob) => {
 							<label className={S.fieldLabel} style={{display:"inline"}}>Outright Buy</label>
 						</Grid.Col>
 						<Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
+							<input 
+								ref={priceRef}
+								className={S.fieldInput}
+								name="price_outright_buy"
+								type="number"
+								placeholder="Price in NEAR" 
+								style={{width:"100%"}}
+								onChange={(e) => {
+									dispatch({ type: "SET_PRICE_OUTRIGHT_BUY", payload: parseInt(e.target.value) });
+									console.log(parseInt(e.target.value));
+								}}
+							/>
 							<input
-									className={S.fieldInput}
-									name="price_outright_buy"
-									type="number"
-									placeholder="Price in NEAR" 
-									style={{width:"100%"}}
-									onChange={(e) => {
-										dispatch({ type: "SET_PRICE_OUTRIGHT_BUY", payload: parseInt(e.target.value) });
-										console.log(parseInt(e.target.value));
-									}}
-								/>
+								style={{borderRadius:"10px", backgroundColor:"#CBD5E1"}}
+								type="checkbox"
+								name="price_free"
+								value="0"
+								onChange={(e) => {
+									let price = priceRef.current;
+									if (e.target.checked) {
+										if(price){
+											price.value = "0";
+											dispatch({ type: "SET_PRICE_OUTRIGHT_BUY", payload: 0 });
+										}
+									} else {
+										if(price){
+											price.value = "";
+											dispatch({ type: "SET_PRICE_OUTRIGHT_BUY", payload: NaN });
+										}
+									}
+								}}
+							/>
+							<label style={{marginLeft:"20px"}}>Make this image free</label>
 								<br></br>
 
 							<p ref={titleRef} className="hover:underline" style={{cursor: "pointer", textAlign:"end", color:"grey", marginTop:"10px"}}onClick={() => {
@@ -896,6 +931,7 @@ const addAudioElement = (blob: Blob) => {
 									dispatch({ type: "SET_PRICE_SINGLE_USE", payload: NaN });
 								}
 							}}>Set Licensing Price(s)</p>
+
 						</Grid.Col>
 					</Grid>
 
@@ -980,7 +1016,106 @@ const addAudioElement = (blob: Blob) => {
 						</Grid.Col>
 					</Grid>
 				</div>
-				{/* <label className={S.fieldLabel}>
+
+				<div>
+					<p ref={splitsTitleRef} className="hover:underline" style={{cursor: "pointer", textAlign:"end", color:"grey", marginTop:"10px"}}onClick={() => {
+						if(!splits){
+							splitsRef.current?.classList.remove("hidden");
+							let splitsTitle = splitsTitleRef.current as HTMLElement;
+							splitsTitle.textContent = "Cancel";
+							setSplits(true);
+						}else{
+							splitsRef.current?.classList.add("hidden");
+							let splitsTitle = splitsTitleRef.current as HTMLElement;
+							splitsTitle.textContent = "Splits";
+							setSplits(false);
+							
+							//reset values to null
+							let splitsAddress = splitsWalletAddress.current as HTMLElement;
+							splitsAddress.textContent = "";
+
+							let splitsPercent = splitsPercentage.current as HTMLElement;
+							splitsPercent.textContent = "0";
+
+							dispatch({ type: "SET_SPLITS_SECONDARY_WALLET", payload: "" });
+							dispatch({ type: "SET_SPLITS_SECONDARY_PERCENT", payload: NaN });
+						}
+					}}>Split Revenue</p>
+				</div>
+
+
+				<div className="hidden" ref={splitsRef}>
+					<span className={S.fieldLabelText} style={{fontSize:"1.2em"}}>Pay Out Funds To</span>
+					<br></br>
+					<Grid>
+						<Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+							<label className={S.fieldLabel} style={{display:"inline"}}>Secondary Wallet Address</label>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, md: 8, lg: 8 }}>
+						<input
+								className={S.fieldInput}
+								name="userr_wallet_address"
+								type="string"
+								placeholder={account?.accountId + " (You)"} 
+								style={{width:"85%", marginRight:"20px"}}
+								disabled
+							/>
+							<input
+								ref={userWalletSplitsPercent}
+								className={S.fieldInput}
+								name="splits_secondary_percentage"
+								type="number"
+								placeholder="50" 
+								style={{width:"7%", marginRight:"10px"}}
+								onChange={(e) => {
+									//calculate 100 - e.target.value and set to other input
+									let splitsPercent = splitsPercentage.current;
+									let calculatedSecondaryWalletPercentage = (100 - parseInt(e.target.value));
+									if(splitsPercent){
+										splitsPercent.value = calculatedSecondaryWalletPercentage.toString();
+									}
+									dispatch({ type: "SET_SPLITS_SECONDARY_PERCENT", payload: calculatedSecondaryWalletPercentage });
+									console.log(parseInt(e.target.value));
+								}}
+							/>
+							<label>%</label>
+
+							<div style={{height:"20px"}}></div>
+
+							<input
+							ref={splitsWalletAddress}
+								className={S.fieldInput}
+								name="splits_secondary_wallet"
+								type="string"
+								placeholder="Wallet Address" 
+								style={{width:"85%", marginRight:"20px"}}
+								onChange={(e) => {
+									dispatch({ type: "SET_SPLITS_SECONDARY_WALLET", payload: (e.target.value) });
+									console.log(parseInt(e.target.value));
+								}}
+							/>
+							<input
+							ref={splitsPercentage}
+								className={S.fieldInput}
+								name="splits_secondary_percentage"
+								type="number"
+								placeholder="50" 
+								style={{width:"7%", marginRight:"10px"}}
+								onChange={(e) => {
+									//calculate 100 - e.target.value and set to other input
+									let splitsLabel = userWalletSplitsPercent.current;
+									if(splitsLabel){
+										splitsLabel.value = (100 - parseInt(e.target.value)).toString();
+									}
+									dispatch({ type: "SET_SPLITS_SECONDARY_PERCENT", payload: parseInt(e.target.value) });
+									console.log(parseInt(e.target.value));
+								}}
+							/>
+							<label>%</label>
+						</Grid.Col>
+						<br></br>
+					</Grid>
+				</div>				{/* <label className={S.fieldLabel}>
 					<span className={S.fieldLabelText}># of Editions</span>
 					<input
 						className={S.fieldInput}
