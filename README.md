@@ -13,3 +13,9 @@ Automated Licensing
 Publicly Visible Chain of Approvals
 
 Next.js Front-End Dapp + Near/Rust Smart Contracts + IPFS Storage 
+
+For Developers
+
+How to run
+cd frontend/apps/frontend/ - this is the front end app's main location
+yarn dev
