@@ -8,7 +8,7 @@ export type Post = {
 	title: string;
 	description: string;
 	imageLink: string;
-	audioLink: string;
+	audioLink?: string;
 	media:string;
 	extra:string;
 	tags:string;
