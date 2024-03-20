@@ -5,13 +5,16 @@ import { config } from "config/config";
 import type { Web3Storage } from "web3.storage";
 // import type { PostStorageSchema } from "../models/post.dto";
 // import { createGatewayUrl } from "./utils/create-gateway-url";
-import { create } from 'ipfs-http-client';
+// import { create } from 'ipfs-http-client';
+// import IPFS from 'ipfs-http-client';
 
 /* 
 --------------------
 QUERIES
 --------------------
 */
+
+
 const getLinks = async (
 	cid: string,
 ): Promise<Result<any>> => {
@@ -21,15 +24,35 @@ const getLinks = async (
 		//console.log(cid);
 		const ipfsPath = cid.replace(".ipfs.w3s.link", "").replace("https://", "").split("/")[0];
 		//console.log(ipfsPath);
-		
-		const data = await axios
-			.get("https://dweb.link/api/v0/ls?arg=" + ipfsPath)
-			.then((response) => response.data)
-			.catch((err: Error) => {
-				throw err;
-			});
-			//console.log(data.Objects[0].Links);
-		return result.ok(data.Objects[0].Links);
+		 let links = ["http://ipfs.io/ipfs/" + ipfsPath + "/image.png"];
+		// axios.get("http://ipfs.io/ipfs/" + ipfsPath + "/image.png")
+		// .then((response) => {
+		// 	console.log(response);
+		//  	links.push();
+		// })
+		// .catch((error) => {
+		//   //console.error('Error fetching data:', error);
+		// });
+
+		axios.get("http://ipfs.io/ipfs/" + ipfsPath + "/audio.mp3")
+		.then((response) => {
+			console.log(response);
+		 	links.push("http://ipfs.io/ipfs/" + ipfsPath + "/audio.mp3");
+		})
+		.catch((error) => {
+		  //console.error('Error fetching data:', error);
+		});
+
+		// axios.get("http://ipfs.io/ipfs/" + ipfsPath + "/article.png")
+		// .then((response) => {
+		// 	console.log(response);
+		//  	links.push();
+		// })
+		// .catch((error) => {
+		//   //console.error('Error fetching data:', error);
+		// });
+
+		return result.ok(links);
 	} catch (err) {
 		return result.fail(err as Error);
 	}
@@ -51,6 +74,7 @@ const uploadFile = async (
 	try {
 		
 		const path = file.name;
+
 		if(audioFile){
 			const combinedFileSize = [file, audioFile].reduce((last, current) => last + current.size, 0);
 
